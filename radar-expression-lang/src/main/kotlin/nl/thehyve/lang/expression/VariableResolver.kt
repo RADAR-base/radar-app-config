@@ -2,14 +2,17 @@ package nl.thehyve.lang.expression
 
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.math.BigDecimal
-import java.util.*
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
+data class ResolvedVariable(val scope: Scope, val id: QualifiedId, val variable: Variable)
+
 interface VariableResolver {
+    fun replace(scope: Scope, variables: Stream<Pair<QualifiedId, Variable>>)
     fun register(scope: Scope, id: QualifiedId, variable: Variable)
-    fun resolve(scope: Scope, id: QualifiedId): Variable
-    fun list(scope: Scope, prefix: QualifiedId?): Stream<QualifiedId>
+    fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable
+    fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Stream<ResolvedVariable>
+    fun list(scopes: List<Scope>, prefix: QualifiedId?): Stream<QualifiedId>
 }
 
 fun VariableResolver.register(functions: List<Function>) {
@@ -33,12 +36,12 @@ fun Collection<Variable>.toVariable(): CollectionLiteral = CollectionLiteral(thi
 fun Boolean.toVariable(): BooleanLiteral = BooleanLiteral(this)
 
 class DirectVariableResolver : VariableResolver {
-    override fun list(scope: Scope, prefix: QualifiedId?): Stream<QualifiedId> {
-        val usePrefix = prefix?.names ?: listOf()
-        var refStream = root.variableNames(scope)
+    override fun list(scopes: List<Scope>, prefix: QualifiedId?): Stream<QualifiedId> {
+        var refStream = scopes.stream()
+                .flatMap { variables[it]?.keys?.stream() ?: Stream.empty() }
                 .distinct()
-                .map { QualifiedId(it) }
 
+        val usePrefix = prefix?.names ?: listOf()
         if (usePrefix.isNotEmpty()) {
             refStream = refStream
                     .filter { it.names.count() >= usePrefix.count()
@@ -48,21 +51,37 @@ class DirectVariableResolver : VariableResolver {
         return refStream
     }
 
-    val root = ScopeNode.root()
-
-    override fun register(scope: Scope, id: QualifiedId, variable: Variable) {
-        val scopeNode = root.ensure(scope)
-        val variables = scopeNode.variables
-                ?: mutableMapOf<String, Variable>()
-                        .also { scopeNode.variables = it }
-
-        variables[id.asString()] = variable
+    override fun replace(scope: Scope, variables: Stream<Pair<QualifiedId, Variable>>) {
+        this.variables.remove(scope)
+        this.variables[scope] = variables
+                .collect(Collectors.toMap<Pair<QualifiedId, Variable>, QualifiedId, Variable>({ it.first }, { it.second }))
+                .toMutableMap()
     }
 
-    override fun resolve(scope: Scope, id: QualifiedId): Variable {
-        val result = root.resolve(scope, id)
+    private val variables = mutableMapOf<Scope, MutableMap<QualifiedId, Variable>>()
+
+    override fun register(scope: Scope, id: QualifiedId, variable: Variable) {
+        val root = variables[scope]
+                ?: mutableMapOf<QualifiedId, Variable>().also { variables[scope] = it }
+
+        root[id] = variable
+    }
+
+    override fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Stream<ResolvedVariable> {
+        return list(scopes, prefix)
+                .map { resolve(scopes, it) }
+    }
+
+    override fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable {
+        val result = scopes.stream()
+                .map { Pair(it, variables[it]?.get(id)) }
+                .filter { it.second != null }
+                .map { ResolvedVariable(it.first, id, it.second!!) }
+                .findFirst()
+                .orElse(null)
+
         if (result == null) {
-            val variables = list(scope, null)
+            val variables = list(scopes, null)
                     .collect(Collectors.toList())
 
             val query = id.asString().replace('.', ' ')
@@ -71,80 +90,13 @@ class DirectVariableResolver : VariableResolver {
                     .take(5)
 
             if (alternatives.isEmpty()) {
-                throw UnsupportedOperationException("Unknown variable $id in scope ${scope.id}.")
+                throw UnsupportedOperationException("Unknown variable $id in scopes $scopes.")
             } else {
-                throw UnsupportedOperationException("Unknown variable $id in scope ${scope.id}." +
+                throw UnsupportedOperationException("Unknown variable $id in scopes $scopes." +
                         " Did you mean any of the following variables?\n - ${alternatives.joinToString(separator="\n - ") { it.referent.asString() }}")
             }
         } else {
             return result
         }
-    }
-}
-
-data class ScopeNode(val name: String?, val parent: ScopeNode?, val children: MutableList<ScopeNode>, var variables: MutableMap<String, Variable>?) {
-    operator fun get(name: String): ScopeNode? = children.find { it.name == name }
-
-    fun ensure(scope: Scope): ScopeNode {
-        val (childName, innerScope) = scope.splitHead() ?: return this
-
-        val child = this[childName]
-                ?: ScopeNode(childName, this, mutableListOf(), null)
-                        .also { children.add(it) }
-
-        return child.ensure(innerScope)
-    }
-
-    fun resolve(scope: Scope, id: QualifiedId): Variable? = scope.splitHead()
-            ?.let { (childName, innerScope) ->
-                this[childName]?.resolve(innerScope, id)
-            }
-            ?: variables?.get(id.asString())
-
-    fun resolveDirect(scope: Scope, id: QualifiedId): Variable? {
-        val (childName, innerScope) = scope.splitHead() ?: return variables?.get(id.asString())
-        return this[childName]?.resolveDirect(innerScope, id)
-    }
-
-    fun variableNames(scope: Scope): Stream<String> {
-        val childStream = scope.splitHead()?.let { (childName, innerScope) ->
-            this[childName]?.variableNames(innerScope)
-        } ?: Stream.empty()
-        val thisStream = variables?.keys?.stream() ?: Stream.empty()
-        return Stream.concat(childStream, thisStream)
-    }
-
-    override fun toString() = buildString(50) {
-        if (parent == null) {
-            append("Scope[ ")
-        }
-        name?.let { append(it).append(": ") }
-
-        if (children.isNotEmpty()) {
-            append(children)
-            variables?.let { append(", ").append(it).append(')')}
-        } else {
-            variables?.let { append(it).append(')')}
-        }
-        if (parent == null) {
-            append(" ]")
-        }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ScopeNode
-
-        return name == other.name
-                && children == other.children
-                && variables == other.variables
-    }
-
-    override fun hashCode() = Objects.hash(name, children)
-
-    companion object {
-        fun root() = ScopeNode(null, null, mutableListOf(), null)
     }
 }

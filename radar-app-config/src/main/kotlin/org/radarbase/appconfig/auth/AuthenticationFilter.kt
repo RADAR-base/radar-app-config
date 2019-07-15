@@ -54,13 +54,6 @@ class AuthenticationFilter : ContainerRequestFilter {
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
                     .header("WWW-Authenticate", BEARER_REALM)
                     .build())
-        } else if (!radarToken.hasPermission(Permission.MEASUREMENT_CREATE)) {
-            val message = "MEASUREMENT.CREATE permission not given"
-            logger.warn("[403] {}: {}", requestContext.uriInfo.path, message)
-            requestContext.abortWith(
-                    Response.status(Response.Status.FORBIDDEN)
-                                .header("WWW-Authenticate", getInvalidScopeChallenge(message))
-                            .build())
         } else {
             requestContext.securityContext = RadarSecurityContext(radarToken)
         }

@@ -7,7 +7,7 @@ import java.util.stream.Collectors
 interface Function {
     val name: String
     val numberOfArguments: IntRange
-    fun apply(interpreter: Interpreter, scope: Scope, parameters: List<Expression>): Variable
+    fun apply(interpreter: Interpreter, scope: List<Scope>, parameters: List<Expression>): Variable
 }
 
 abstract class AbstractFunction: Function {
@@ -17,7 +17,7 @@ abstract class AbstractFunction: Function {
 class SumFunction : AbstractFunction() {
     override val name = "sum"
     override val numberOfArguments = 1..Int.MAX_VALUE
-    override fun apply(interpreter: Interpreter, scope: Scope, parameters: List<Expression>) = parameters.stream()
+    override fun apply(interpreter: Interpreter, scope: List<Scope>, parameters: List<Expression>) = parameters.stream()
             .flatMap { interpreter.interpret(scope, it).asStream() }
             .map { it.asNumber() }
             .reduce(BigDecimal.ZERO, BigDecimal::add)
@@ -27,7 +27,7 @@ class SumFunction : AbstractFunction() {
 class ListVariablesFunction : AbstractFunction() {
     override val name = "listVariables"
     override val numberOfArguments = 0..1
-    override fun apply(interpreter: Interpreter, scope: Scope, parameters: List<Expression>): Variable {
+    override fun apply(interpreter: Interpreter, scope: List<Scope>, parameters: List<Expression>): Variable {
         val id = if (parameters.isNotEmpty()) {
             parameters.firstOrNull() as? QualifiedId
                     ?: throw UnsupportedOperationException("Can only list variables of an ID")
@@ -43,7 +43,7 @@ class ListVariablesFunction : AbstractFunction() {
 class CountFunction : AbstractFunction() {
     override val name = "count"
     override val numberOfArguments = 1..Int.MAX_VALUE
-    override fun apply(interpreter: Interpreter, scope: Scope, parameters: List<Expression>) = parameters.stream()
+    override fun apply(interpreter: Interpreter, scope: List<Scope>, parameters: List<Expression>) = parameters.stream()
             .flatMap { interpreter.interpret(scope, it).asStream() }
             .count()
             .toVariable()

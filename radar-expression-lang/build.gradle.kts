@@ -17,13 +17,24 @@ sourceSets {
     }
 }
 
+project.extra.apply {
+    set("jacksonVersion", "2.9.9")
+}
+
+
 dependencies {
     antlr("org.antlr:antlr4:4.5.1")
 
     implementation("org.antlr:antlr4-runtime:4.5.1")
     implementation("me.xdrop:fuzzywuzzy:1.2.0")
+
     // Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("reflect"))
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${project.extra["jacksonVersion"]}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${project.extra["jacksonVersion"]}")
+
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")

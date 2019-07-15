@@ -3,7 +3,7 @@ package org.radarbase.appconfig.auth
 import com.auth0.jwt.interfaces.DecodedJWT
 import org.radarbase.appconfig.exception.HttpApplicationException
 import org.radarcns.auth.authorization.Permission
-import org.radarcns.auth.authorization.Permission.MEASUREMENT_CREATE
+import org.radarcns.auth.authorization.Permission.*
 import javax.ws.rs.core.Response
 
 /**
@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response
  */
 class JwtAuth(project: String?, private val token: DecodedJWT, private val scopes: List<String>) : Auth {
     private val claimProject = token.getClaim("project").asString()
+    override val clientId: String? = token.getClaim("client_id").asString() ?: "appconfig_frontend"
     override val defaultProject = claimProject ?: project
     override val userId: String? = token.subject?.takeUnless { it.isEmpty() }
 
@@ -29,6 +30,14 @@ class JwtAuth(project: String?, private val token: DecodedJWT, private val scope
             throw HttpApplicationException(Response.Status.FORBIDDEN, "permission_mismatch", "Actual project ID $projectId does not match expected project ID ${this.claimProject} " +
                     "using token ${token.token}")
         }
+    }
+
+    override fun hasPermissionOnProject(permission: Permission, projectId: String): Boolean {
+        return hasPermission(permission) && (claimProject != null && projectId == claimProject)
+    }
+
+    override fun hasPermissionOnSubject(permission: Permission, projectId: String, userId: String): Boolean {
+        return hasPermissionOnProject(permission, projectId) && (userId == this.userId || hasPermission(PROJECT_UPDATE))
     }
 
     override fun hasRole(projectId: String, role: String) = projectId == defaultProject

@@ -15,7 +15,7 @@ val logger: Logger = LoggerFactory.getLogger("org.radarbase.appconfig")
 fun loadConfig(args: Array<String>): Config {
     val configFileName = when {
         args.size == 1 -> args[0]
-        Files.exists(Paths.get("gateway.yml")) -> "gateway.yml"
+        Files.exists(Paths.get("appconfig.yml")) -> "appconfig.yml"
         else -> null
     }
     return if (configFileName != null) {

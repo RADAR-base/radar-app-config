@@ -26,7 +26,10 @@ repositories {
 
 dependencies {
     compile(kotlin("stdlib-jdk8"))
+    compile(kotlin("reflect"))
 
+    implementation("com.squareup.okhttp3:okhttp:4.0.0")
+    implementation(project(":radar-expression-lang"))
     implementation("org.glassfish.grizzly:grizzly-http-server:${project.extra["grizzlyVersion"]}")
 
     implementation("org.glassfish.jersey.containers:jersey-container-grizzly2-http:${project.extra["jerseyVersion"]}")
@@ -51,8 +54,6 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql:42.2.5")
     runtimeOnly("ch.qos.logback:logback-classic:${project.extra["logbackVersion"]}")
 
-
-//    testImplementation("com.h2database:h2:1.4.199")
     testImplementation("org.junit.jupiter:junit-jupiter:5.4.2")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
 }

@@ -17,7 +17,7 @@ interface BinaryExpression : Expression {
 }
 
 abstract class AbstractBinaryExpression(override val operator: String): BinaryExpression {
-    override fun toString() = "${left.parenString()} $operator ${right.parenString()}"
+    final override fun toString() = "${left.parenString()} $operator ${right.parenString()}"
 }
 
 interface UnaryExpression : Expression {
@@ -26,12 +26,13 @@ interface UnaryExpression : Expression {
 }
 
 abstract class AbstractUnaryExpression(override val operator: String): UnaryExpression {
-    override fun toString() = "$operator${value.parenString()}"
+    final override fun toString() = "$operator${value.parenString()}"
 }
 
 interface Variable : Comparable<Variable>, Expression {
     fun asNumber(): BigDecimal
     fun asString(): String
+    fun asOptString(): String?
     fun asBoolean(): Boolean
     fun asStream(): Stream<Variable>
 }
@@ -39,6 +40,7 @@ interface Variable : Comparable<Variable>, Expression {
 abstract class AbstractVariable: Variable {
     override fun asNumber(): BigDecimal = throw UnsupportedOperationException("Cannot convert $this to number")
     override fun asString(): String = throw UnsupportedOperationException("Cannot convert $this to string")
+    override fun asOptString(): String? = asString()
     override fun asBoolean(): Boolean = throw UnsupportedOperationException("Cannot convert $this to boolean")
     override fun asStream(): Stream<Variable> = Stream.of(this)
 }
@@ -74,10 +76,16 @@ data class QualifiedId(val names: List<String>) : Expression {
         Pair(names[0], QualifiedId(names.subList(1, names.count())))
     } else null
 
+    operator fun plus(name: String) = QualifiedId(names + name)
+    operator fun plus(id: QualifiedId) = QualifiedId(names + id.names)
+
+    fun prefixWith(prefix: String) = QualifiedId(prefix + names)
+
     fun asString() = names.joinToString(separator = ".")
 
     override fun toString() = asString()
 }
+
 data class FunctionReference(val function: Function, val parameters: List<Expression>) : Expression {
     override fun toString() = "${function.name}(${parameters.joinToString()})"
 }
@@ -102,6 +110,8 @@ data class NumberLiteral(val value: BigDecimal) : AbstractVariable() {
 
 class NullLiteral : AbstractVariable() {
     override fun compareTo(other: Variable): Int = if (other is NullLiteral) 0 else throw UnsupportedOperationException("Cannot compare null to other value")
+
+    override fun asOptString(): String? = null
 
     override fun toString() = "null"
 }
@@ -140,6 +150,11 @@ data class StringLiteral(val value: String) : AbstractVariable() {
 
     override fun asNumber(): BigDecimal = BigDecimal(value)
 
+    override fun asStream(): Stream<Variable> = value.split(" ")
+            .stream()
+            .filter { it.isNotEmpty() }
+            .map { it.toVariable() }
+
     override fun toString() = "'${value
             .replace("\\", "\\\\")
             .replace("'", "\\'")}'"
@@ -170,9 +185,11 @@ data class StringLiteral(val value: String) : AbstractVariable() {
 }
 
 data class CollectionLiteral(val values: Collection<Variable>): Variable {
+    override fun asOptString(): String? = asString()
+
     override fun asNumber(): BigDecimal = throw UnsupportedOperationException("Cannot convert $this to a number.")
 
-    override fun asString() = throw UnsupportedOperationException("Cannot convert $this to a string.")
+    override fun asString() = values.joinToString(separator = " ") { it.asString() }
 
     override fun asBoolean() = throw UnsupportedOperationException("Cannot convert $this to a boolaean.")
 

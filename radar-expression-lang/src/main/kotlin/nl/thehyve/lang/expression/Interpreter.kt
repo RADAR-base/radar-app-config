@@ -5,9 +5,9 @@ import java.lang.RuntimeException
 class InterpreterException(val expression: Expression, cause: Throwable) : RuntimeException(cause.message, cause)
 
 class Interpreter(val variables: VariableResolver) {
-    fun interpret(scope: Scope, expression: Expression): Variable = expression.evaluate(scope)
+    fun interpret(scope: List<Scope>, expression: Expression): Variable = expression.evaluate(scope)
 
-    private fun Expression.evaluate(scope: Scope): Variable {
+    private fun Expression.evaluate(scope: List<Scope>): Variable {
         try {
             return when (this) {
                 is OrExpression -> BooleanLiteral(left.evaluate(scope).asBoolean() || right.evaluate(scope).asBoolean())
@@ -21,7 +21,7 @@ class Interpreter(val variables: VariableResolver) {
                 is LessThanOrEqualExpression -> BooleanLiteral(left.evaluate(scope) <= right.evaluate(scope))
                 is Variable -> this
                 is FunctionReference -> function.apply(this@Interpreter, scope, parameters)
-                is QualifiedId -> variables.resolve(scope, this)
+                is QualifiedId -> variables.resolve(scope, this).variable
                 is InvertExpression -> BooleanLiteral(!value.evaluate(scope).asBoolean())
                 is NegateExpression -> value.evaluate(scope).asNumber().negate().toVariable()
                 else -> throw UnsupportedOperationException("Cannot evaluate unknown expression $this")
@@ -35,6 +35,7 @@ class Interpreter(val variables: VariableResolver) {
 interface Scope {
     val id: QualifiedId
     fun splitHead(): Pair<String, Scope>?
+    fun asString(): String = id.asString()
 }
 
 data class SimpleScope(override val id: QualifiedId) : Scope {
@@ -45,7 +46,7 @@ data class SimpleScope(override val id: QualifiedId) : Scope {
                 Pair(name, SimpleScope(tailId))
             }
 
-    override fun toString() = "Scope<$id>"
+    override fun toString() = id.toString()
 
     companion object {
         val root = SimpleScope(QualifiedId(listOf()))

@@ -14,12 +14,10 @@ fun main() {
             ListVariablesFunction(),
             CountFunction()
     )
-    val parser = ExpressionParser(
-            "functions",
-            functions)
+    val parser = ExpressionParser(functions)
 
     val expr = try {
-        parser.parse()
+        parser.parse("sum(alternative.brace.cool) == 10")
     } catch (ex: ExpressionParserException) {
         println("Failed to parse expression ${ex.expression} at position ${ex.errorOffset}: ${ex.message}")
         exitProcess(1)
@@ -38,7 +36,7 @@ fun main() {
 
     val interpreter = Interpreter(resolver)
     try {
-        print(interpreter.interpret(SimpleScope("user.blootsvoets"), expr))
+        print(interpreter.interpret(listOf(SimpleScope("user.blootsvoets"), SimpleScope("user")), expr))
     } catch (ex: InterpreterException) {
         println("Failed to evaluate expression ${ex.expression}:\n\n${ex.message}")
     }
