@@ -8,42 +8,37 @@ application {
 }
 
 project.extra.apply {
+    set("okhttpVersion", "4.2.0")
     set("radarMpVersion", "0.5.4")
-    set("radarCommonsVersion", "0.11.3")
-    set("radarSchemasVersion", "0.4.3")
-    set("jacksonVersion", "2.9.9")
-    set("slf4jVersion", "1.7.25")
+    set("radarAuthVersion", "0.1.1-SNAPSHOT")
+    set("radarCommonsVersion", "0.12.2")
+    set("radarSchemasVersion", "0.5.2")
+    set("jacksonVersion", "2.9.10")
+    set("slf4jVersion", "1.7.26")
     set("logbackVersion", "1.2.3")
     set("grizzlyVersion", "2.4.4")
-    set("jerseyVersion", "2.28")
-    set("hibernateVersion", "5.4.2.Final")
+    set("jerseyVersion", "2.29.1")
+    set("hibernateVersion", "5.4.4.Final")
 }
 
 repositories {
     jcenter()
+    maven(url = "https://dl.bintray.com/radar-base/org.radarbase")
     maven(url = "https://dl.bintray.com/radar-cns/org.radarcns")
+    maven(url = "https://repo.thehyve.nl/content/repositories/snapshots")
 }
 
 dependencies {
     compile(kotlin("stdlib-jdk8"))
     compile(kotlin("reflect"))
 
-    implementation("com.squareup.okhttp3:okhttp:4.0.0")
+    implementation("com.squareup.okhttp3:okhttp:${project.extra["okhttpVersion"]}")
     implementation(project(":radar-expression-lang"))
-    implementation("org.glassfish.grizzly:grizzly-http-server:${project.extra["grizzlyVersion"]}")
 
-    implementation("org.glassfish.jersey.containers:jersey-container-grizzly2-http:${project.extra["jerseyVersion"]}")
-    implementation("org.glassfish.jersey.containers:jersey-container-grizzly2-servlet:${project.extra["jerseyVersion"]}")
-    implementation("org.glassfish.jersey.inject:jersey-hk2:${project.extra["jerseyVersion"]}")
-    runtimeOnly("org.glassfish.jersey.media:jersey-media-json-jackson:${project.extra["jerseyVersion"]}")
+    implementation("org.radarbase:radar-jersey:${project.extra["radarAuthVersion"]}")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${project.extra["jacksonVersion"]}")
     implementation("com.fasterxml.jackson.core:jackson-databind:${project.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${project.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${project.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${project.extra["jacksonVersion"]}")
-
-    implementation("org.radarcns:radar-auth:${project.extra["radarMpVersion"]}")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${project.extra["jacksonVersion"]}")
 
     implementation("org.slf4j:slf4j-api:${project.extra["slf4jVersion"]}")
 
@@ -56,17 +51,19 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.4.2")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")
+        setExceptionFormat("full")
+        showStandardStreams = true
     }
 }
 
 tasks.register("downloadDependencies") {
-
     configurations["runtimeClasspath"].files
     configurations["compileClasspath"].files
 

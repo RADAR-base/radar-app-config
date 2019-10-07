@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
     id("org.jetbrains.kotlin.jvm").version("1.3.40").apply(false)
@@ -21,5 +20,5 @@ subprojects {
 }
 
 tasks.wrapper {
-    gradleVersion = "5.4.1"
+    gradleVersion = "5.6.2"
 }

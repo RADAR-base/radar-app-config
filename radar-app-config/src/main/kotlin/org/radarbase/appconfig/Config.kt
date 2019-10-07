@@ -1,6 +1,6 @@
 package org.radarbase.appconfig
 
-import org.radarbase.appconfig.inject.ManagementPortalAppConfigResources
+import org.radarbase.appconfig.inject.ManagementPortalEnhancerFactory
 import java.net.URI
 import java.net.URL
 
@@ -9,7 +9,7 @@ class Config {
     var clientSecret: String? = null
     var baseUri: URI = URI.create("http://0.0.0.0:8090/appconfig/")
     var managementPortalUrl: URL = URL("http://managementportal-app:8080/managementportal/")
-    var resourceConfig: Class<*> = ManagementPortalAppConfigResources::class.java
+    var resourceConfig: Class<*> = ManagementPortalEnhancerFactory::class.java
     var jwtKeystorePath: String? = null
     var jwtKeystoreAlias: String? = null
     var jwtKeystorePassword: String? = null

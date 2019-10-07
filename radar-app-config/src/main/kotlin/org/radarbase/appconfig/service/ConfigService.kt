@@ -42,9 +42,8 @@ class ConfigService(
                 .flatMap { clientConfig ->
                     clientConfig.config.stream()
                             .map { (innerId, variable, _) ->
-                                Pair(
-                                        QualifiedId("${clientConfig.clientId}.$innerId"),
-                                        variable?.toVariable() ?: NullLiteral())
+                                QualifiedId("${clientConfig.clientId}.$innerId") to
+                                        (variable?.toVariable() ?: NullLiteral())
                             }
                 })
     }

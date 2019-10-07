@@ -1,13 +1,13 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.auth.Auth
-import org.radarbase.appconfig.auth.Authenticated
-import org.radarbase.appconfig.auth.NeedsPermissionOnProject
 import org.radarbase.appconfig.domain.Condition
 import org.radarbase.appconfig.domain.ConditionList
-import org.radarbase.appconfig.exception.HttpApplicationException
 import org.radarbase.appconfig.service.ConditionService
 import org.radarbase.appconfig.service.ProjectService
+import org.radarbase.jersey.auth.Auth
+import org.radarbase.jersey.auth.Authenticated
+import org.radarbase.jersey.auth.NeedsPermission
+import org.radarbase.jersey.exception.HttpBadRequestException
 import org.radarcns.auth.authorization.Permission
 import javax.inject.Singleton
 import javax.ws.rs.*
@@ -27,14 +27,13 @@ class ConditionResource(
         @Context private val uriInfo: UriInfo
 ) {
     @POST
-    @NeedsPermissionOnProject(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
+    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
     fun createCondition(
-            @Context auth: Auth,
             @PathParam("projectId") projectId: String,
             condition: Condition
     ): Response {
         if (condition.id != null) {
-            throw HttpApplicationException(Response.Status.BAD_REQUEST, "bad_request", "Cannot set condition ID in request.")
+            throw HttpBadRequestException("bad_request", "Cannot set condition ID in request.")
         }
         val newCondition = conditionService.create(projectId, condition)
         return Response
@@ -44,13 +43,13 @@ class ConditionResource(
     }
 
     @GET
-    @NeedsPermissionOnProject(Permission.Entity.PROJECT, Permission.Operation.READ, "projectId")
+    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.READ, "projectId")
     fun listConditions(@PathParam("projectId") projectId: String): ConditionList {
         return ConditionList(conditionService.list(projectId))
     }
 
     @PUT
-    @NeedsPermissionOnProject(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
+    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
     fun orderConditions(@PathParam("projectId") projectId: String, conditions: ConditionList): Response {
         conditionService.order(projectId, conditions.conditions)
         return Response.noContent().build()
@@ -58,7 +57,7 @@ class ConditionResource(
 
     @POST
     @Path("{conditionId}")
-    @NeedsPermissionOnProject(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
+    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
     fun updateCondition(
             @PathParam("projectId") projectId: String,
             @PathParam("conditionId") conditionId: Long,
@@ -69,7 +68,7 @@ class ConditionResource(
 
     @GET
     @Path("{conditionId}")
-    @NeedsPermissionOnProject(Permission.Entity.PROJECT, Permission.Operation.READ, "projectId")
+    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.READ, "projectId")
     fun condition(
             @PathParam("projectId") projectId: String,
             @PathParam("conditionId") conditionId: Long): Condition {
@@ -78,7 +77,7 @@ class ConditionResource(
 
     @DELETE
     @Path("{conditionId}")
-    @NeedsPermissionOnProject(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
+    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
     fun deleteCondition(
             @PathParam("projectId") projectId: String,
             @PathParam("conditionId") conditionId: Long): Response {

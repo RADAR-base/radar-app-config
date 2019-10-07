@@ -6,17 +6,21 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.radarbase.appconfig.Config
-import org.radarbase.appconfig.auth.Auth
 import org.radarbase.appconfig.domain.OAuthClient
 import org.radarbase.appconfig.domain.Project
-import org.radarbase.appconfig.exception.BadGatewayException
+import org.radarbase.jersey.auth.Auth
+import org.radarbase.jersey.exception.HttpBadGatewayException
 import org.radarcns.auth.authorization.Permission
+import org.slf4j.LoggerFactory
 import java.net.MalformedURLException
 import java.time.Duration
 import java.time.Instant
 import javax.ws.rs.core.Context
 
-class MPClient(@Context config: Config, @Context private val auth: Auth) {
+class MPClient(
+        @Context config: Config,
+        @Context private val auth: Auth
+) {
     private val clientId: String = config.clientId
     private val clientSecret: String = config.clientSecret ?: throw IllegalArgumentException("Cannot configure managementportal client without client secret")
     private val httpClient = OkHttpClient()
@@ -53,7 +57,7 @@ class MPClient(@Context config: Config, @Context private val auth: Auth) {
             }.build()))
 
             localToken = result["access_token"].asText()
-                    ?: throw BadGatewayException("ManagementPortal did not provide an access token")
+                    ?: throw HttpBadGatewayException("ManagementPortal did not provide an access token")
             expiration = Instant.now() + Duration.ofSeconds(result["expires_in"].asLong()) - Duration.ofMinutes(5)
             token = localToken
             localToken
@@ -67,16 +71,17 @@ class MPClient(@Context config: Config, @Context private val auth: Auth) {
         }.build()
 
         return projectListReader.readValue<List<Project>>(execute(request))
-                .filter { auth.hasPermissionOnProject(Permission.PROJECT_READ, it.name) }
+                .filter { auth.token.hasPermissionOnProject(Permission.PROJECT_READ, it.name) }
     }
 
     private fun execute(request: Request): String {
         return httpClient.newCall(request).execute().use { response ->
             if (response.isSuccessful) {
                response.body?.string()
-                       ?: throw BadGatewayException("ManagementPortal did not provide a result")
+                       ?: throw HttpBadGatewayException("ManagementPortal did not provide a result")
             } else {
-                throw BadGatewayException("Cannot connect to managementportal")
+                logger.error("Failed to reach ManagementPortal URL {} (code {}): {}", request.url, response.code, response.body?.string())
+                throw HttpBadGatewayException("Cannot connect to managementportal")
             }
         }
     }
@@ -88,5 +93,9 @@ class MPClient(@Context config: Config, @Context private val auth: Auth) {
         }.build()
 
         return clientListReader.readValue(execute(request))
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(MPClient::class.java)
     }
 }

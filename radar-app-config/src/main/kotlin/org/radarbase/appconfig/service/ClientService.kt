@@ -1,9 +1,9 @@
 package org.radarbase.appconfig.service
 
 import org.radarbase.appconfig.domain.OAuthClient
-import org.radarbase.appconfig.exception.HttpApplicationException
 import org.radarbase.appconfig.managementportal.MPClient
 import org.radarbase.appconfig.util.CachedSet
+import org.radarbase.jersey.exception.HttpNotFoundException
 import java.time.Duration
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.Response
@@ -15,7 +15,7 @@ class ClientService(@Context private val mpClient: MPClient) {
 
     fun ensureClient(name: String) {
         if (!contains(name)) {
-            throw HttpApplicationException(Response.Status.NOT_FOUND, "client_not_found", "OAuth client $name not found.")
+            throw HttpNotFoundException("client_not_found", "OAuth client $name not found.")
         }
     }
 

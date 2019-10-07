@@ -1,14 +1,12 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.auth.Authenticated
-import org.radarbase.appconfig.auth.NeedsPermission
-import org.radarbase.appconfig.auth.NeedsPermissionOnProject
-import org.radarbase.appconfig.auth.NeedsPermissionOnUser
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.GlobalConfig
 import org.radarbase.appconfig.managementportal.MPClient
 import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.appconfig.service.ProjectService
+import org.radarbase.jersey.auth.Authenticated
+import org.radarbase.jersey.auth.NeedsPermission
 import org.radarcns.auth.authorization.Permission.Entity
 import org.radarcns.auth.authorization.Permission.Operation
 import javax.ws.rs.*
@@ -30,14 +28,14 @@ class ProjectResource(
 
     @Path("{projectId}/config")
     @GET
-    @NeedsPermissionOnProject(Entity.PROJECT, Operation.READ, "projectId")
+    @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
     fun projectConfig(@PathParam("projectId") projectId: String): GlobalConfig {
         return projectService.projectConfig(projectId)
     }
 
     @Path("{projectId}/config")
     @PUT
-    @NeedsPermissionOnProject(Entity.PROJECT, Operation.UPDATE, "projectId")
+    @NeedsPermission(Entity.PROJECT, Operation.UPDATE, "projectId")
     fun putProjectConfig(
             @PathParam("projectId") projectId: String,
             globalConfig: GlobalConfig
@@ -49,7 +47,7 @@ class ProjectResource(
 
     @Path("{projectId}/users/{userId}/config")
     @GET
-    @NeedsPermissionOnUser(Entity.SUBJECT, Operation.READ, "projectId", "userId")
+    @NeedsPermission(Entity.SUBJECT, Operation.READ, "projectId", "userId")
     fun userConfig(
             @PathParam("projectId") projectId: String,
             @PathParam("userId") userId: String
@@ -59,7 +57,7 @@ class ProjectResource(
 
     @Path("{projectId}/users/{userId}/config/{clientId}")
     @GET
-    @NeedsPermissionOnUser(Entity.SUBJECT, Operation.READ, "projectId", "userId")
+    @NeedsPermission(Entity.SUBJECT, Operation.READ, "projectId", "userId")
     fun userClientConfig(
             @PathParam("projectId") projectId: String,
             @PathParam("userId") userId: String,

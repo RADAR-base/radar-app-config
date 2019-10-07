@@ -1,5 +1,6 @@
 package org.radarbase.appconfig.service
 
+import com.nhaarman.mockitokotlin2.mock
 import nl.thehyve.lang.expression.*
 import org.junit.jupiter.api.Test
 
@@ -10,7 +11,7 @@ import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.GlobalConfig
 import org.radarbase.appconfig.domain.SingleVariable
 import org.radarbase.appconfig.managementportal.MPClient
-import org.radarbase.appconfig.managementportal.MockAuth
+import org.radarbase.jersey.auth.Auth
 import java.net.URL
 
 internal class ProjectServiceTest {
@@ -24,7 +25,8 @@ internal class ProjectServiceTest {
             managementPortalUrl = URL("https://radar-test.thehyve.net/managementportal/")
             clientSecret = "appconfig_test"
         }
-        val mpClient = MPClient(config, MockAuth())
+        val auth = mock<Auth> {}
+        val mpClient = MPClient(config, auth)
         val conditionService = ConditionService(resolver, Interpreter(resolver))
         service = ProjectService(mpClient, resolver, conditionService)
     }

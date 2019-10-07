@@ -1,17 +1,16 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.auth.Auth
-import org.radarbase.appconfig.auth.Authenticated
-import org.radarbase.appconfig.auth.NeedsPermission
-import org.radarbase.appconfig.domain.OAuthClient
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.GlobalConfig
 import org.radarbase.appconfig.domain.OAuthClientList
-import org.radarbase.appconfig.exception.HttpApplicationException
 import org.radarbase.appconfig.managementportal.MPClient
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.appconfig.service.ProjectService
+import org.radarbase.jersey.auth.Auth
+import org.radarbase.jersey.auth.Authenticated
+import org.radarbase.jersey.auth.NeedsPermission
+import org.radarbase.jersey.exception.HttpBadRequestException
 import org.radarcns.auth.authorization.Permission
 import org.radarcns.auth.authorization.Permission.SUBJECT_READ
 import javax.ws.rs.*
@@ -32,10 +31,7 @@ class RootResource(
     @GET
     @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ)
     fun config(@Context auth: Auth): GlobalConfig {
-        val projectId = auth.defaultProject ?: throw HttpApplicationException(Response.Status.BAD_REQUEST, "project_missing", "Cannot request config without a project ID")
-        val userId = auth.defaultProject ?: throw HttpApplicationException(Response.Status.BAD_REQUEST, "project_missing", "Cannot request config without a project ID")
-        projectService.ensureProject(projectId)
-        auth.hasPermissionOnSubject(SUBJECT_READ, projectId, userId)
+        val (projectId, userId) = ensureUser(auth)
         return configService.globalConfig(projectId, userId)
     }
 
@@ -46,11 +42,16 @@ class RootResource(
             @PathParam("clientId") clientId: String,
             @Context auth: Auth
     ): ClientConfig {
-        val projectId = auth.defaultProject ?: throw HttpApplicationException(Response.Status.BAD_REQUEST, "project_missing", "Cannot request config without a project ID")
-        val userId = auth.defaultProject ?: throw HttpApplicationException(Response.Status.BAD_REQUEST, "project_missing", "Cannot request config without a project ID")
-        projectService.ensureProject(projectId)
-        auth.hasPermissionOnSubject(SUBJECT_READ, projectId, userId)
+        val (projectId, userId) = ensureUser(auth)
         return configService.clientConfig(clientId, projectId, userId)
+    }
+
+    private fun ensureUser(auth: Auth): Pair<String, String> {
+        val projectId = auth.defaultProject ?: throw HttpBadRequestException("project_missing", "Cannot request config without a project ID")
+        val userId = auth.userId ?: throw HttpBadRequestException("user_missing", "Cannot request config without a user ID")
+        projectService.ensureProject(projectId)
+        auth.checkPermissionOnSubject(SUBJECT_READ, projectId, userId)
+        return projectId to userId
     }
 
     @Path("config")
@@ -64,7 +65,7 @@ class RootResource(
     @Path("clients")
     @GET
     @NeedsPermission(Permission.Entity.OAUTHCLIENTS, Permission.Operation.READ)
-    fun clients(@Context mpClient: MPClient): OAuthClientList {
+    fun clients(): OAuthClientList {
         return OAuthClientList(clientService.readClients().toList())
     }
 }
