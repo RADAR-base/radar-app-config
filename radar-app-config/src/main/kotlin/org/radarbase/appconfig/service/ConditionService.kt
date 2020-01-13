@@ -7,7 +7,7 @@ import nl.thehyve.lang.expression.VariableResolver
 import org.radarbase.appconfig.domain.Condition
 import org.radarbase.appconfig.service.ConfigService.Companion.globalScope
 import org.radarbase.appconfig.service.ConfigService.Companion.userScope
-import org.radarbase.appconfig.service.ProjectService.Companion.projectScope
+import org.radarbase.appconfig.service.MPProjectService.Companion.projectScope
 import javax.ws.rs.core.Context
 
 

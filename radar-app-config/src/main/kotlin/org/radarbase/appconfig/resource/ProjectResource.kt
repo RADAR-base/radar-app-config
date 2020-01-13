@@ -5,7 +5,7 @@ import org.radarbase.appconfig.domain.GlobalConfig
 import org.radarbase.appconfig.domain.ProjectList
 import org.radarbase.appconfig.managementportal.MPClient
 import org.radarbase.appconfig.service.ConfigService
-import org.radarbase.appconfig.service.ProjectService
+import org.radarbase.appconfig.service.MPProjectService
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarcns.auth.authorization.Permission.Entity
@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response
 @Authenticated
 class ProjectResource(
         @Context private val client: MPClient,
-        @Context private val projectService: ProjectService,
+        @Context private val projectService: MPProjectService,
         @Context private val configService: ConfigService
 ) {
     @GET

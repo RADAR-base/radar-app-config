@@ -3,8 +3,7 @@ package org.radarbase.appconfig.resource
 import org.radarbase.appconfig.domain.Condition
 import org.radarbase.appconfig.domain.ConditionList
 import org.radarbase.appconfig.service.ConditionService
-import org.radarbase.appconfig.service.ProjectService
-import org.radarbase.jersey.auth.Auth
+import org.radarbase.appconfig.service.ConfigProjectService
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.exception.HttpBadRequestException
@@ -23,7 +22,7 @@ import javax.ws.rs.core.UriInfo
 @Consumes("application/json")
 class ConditionResource(
         @Context private val conditionService: ConditionService,
-        @Context private val projectService: ProjectService,
+        @Context private val projectService: ConfigProjectService,
         @Context private val uriInfo: UriInfo
 ) {
     @POST

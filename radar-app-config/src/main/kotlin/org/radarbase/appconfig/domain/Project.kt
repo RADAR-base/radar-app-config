@@ -1,15 +1,14 @@
 package org.radarbase.appconfig.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import nl.thehyve.lang.expression.*
+import nl.thehyve.lang.expression.Expression
+import nl.thehyve.lang.expression.ResolvedVariable
 import java.util.function.BiConsumer
 import java.util.function.BinaryOperator
 import java.util.function.Function
 import java.util.function.Supplier
 import java.util.stream.Collector
 import java.util.stream.Collectors
-import java.util.stream.Collectors.mapping
-import java.util.stream.Collectors.toSet
 import java.util.stream.Stream
 
 data class ProjectList(val projects: List<Project>)

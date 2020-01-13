@@ -6,7 +6,6 @@ import org.radarbase.appconfig.util.CachedSet
 import org.radarbase.jersey.exception.HttpNotFoundException
 import java.time.Duration
 import javax.ws.rs.core.Context
-import javax.ws.rs.core.Response
 
 class ClientService(@Context private val mpClient: MPClient) {
     private val clients = CachedSet(Duration.ofHours(1), Duration.ofMinutes(5), mpClient::readClients)

@@ -5,10 +5,10 @@ import org.radarbase.appconfig.domain.GlobalConfig
 import org.radarbase.appconfig.domain.OAuthClientList
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigService
-import org.radarbase.appconfig.service.ProjectService
 import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
+import org.radarbase.jersey.auth.ProjectService
 import org.radarbase.jersey.exception.HttpBadRequestException
 import org.radarcns.auth.authorization.Permission
 import org.radarcns.auth.authorization.Permission.SUBJECT_READ
@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response
 @Authenticated
 class RootResource(
         @Context private val configService: ConfigService,
-        @Context private val projectService: ProjectService,
+        @Context private val projectAuthService: ProjectService,
         @Context private val clientService: ClientService
 ) {
     @Path("config")
@@ -48,7 +48,7 @@ class RootResource(
     private fun ensureUser(auth: Auth): Pair<String, String> {
         val projectId = auth.defaultProject ?: throw HttpBadRequestException("project_missing", "Cannot request config without a project ID")
         val userId = auth.userId ?: throw HttpBadRequestException("user_missing", "Cannot request config without a user ID")
-        projectService.ensureProject(projectId)
+        projectAuthService.ensureProject(projectId)
         auth.checkPermissionOnSubject(SUBJECT_READ, projectId, userId)
         return projectId to userId
     }
