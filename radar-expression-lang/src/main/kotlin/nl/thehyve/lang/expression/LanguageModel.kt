@@ -70,7 +70,7 @@ data class InvertExpression(override val value: Expression) : AbstractUnaryExpre
 data class NegateExpression(override val value: Expression): AbstractUnaryExpression("-")
 
 data class QualifiedId(val names: List<String>) : Expression {
-    constructor(value: String) : this(value.split('.'))
+    constructor(vararg value: String) : this(value.toList().flatMap { it.split('.') })
 
     fun splitHead(): Pair<String, QualifiedId>? = if (names.isNotEmpty()) {
         Pair(names[0], QualifiedId(names.subList(1, names.count())))

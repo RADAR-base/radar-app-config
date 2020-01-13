@@ -3,7 +3,6 @@ package org.radarbase.appconfig.resource
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.GlobalConfig
 import org.radarbase.appconfig.domain.OAuthClientList
-import org.radarbase.appconfig.managementportal.MPClient
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.appconfig.service.ProjectService
@@ -35,7 +34,7 @@ class RootResource(
         return configService.globalConfig(projectId, userId)
     }
 
-    @Path("config/{clientId}")
+    @Path("config/clients/{clientId}")
     @GET
     @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ)
     fun clientConfig(

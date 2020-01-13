@@ -2,6 +2,7 @@ package org.radarbase.appconfig.resource
 
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.GlobalConfig
+import org.radarbase.appconfig.domain.ProjectList
 import org.radarbase.appconfig.managementportal.MPClient
 import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.appconfig.service.ProjectService
@@ -24,7 +25,7 @@ class ProjectResource(
 ) {
     @GET
     @NeedsPermission(Entity.PROJECT, Operation.READ)
-    fun listProjects() = client.readProjects()
+    fun listProjects() = ProjectList(client.readProjects())
 
     @Path("{projectId}/config")
     @GET

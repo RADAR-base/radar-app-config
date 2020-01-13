@@ -50,6 +50,6 @@ class ConfigService(
 
     companion object {
         val globalScope: Scope = SimpleScope("global")
-        fun userScope(userId: String): Scope = SimpleScope(QualifiedId(listOf("user", userId)))
+        fun userScope(userId: String): Scope = SimpleScope(QualifiedId("user", userId))
     }
 }

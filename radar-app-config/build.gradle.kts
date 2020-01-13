@@ -8,13 +8,12 @@ application {
 }
 
 project.extra.apply {
-    set("okhttpVersion", "4.2.0")
-    set("radarMpVersion", "0.5.4")
-    set("radarAuthVersion", "0.1.1-SNAPSHOT")
+    set("okhttpVersion", "4.2.2")
+    set("radarAuthVersion", "0.2.2.4")
     set("radarCommonsVersion", "0.12.2")
-    set("radarSchemasVersion", "0.5.2")
-    set("jacksonVersion", "2.9.10")
-    set("slf4jVersion", "1.7.26")
+    set("radarSchemasVersion", "0.5.5")
+    set("jacksonVersion", "2.10.1")
+    set("slf4jVersion", "1.7.27")
     set("logbackVersion", "1.2.3")
     set("grizzlyVersion", "2.4.4")
     set("jerseyVersion", "2.29.1")
@@ -29,8 +28,8 @@ repositories {
 }
 
 dependencies {
-    compile(kotlin("stdlib-jdk8"))
-    compile(kotlin("reflect"))
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("reflect"))
 
     implementation("com.squareup.okhttp3:okhttp:${project.extra["okhttpVersion"]}")
     implementation(project(":radar-expression-lang"))

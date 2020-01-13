@@ -12,6 +12,8 @@ import java.util.stream.Collectors.mapping
 import java.util.stream.Collectors.toSet
 import java.util.stream.Stream
 
+data class ProjectList(val projects: List<Project>)
+
 data class Project(val id: Long, @JsonProperty("projectName") val name: String, @JsonProperty("humanReadableProjectName") val humanReadableName: String? = null, val location: String? = null, val organization: String? = null, val description: String? = null)
 
 data class OAuthClient(@JsonProperty("clientId") val id: String)
