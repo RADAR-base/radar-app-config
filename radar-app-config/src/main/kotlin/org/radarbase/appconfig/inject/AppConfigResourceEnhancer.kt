@@ -41,7 +41,7 @@ class AppConfigResourceEnhancer(private val config: Config): JerseyResourceEnhan
                     .`in`(Singleton::class.java)
 
             bind(ProjectService::class.java)
-                    .to(ProjectService::class.java)
+                    .to(org.radarbase.jersey.auth.ProjectService::class.java)
                     .`in`(Singleton::class.java)
 
             bind(ClientService::class.java)

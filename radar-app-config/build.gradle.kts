@@ -12,7 +12,7 @@ project.extra.apply {
     set("radarAuthVersion", "0.2.2.4")
     set("radarCommonsVersion", "0.12.2")
     set("radarSchemasVersion", "0.5.5")
-    set("jacksonVersion", "2.10.1")
+    set("jacksonVersion", "2.10.2")
     set("slf4jVersion", "1.7.27")
     set("logbackVersion", "1.2.3")
     set("grizzlyVersion", "2.4.4")
