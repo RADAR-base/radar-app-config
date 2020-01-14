@@ -8,15 +8,12 @@ application {
 }
 
 project.extra.apply {
-    set("okhttpVersion", "4.2.2")
+    set("okhttpVersion", "4.3.1")
     set("radarAuthVersion", "0.2.3-SNAPSHOT")
-    set("radarCommonsVersion", "0.12.2")
     set("radarSchemasVersion", "0.5.5")
-    set("jacksonVersion", "2.10.1")
+    set("jacksonVersion", "2.10.2")
     set("slf4jVersion", "1.7.27")
     set("logbackVersion", "1.2.3")
-    set("grizzlyVersion", "2.4.4")
-    set("jerseyVersion", "2.29.1")
     set("hibernateVersion", "5.4.4.Final")
 }
 
@@ -38,9 +35,6 @@ dependencies {
 
     implementation("com.fasterxml.jackson.core:jackson-databind:${project.extra["jacksonVersion"]}")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${project.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${project.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${project.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${project.extra["jacksonVersion"]}")
 
     implementation("org.slf4j:slf4j-api:${project.extra["slf4jVersion"]}")
 
