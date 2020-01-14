@@ -53,14 +53,6 @@ class RootResource(
         return projectId to userId
     }
 
-    @Path("config")
-    @PUT
-    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.CREATE)
-    fun putConfig(config: GlobalConfig): Response {
-        configService.putConfig(config)
-        return Response.noContent().build()
-    }
-
     @Path("clients")
     @GET
     @NeedsPermission(Permission.Entity.OAUTHCLIENTS, Permission.Operation.READ)

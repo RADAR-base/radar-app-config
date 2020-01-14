@@ -56,7 +56,7 @@ The current iteration of this project has a subset of the intended functionality
 
 Settings in the global scope can be seen as the platform defaults. They can only be updated by the system administrator. Project and user configs can only be updated by project admins.
 
-Get config for all clients. User/project inferred from authentication.
+Get config for all clients for a single user. User/project inferred from authentication.
 ```
 GET /config
 ---
@@ -72,9 +72,26 @@ HTTP 200 OK
 }
 ```
 
+Get the default config (global scope) for all clients. Sys admin only.
+```
+GET /global/config
+---
+HTTP 200 OK
+{
+   "clients": {
+     "clientA": {
+        "config": [
+          {"name": "plugins", "value": "A B", "scope": "global"}
+        ]
+     }
+   }
+}
+```
+
+
 Replace the default config (global scope) for all clients. Sys admin only.
 ```
-PUT /config
+PUT /global/config
 {
    "clients": {
      "clientA": {

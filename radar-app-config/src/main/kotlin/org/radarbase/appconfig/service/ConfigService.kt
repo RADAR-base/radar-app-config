@@ -20,6 +20,13 @@ class ConfigService(
         return ClientConfig.fromStream(clientId, resolver.resolveAll(scopes, QualifiedId(listOf(clientId))))
     }
 
+    fun globalConfig(): GlobalConfig {
+        return GlobalConfig.fromStream(resolver.resolveAll(listOf(globalScope), null)
+                .filter { (_, id, _) -> id.names.firstOrNull()
+                        ?.let { clientService.contains(it) }
+                        ?: false })
+    }
+
     fun globalConfig(projectId: String, userId: String): GlobalConfig {
         projectService.ensureProject(projectId)
         val scopes = userScopes(projectId, userId)
