@@ -4,7 +4,8 @@ import nl.thehyve.lang.expression.*
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.GlobalConfig
 import org.radarbase.appconfig.service.ConditionService.Companion.conditionScope
-import org.radarbase.appconfig.service.ProjectService.Companion.projectScope
+import org.radarbase.appconfig.service.MPProjectService.Companion.projectScope
+import org.radarbase.jersey.auth.ProjectService
 import javax.ws.rs.core.Context
 
 class ConfigService(

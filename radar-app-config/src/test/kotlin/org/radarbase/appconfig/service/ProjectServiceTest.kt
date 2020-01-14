@@ -15,7 +15,7 @@ import org.radarbase.jersey.auth.Auth
 import java.net.URL
 
 internal class ProjectServiceTest {
-    private lateinit var service: ProjectService
+    private lateinit var service: MPProjectService
     private lateinit var resolver: VariableResolver
 
     @BeforeEach
@@ -28,7 +28,7 @@ internal class ProjectServiceTest {
         val auth = mock<Auth> {}
         val mpClient = MPClient(config, auth)
         val conditionService = ConditionService(resolver, Interpreter(resolver))
-        service = ProjectService(mpClient, resolver, conditionService)
+        service = MPProjectService(mpClient, resolver, conditionService)
     }
 
     @Test

@@ -10,10 +10,8 @@ import org.glassfish.jersey.internal.inject.PerThread
 import org.glassfish.jersey.server.ResourceConfig
 import org.radarbase.appconfig.Config
 import org.radarbase.appconfig.managementportal.MPClient
-import org.radarbase.appconfig.service.ClientService
-import org.radarbase.appconfig.service.ConditionService
-import org.radarbase.appconfig.service.ConfigService
-import org.radarbase.appconfig.service.ProjectService
+import org.radarbase.appconfig.service.*
+import org.radarbase.jersey.auth.ProjectService
 import org.radarbase.jersey.config.JerseyResourceEnhancer
 import javax.inject.Singleton
 import javax.ws.rs.ext.ContextResolver
@@ -40,11 +38,11 @@ class AppConfigResourceEnhancer(private val config: Config): JerseyResourceEnhan
                     .to(ConfigService::class.java)
                     .`in`(Singleton::class.java)
 
-            bind(ProjectService::class.java)
-                    .to(org.radarbase.jersey.auth.ProjectService::class.java)
+            bind(MPProjectService::class.java)
+                    .to(ConfigProjectService::class.java)
                     .`in`(Singleton::class.java)
 
-            bind(ProjectService::class.java)
+            bind(ProjectAuthService::class.java)
                     .to(ProjectService::class.java)
                     .`in`(Singleton::class.java)
 
