@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
-import org.radarbase.appconfig.Config
+import org.radarbase.appconfig.config.ApplicationConfig
+import org.radarbase.appconfig.config.AuthenticationConfig
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.GlobalConfig
 import org.radarbase.appconfig.domain.SingleVariable
@@ -21,10 +22,11 @@ internal class ProjectServiceTest {
     @BeforeEach
     fun setUp() {
         resolver = DirectVariableResolver()
-        val config = Config().apply {
-            managementPortalUrl = URL("https://radar-test.thehyve.net/managementportal/")
-            clientSecret = "appconfig_test"
-        }
+        val config = ApplicationConfig(
+                authentication = AuthenticationConfig(
+                        url = URL("https://radar-test.thehyve.net/managementportal/"),
+                        clientSecret = "appconfig_test"))
+
         val auth = mock<Auth> {}
         val mpClient = MPClient(config, auth)
         val conditionService = ConditionService(resolver, Interpreter(resolver))
@@ -49,7 +51,7 @@ internal class ProjectServiceTest {
     fun putConfig() {
         val configEmpty = service.projectConfig("radar-test")
         assertEquals(configEmpty, GlobalConfig(mapOf()))
-        service.putConfig("radar-test", GlobalConfig(clients = mapOf("a" to
+        service.putUserConfig("radar-test", GlobalConfig(clients = mapOf("a" to
                 ClientConfig("a", listOf(
                         SingleVariable("c", "b"),
                         SingleVariable("d", "5"))
@@ -62,7 +64,7 @@ internal class ProjectServiceTest {
                         SingleVariable("d", "5", "project.radar-test")))
         )))
 
-        service.putConfig("radar-test", GlobalConfig(clients = mapOf("a" to
+        service.putUserConfig("radar-test", GlobalConfig(clients = mapOf("a" to
                 ClientConfig("a", listOf(
                         SingleVariable("c", "b")
         )))))
@@ -72,7 +74,7 @@ internal class ProjectServiceTest {
                                 SingleVariable("c", "b", "project.radar-test")
                 )))))
 
-        service.putConfig("radar-test", GlobalConfig(clients = mapOf("a" to
+        service.putUserConfig("radar-test", GlobalConfig(clients = mapOf("a" to
                 ClientConfig("a", listOf(
                         SingleVariable("c", null)
                 )))))

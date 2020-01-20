@@ -1,0 +1,45 @@
+<!--
+  ~ /*
+  ~  * Copyright 2019 The Hyve
+  ~  *
+  ~  * Licensed under the Apache License, Version 2.0 (the "License");
+  ~  * you may not use this file except in compliance with the License.
+  ~  * You may obtain a copy of the License at
+  ~  *
+  ~  *   http://www.apache.org/licenses/LICENSE-2.0
+  ~  *
+  ~  * Unless required by applicable law or agreed to in writing, software
+  ~  * distributed under the License is distributed on an "AS IS" BASIS,
+  ~  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  * See the License for the specific language governing permissions and
+  ~  * limitations under the License.
+  ~  *
+  ~  */
+  -->
+
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://java.sun.com/xml/ns/persistence"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+    <persistence-unit name="org.radarbase.appconfig.domain" transaction-type="RESOURCE_LOCAL">
+        <class>org.radarbase.appconfig.persistence.entity.ConfigEntity</class>
+        <properties>
+            <property name="javax.persistence.schema-generation.database.action"
+                      value="none"/>
+            <property name="javax.persistence.provider"
+                      value="org.hibernate.jpa.HibernatePersistenceProvider"/>
+            <property name="org.hibernate.flushMode" value="COMMIT"/>
+
+            <!-- Important -->
+            <property name="hibernate.connection.provider_class"
+                      value="org.hibernate.connection.C3P0ConnectionProvider" />
+
+            <property name="hibernate.c3p0.max_size" value="50" />
+            <property name="hibernate.c3p0.min_size" value="0" />
+            <property name="hibernate.c3p0.acquire_increment" value="1" />
+            <property name="hibernate.c3p0.idle_test_period" value="300" />
+            <property name="hibernate.c3p0.max_statements" value="0" />
+            <property name="hibernate.c3p0.timeout" value="100" />
+        </properties>
+    </persistence-unit>
+</persistence>

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import org.radarbase.appconfig.Config
+import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.domain.OAuthClient
 import org.radarbase.appconfig.domain.Project
 import org.radarbase.jersey.auth.Auth
@@ -18,14 +18,14 @@ import java.time.Instant
 import javax.ws.rs.core.Context
 
 class MPClient(
-        @Context config: Config,
+        @Context config: ApplicationConfig,
         @Context private val auth: Auth
 ) {
-    private val clientId: String = config.clientId
-    private val clientSecret: String = config.clientSecret ?: throw IllegalArgumentException("Cannot configure managementportal client without client secret")
+    private val clientId: String = config.authentication.clientId
+    private val clientSecret: String = config.authentication.clientSecret ?: throw IllegalArgumentException("Cannot configure managementportal client without client secret")
     private val httpClient = OkHttpClient()
-    private val baseUrl: HttpUrl = config.managementPortalUrl.toHttpUrlOrNull()
-            ?: throw MalformedURLException("Cannot parse base URL ${config.managementPortalUrl} as an URL")
+    private val baseUrl: HttpUrl = config.authentication.url.toHttpUrlOrNull()
+            ?: throw MalformedURLException("Cannot parse base URL ${config.authentication.url} as an URL")
     private val mapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     private val projectListReader = mapper.readerFor(object : TypeReference<List<Project>>(){})
     private val clientListReader = mapper.readerFor(object : TypeReference<List<OAuthClient>>(){})
@@ -78,6 +78,7 @@ class MPClient(
         return httpClient.newCall(request).execute().use { response ->
             if (response.isSuccessful) {
                response.body?.string()
+                       ?.also { println(it) }
                        ?: throw HttpBadGatewayException("ManagementPortal did not provide a result")
             } else {
                 logger.error("Failed to reach ManagementPortal URL {} (code {}): {}", request.url, response.code, response.body?.string())
@@ -92,7 +93,7 @@ class MPClient(
             header("Authorization", "Bearer ${ensureToken()}")
         }.build()
 
-        return clientListReader.readValue(execute(request))
+        return clientListReader.readValue<List<OAuthClient>>(execute(request))
     }
 
     companion object {

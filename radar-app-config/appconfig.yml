@@ -1,2 +1,17 @@
-managementPortalUrl: https://radar-test.thehyve.net/managementportal/
-clientSecret: peyman
+baseUri: http://0.0.0.0:8090/appconfig
+isJmxEnabled: false
+
+inject:
+  enhancerFactory: org.radarbase.appconfig.inject.ManagementPortalEnhancerFactory
+
+authentication:
+  url: https://radar-test.thehyve.net/managementportal/
+  clientId: appconfig
+  clientSecret: peyman
+  resourceName: res_appconfig
+
+jdbc:
+  driver: "org.h2.Driver"
+  url: "jdbc:h2:./h2"
+  user:
+  password:

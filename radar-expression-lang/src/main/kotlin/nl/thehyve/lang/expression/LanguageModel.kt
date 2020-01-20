@@ -1,11 +1,7 @@
 package nl.thehyve.lang.expression
 
 import java.math.BigDecimal
-import java.util.*
 import java.util.stream.Stream
-import java.util.stream.StreamSupport
-import kotlin.NoSuchElementException
-import kotlin.math.min
 
 
 interface Expression
@@ -72,9 +68,16 @@ data class NegateExpression(override val value: Expression): AbstractUnaryExpres
 data class QualifiedId(val names: List<String>) : Expression {
     constructor(vararg value: String) : this(value.toList().flatMap { it.split('.') })
 
-    fun splitHead(): Pair<String, QualifiedId>? = if (names.isNotEmpty()) {
-        Pair(names[0], QualifiedId(names.subList(1, names.count())))
-    } else null
+    fun head(): String = names.first()
+    fun headOrNull(): String? = names.firstOrNull()
+
+    fun splitHead(): Pair<String?, QualifiedId?> = when {
+        names.size > 1 -> Pair(names[0], QualifiedId(names.subList(1, names.count())))
+        names.size == 1 -> Pair(names[0], null)
+        else -> Pair(null, null)
+    }
+
+    fun tail(): QualifiedId = QualifiedId(names.subList(1, names.count()))
 
     operator fun plus(name: String) = QualifiedId(names + name)
     operator fun plus(id: QualifiedId) = QualifiedId(names + id.names)
@@ -82,6 +85,13 @@ data class QualifiedId(val names: List<String>) : Expression {
     fun prefixWith(prefix: String) = QualifiedId(prefix + names)
 
     fun asString() = names.joinToString(separator = ".")
+
+    fun isPrefixedBy(id: QualifiedId): Boolean {
+        return names.size >= id.names.size && names.subList(0, id.names.size) == id.names
+    }
+
+    fun isEmpty(): Boolean = names.all { it.isEmpty() }
+    fun hasTail(): Boolean = names.size > 1
 
     override fun toString() = asString()
 }
@@ -134,18 +144,21 @@ data class BooleanLiteral(val value: Boolean) : AbstractVariable() {
     }
 
     companion object {
-        fun parse(value: String): BooleanLiteral? = when {
-            value.equals("true", ignoreCase = true) -> BooleanLiteral(true)
-            value.equals("false", ignoreCase = true) -> BooleanLiteral(false)
-            else -> null
-        }
+        val FALSE = BooleanLiteral(false)
+        val TRUE = BooleanLiteral(true)
     }
+}
+
+fun String.toBooleanLiteral(): BooleanLiteral?  = when {
+    equals("true", ignoreCase = true) -> BooleanLiteral.TRUE
+    equals("false", ignoreCase = true) -> BooleanLiteral.FALSE
+    else -> null
 }
 
 data class StringLiteral(val value: String) : AbstractVariable() {
     override fun asString() = value
 
-    override fun asBoolean() = BooleanLiteral.parse(value)?.asBoolean()
+    override fun asBoolean() = value.toBooleanLiteral()?.asBoolean()
             ?: throw UnsupportedOperationException("Cannot convert $this to boolean.")
 
     override fun asNumber(): BigDecimal = BigDecimal(value)
@@ -166,22 +179,14 @@ data class StringLiteral(val value: String) : AbstractVariable() {
         is CollectionLiteral -> -other.compareTo(this)
         else -> throw UnsupportedOperationException("Cannot compare $this with $other")
     }
+}
 
-    companion object {
-        fun parseEscapedString(value: String): StringLiteral {
-            return StringLiteral(if (value[0] == '\'') {
-                value.substring(1, value.count() - 1)
-                        .replace("\\\\", "\\\\/")
-                        .replace("\\'", "'")
-                        .replace("\\\\/", "\\")
-            } else {
-                value.substring(1, value.count() - 1)
-                        .replace("\\\\", "\\\\/")
-                        .replace("\\\"", "\"")
-                        .replace("\\\\/", "\\")
-            })
-        }
-    }
+fun String.toUnescapedStringLiteral(): StringLiteral {
+    val quoteSymbol = if (this[0] == '\'') "'" else "\""
+    return StringLiteral(substring(1, count() - 1)
+            .replace("\\\\", "\\\\/")
+            .replace("\\$quoteSymbol", quoteSymbol)
+            .replace("\\\\/", "\\"))
 }
 
 data class CollectionLiteral(val values: Collection<Variable>): Variable {
@@ -217,35 +222,4 @@ data class CollectionLiteral(val values: Collection<Variable>): Variable {
                 .orElse(0)
 
     }
-}
-
-fun <A, B> Stream<A>.zipOrNull(other: Stream<out B>): Stream<Pair<A?, B?>> {
-    val splitA = spliterator()
-    val splitB = other.spliterator()
-
-    // Zipping looses SORTED characteristic
-    val characteristics = splitA.characteristics() and splitB.characteristics() and
-            Spliterator.SORTED.inv()
-
-    val zipSize = min(splitA.exactSizeIfKnown, splitB.exactSizeIfKnown)
-
-    val iterA = Spliterators.iterator(splitA)
-    val iterB = Spliterators.iterator(splitB)
-    val iterPair = object : Iterator<Pair<A?, B?>> {
-        override fun hasNext() = iterA.hasNext() || iterB.hasNext()
-
-        override fun next(): Pair<A?, B?> {
-            val nextA = iterA.hasNext()
-            val nextB = iterB.hasNext()
-            return when {
-                nextA && nextB -> Pair(iterA.next(), iterB.next())
-                nextA -> Pair(iterA.next(), null)
-                nextB -> Pair(null, iterB.next())
-                else -> throw NoSuchElementException()
-            }
-        }
-    }
-
-    val split = Spliterators.spliterator(iterPair, zipSize, characteristics)
-    return StreamSupport.stream(split, isParallel || other.isParallel)
 }

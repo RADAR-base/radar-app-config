@@ -27,8 +27,8 @@ data class GlobalConfig(val clients: Map<String, ClientConfig>) {
     companion object {
         fun fromStream(stream: Stream<ResolvedVariable>): GlobalConfig {
             return GlobalConfig(stream
-                    .filter { it.id.names.isNotEmpty() }
-                    .collect(Collectors.groupingBy({ it.id.names.first() }, ClientConfigCollector())))
+                    .filter { it.id.hasTail() }
+                    .collect(Collectors.groupingBy({ it.id.head() }, ClientConfigCollector())))
         }
     }
 }
@@ -37,9 +37,9 @@ data class ClientConfig(val clientId: String?, val config: List<SingleVariable>)
     companion object {
         fun fromStream(clientId: String, stream: Stream<ResolvedVariable>, includeId: Boolean = false): ClientConfig {
             return ClientConfig(if (includeId) clientId else null, stream
-                    .filter { it.id.names.firstOrNull() == clientId }
+                    .filter { it.id.hasTail() && it.id.head() == clientId }
                     .map { (scope, id, variable) ->
-                        SingleVariable(id.splitHead()!!.second.asString(), variable.asOptString(), scope.asString())
+                        SingleVariable(id.splitHead().second!!.asString(), variable.asOptString(), scope.asString())
                     }
                     .collect(Collectors.toList()))
         }
@@ -54,7 +54,10 @@ class ClientConfigCollector : Collector<ResolvedVariable, ClientConfigCollector.
     override fun supplier() = Supplier { ClientConfigCollection() }
 
     override fun accumulator() = BiConsumer { list: ClientConfigCollection, (scope, id, variable): ResolvedVariable ->
-        val (clientId, innerId) = id.splitHead() ?: return@BiConsumer
+        val (clientId, innerId) = id.splitHead()
+        if (clientId == null || innerId == null) {
+            return@BiConsumer
+        }
         if (list.clientId == null) {
             list.clientId = clientId
         } else if (clientId != list.clientId) {

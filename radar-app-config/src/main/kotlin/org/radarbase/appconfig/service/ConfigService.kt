@@ -3,41 +3,33 @@ package org.radarbase.appconfig.service
 import nl.thehyve.lang.expression.*
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.GlobalConfig
+import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.service.ConditionService.Companion.conditionScope
 import org.radarbase.appconfig.service.MPProjectService.Companion.projectScope
 import org.radarbase.jersey.auth.ProjectService
+import java.util.stream.Stream
 import javax.ws.rs.core.Context
 
 class ConfigService(
-        @Context private val resolver: VariableResolver,
+        @Context private val resolver: ClientVariableResolver,
         @Context private val projectService: ProjectService,
         @Context private val conditionService: ConditionService,
         @Context private val clientService: ClientService
 ) {
-    fun clientConfig(clientId: String, projectId: String, userId: String): ClientConfig {
+    fun globalConfig(clientId: String): ClientConfig {
+        return ClientConfig.fromStream(clientId,
+                resolver[clientId].resolveAll(listOf(globalScope), null))
+    }
+
+    fun userConfig(clientId: String, projectId: String, userId: String): ClientConfig {
         clientService.ensureClient(clientId)
-        val scopes = userScopes(projectId, userId)
-        return ClientConfig.fromStream(clientId, resolver.resolveAll(scopes, QualifiedId(listOf(clientId))))
+        val scopes = userScopes(clientId, projectId, userId)
+        return ClientConfig.fromStream(clientId,
+                resolver[clientId].resolveAll(scopes, null))
     }
 
-    fun globalConfig(): GlobalConfig {
-        return GlobalConfig.fromStream(resolver.resolveAll(listOf(globalScope), null)
-                .filter { (_, id, _) -> id.names.firstOrNull()
-                        ?.let { clientService.contains(it) }
-                        ?: false })
-    }
-
-    fun globalConfig(projectId: String, userId: String): GlobalConfig {
-        projectService.ensureProject(projectId)
-        val scopes = userScopes(projectId, userId)
-        return GlobalConfig.fromStream(resolver.resolveAll(scopes, null)
-                .filter { (_, id, _) -> id.names.firstOrNull()
-                        ?.let { clientService.contains(it) }
-                        ?: false })
-    }
-
-    private fun userScopes(projectId: String, userId: String): List<Scope> {
-        val conditions = conditionService.matchingConditions(projectId, userId)
+    private fun userScopes(clientId: String, projectId: String, userId: String): List<Scope> {
+        val conditions = conditionService.matchingConditions(clientId, projectId, userId)
                 .map { conditionScope(it) }
 
         return (listOf(userScope(userId))
@@ -45,14 +37,11 @@ class ConfigService(
                 + listOf(projectScope(projectId), globalScope))
     }
 
-    fun putConfig(config: GlobalConfig) {
-        resolver.replace(globalScope, config.clients.values.stream()
-                .flatMap { clientConfig ->
-                    clientConfig.config.stream()
-                            .map { (innerId, variable, _) ->
-                                QualifiedId("${clientConfig.clientId}.$innerId") to
-                                        (variable?.toVariable() ?: NullLiteral())
-                            }
+    fun putGlobalConfig(config: ClientConfig, clientId: String) {
+        resolver[clientId].replace(globalScope, null, config.config.stream()
+                .map { (innerId, variable, _) ->
+                    QualifiedId(innerId) to
+                            (variable?.toVariable() ?: NullLiteral())
                 })
     }
 

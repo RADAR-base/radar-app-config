@@ -15,6 +15,10 @@ project.extra.apply {
     set("slf4jVersion", "1.7.27")
     set("logbackVersion", "1.2.3")
     set("hibernateVersion", "5.4.4.Final")
+    set("h2Version", "1.4.200")
+    set("postgresqlVersion", "42.2.9")
+    set("liquibaseVersion", "3.8.5")
+    set("c3p0Version", "0.9.5.5")
 }
 
 repositories {
@@ -39,11 +43,12 @@ dependencies {
     implementation("org.slf4j:slf4j-api:${project.extra["slf4jVersion"]}")
 
     implementation("org.hibernate:hibernate-core:${project.extra["hibernateVersion"]}")
-    implementation("org.liquibase:liquibase-core:3.5.3")
+    implementation("org.liquibase:liquibase-core:${project.extra["liquibaseVersion"]}")
 
-    runtimeOnly("com.h2database:h2:1.4.199")
-    runtimeOnly("org.postgresql:postgresql:42.2.5")
+    runtimeOnly("com.h2database:h2:${project.extra["h2Version"]}")
+    runtimeOnly("org.postgresql:postgresql:${project.extra["postgresqlVersion"]}")
     runtimeOnly("ch.qos.logback:logback-classic:${project.extra["logbackVersion"]}")
+    runtimeOnly("org.hibernate:hibernate-c3p0:${project.extra["hibernateVersion"]}")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.4.2")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
