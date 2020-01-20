@@ -1,20 +1,18 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.domain.GlobalConfig
 import org.radarbase.appconfig.domain.OAuthClientList
 import org.radarbase.appconfig.domain.ProjectList
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigProjectService
 import org.radarbase.appconfig.service.ConfigService
-import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.auth.ProjectService
-import org.radarbase.jersey.exception.HttpBadRequestException
 import org.radarcns.auth.authorization.Permission
-import org.radarcns.auth.authorization.Permission.SUBJECT_READ
-import javax.ws.rs.*
+import javax.ws.rs.Consumes
+import javax.ws.rs.GET
+import javax.ws.rs.Path
+import javax.ws.rs.Produces
 import javax.ws.rs.core.Context
 
 /** Root path, just forward requests without authentication. */

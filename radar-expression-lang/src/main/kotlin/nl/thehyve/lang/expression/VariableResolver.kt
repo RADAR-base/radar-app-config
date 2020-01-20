@@ -36,6 +36,8 @@ fun Collection<Variable>.toVariable(): CollectionLiteral = CollectionLiteral(thi
 fun Boolean.toVariable(): BooleanLiteral = BooleanLiteral(this)
 
 class DirectVariableResolver : VariableResolver {
+    private val variables = mutableMapOf<Scope, MutableMap<QualifiedId, Variable>>()
+
     override fun list(scopes: List<Scope>, prefix: QualifiedId?): Stream<QualifiedId> {
         var refStream = scopes.stream()
                 .flatMap { variables[it]?.keys?.stream() ?: Stream.empty() }
@@ -65,17 +67,18 @@ class DirectVariableResolver : VariableResolver {
         }
     }
 
-    private val variables = mutableMapOf<Scope, MutableMap<QualifiedId, Variable>>()
-
     override fun register(scope: Scope, id: QualifiedId, variable: Variable) {
-        val root = variables[scope]
-                ?: mutableMapOf<QualifiedId, Variable>().also { variables[scope] = it }
-
+        var root = variables[scope]
+        if (root == null) {
+            root = mutableMapOf()
+            variables[scope] = root
+        }
         root[id] = variable
     }
 
     override fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Stream<ResolvedVariable> {
         return list(scopes, prefix)
+                .peek { println(it) }
                 .map { resolve(scopes, it) }
     }
 
@@ -105,5 +108,9 @@ class DirectVariableResolver : VariableResolver {
         } else {
             return result
         }
+    }
+
+    override fun toString(): String {
+        return "DirectVariableResolver(variables=$variables)"
     }
 }

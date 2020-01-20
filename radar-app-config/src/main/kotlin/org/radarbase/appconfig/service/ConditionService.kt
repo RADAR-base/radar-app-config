@@ -43,7 +43,7 @@ class ConditionService(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun update(projectId: String, condition: Condition) {
+    fun update(projectId: String, condition: Condition): Condition {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

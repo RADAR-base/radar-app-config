@@ -13,7 +13,8 @@ import javax.ws.rs.core.Context
 class MPProjectService(
         @Context private val mpClient: MPClient,
         @Context private val resolver: ClientVariableResolver,
-        @Context private val conditionService: ConditionService
+        @Context private val conditionService: ConditionService,
+        @Context private val clientService: ClientService
 ): ConfigProjectService {
     private val projects = CachedSet(Duration.ofMinutes(5), Duration.ofMinutes(1), mpClient::readProjects)
 
@@ -21,15 +22,33 @@ class MPProjectService(
 
     override fun projectConfig(clientId: String, projectId: String): ClientConfig {
         val scopes = listOf(projectScope(projectId))
-        return ClientConfig.fromStream(clientId, resolver[clientId].resolveAll(scopes, null))
+        return ClientConfig.fromStream(clientId,
+                resolver[clientId].resolveAll(scopes, null))
     }
 
-    override fun putConfig(clientId: String, projectId: String, clientConfig: ClientConfig) {
+    override fun putProjectConfig(clientId: String, projectId: String, clientConfig: ClientConfig) {
         putConfig(clientId, projectScope(projectId), clientConfig)
     }
 
     override fun putUserConfig(clientId: String, userId: String, clientConfig: ClientConfig) {
         putConfig(clientId, userScope(userId), clientConfig)
+    }
+
+
+    override fun userConfig(clientId: String, projectId: String, userId: String): ClientConfig {
+        clientService.ensureClient(clientId)
+        val scopes = userScopes(clientId, projectId, userId)
+        return ClientConfig.fromStream(clientId,
+                resolver[clientId].resolveAll(scopes, null))
+    }
+
+    private fun userScopes(clientId: String, projectId: String, userId: String): List<Scope> {
+        val conditions = conditionService.matchingConditions(clientId, projectId, userId)
+                .map { ConditionService.conditionScope(it) }
+
+        return (listOf(userScope(userId))
+                + conditions
+                + listOf(projectScope(projectId), ConfigService.globalScope))
     }
 
     private fun putConfig(clientId: String, scope: Scope, clientConfig: ClientConfig) {

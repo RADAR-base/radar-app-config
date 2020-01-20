@@ -8,6 +8,7 @@ import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.exception.HttpBadRequestException
 import org.radarcns.auth.authorization.Permission
+import java.net.URI
 import javax.inject.Singleton
 import javax.ws.rs.*
 import javax.ws.rs.core.Context
@@ -35,9 +36,8 @@ class ConditionResource(
             throw HttpBadRequestException("bad_request", "Cannot set condition ID in request.")
         }
         val newCondition = conditionService.create(projectId, condition)
-        return Response
-                .ok()
-                .header("Location", "${uriInfo.path}/${newCondition.id}")
+        return Response.created(URI.create("${uriInfo.path}/${newCondition.id}"))
+                .entity(newCondition)
                 .build()
     }
 
@@ -61,8 +61,8 @@ class ConditionResource(
             @PathParam("projectId") projectId: String,
             @PathParam("conditionId") conditionId: Long,
             condition: Condition
-    ) {
-        conditionService.update(projectId, condition.copy(id = conditionId))
+    ): Condition {
+        return conditionService.update(projectId, condition.copy(id = conditionId))
     }
 
     @GET

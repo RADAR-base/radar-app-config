@@ -42,7 +42,7 @@ class ProjectResource(
             @PathParam("clientId") clientId: String,
             clientConfig: ClientConfig
     ): Response {
-        projectService.putConfig(clientId, projectId, clientConfig)
+        projectService.putProjectConfig(clientId, projectId, clientConfig)
 
         return Response.noContent().build()
     }
@@ -55,7 +55,7 @@ class ProjectResource(
             @PathParam("userId") userId: String,
             @PathParam("clientId") clientId: String
     ): ClientConfig {
-        return configService.userConfig(clientId, projectId, userId)
+        return projectService.userConfig(clientId, projectId, userId)
     }
 
     @Path("{projectId}/users/{userId}/config/{clientId}")

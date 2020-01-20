@@ -2,12 +2,10 @@ package org.radarbase.appconfig.service
 
 import nl.thehyve.lang.expression.*
 import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.domain.GlobalConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.service.ConditionService.Companion.conditionScope
 import org.radarbase.appconfig.service.MPProjectService.Companion.projectScope
 import org.radarbase.jersey.auth.ProjectService
-import java.util.stream.Stream
 import javax.ws.rs.core.Context
 
 class ConfigService(
@@ -19,22 +17,6 @@ class ConfigService(
     fun globalConfig(clientId: String): ClientConfig {
         return ClientConfig.fromStream(clientId,
                 resolver[clientId].resolveAll(listOf(globalScope), null))
-    }
-
-    fun userConfig(clientId: String, projectId: String, userId: String): ClientConfig {
-        clientService.ensureClient(clientId)
-        val scopes = userScopes(clientId, projectId, userId)
-        return ClientConfig.fromStream(clientId,
-                resolver[clientId].resolveAll(scopes, null))
-    }
-
-    private fun userScopes(clientId: String, projectId: String, userId: String): List<Scope> {
-        val conditions = conditionService.matchingConditions(clientId, projectId, userId)
-                .map { conditionScope(it) }
-
-        return (listOf(userScope(userId))
-                + conditions
-                + listOf(projectScope(projectId), globalScope))
     }
 
     fun putGlobalConfig(config: ClientConfig, clientId: String) {

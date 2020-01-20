@@ -51,6 +51,7 @@ dependencies {
     runtimeOnly("org.hibernate:hibernate-c3p0:${project.extra["hibernateVersion"]}")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.4.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.4.2")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
 }
