@@ -56,70 +56,6 @@ The current iteration of this project has a subset of the intended functionality
 
 Settings in the global scope can be seen as the platform defaults. They can only be updated by the system administrator. Project and user configs can only be updated by project admins.
 
-Get config for all clients for a single user. User/project inferred from authentication.
-```
-GET /config
----
-HTTP 200 OK
-{
-   "clients": {
-     "clientA": {
-        "config": [
-          {"name": "plugins", "value": "A B", "scope": "project.projectA"}
-        ]
-     }
-   }
-}
-```
-
-Get the default config (global scope) for all clients. Sys admin only.
-```
-GET /global/config
----
-HTTP 200 OK
-{
-   "clients": {
-     "clientA": {
-        "config": [
-          {"name": "plugins", "value": "A B", "scope": "global"}
-        ]
-     }
-   }
-}
-```
-
-
-Replace the default config (global scope) for all clients. Sys admin only.
-```
-PUT /global/config
-{
-   "clients": {
-     "clientA": {
-        "config": [
-          {"name": "plugins", "value": "A B"}
-        ]
-     }
-   }
-}
----
-HTTP 204 No Content
-```
-
-Get client-specific config. User/project inferred from authentication.
-```
-GET /config/clients/{clientId}
----
-HTTP 200 OK
-{
-  "clientId": "clientA",
-  "config": [
-    {"name": "plugins", "value": "A B", "scope": "project"}
-  ]
-}
-```
-
-
-
 List supported clients. This list can be configured in ManagementPortal
 ```
 GET /clients
@@ -144,65 +80,79 @@ HTTP 200 OK
 }
 ```
 
-Get the per-project config.
+Get the default config (global scope) for a client. Sys admin only.
 ```
-GET /projects/{projectId}/config
+GET /global/config/{clientId}
 ---
 HTTP 200 OK
 {
-  "clients": {
-    "clientA": {
-      "config": [
-        {"name": "plugins", "value": "A B", "scope": "project.projectA"}
-      ]
-    }
-  }
+  "clientId": "{clientId}"
+  "config": [
+    {"name": "plugins", "value": "A B", "scope": "global"}
+  ]
+}
+```
+
+Replace the default config (global scope) for a client. Sys admin only.
+```
+PUT /global/config/{clientId}
+{
+  "clientId": "{clientId}"
+  "config": [
+    {"name": "plugins", "value": "A B"}
+  ]
+}
+---
+HTTP 204 No Content
+```
+
+Get the per-project config.
+```
+GET /projects/{projectId}/config/{clientId}
+---
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "config": [
+    {"name": "plugins", "value": "A B", "scope": "project.projectA"}
+  ]
 }
 ```
 
 Update the per-project config.
 ```
-PUT /projects/{projectId}/config
+PUT /projects/{projectId}/config/{clientId}
 {
-  "clients": {
-    "clientA": {
-      "config": [
-        {"name": "plugins", "value": "A B"}
-      ]
-    }
-  }
+  "clientId": "{clientId}",
+  "config": [
+    {"name": "plugins", "value": "A B"}
+  ]
 }
 ---
 HTTP 204 No Content
 ```
 
-Get the per-user config.
+Get the per-user config. This is the call that end-user clients should make.
 ```
-PUT /projects/{projectId}/users/{userId}
-{
-  "clients": {
-    "clientA": {
-      "config": [
-        {"name": "plugins", "value": "A B", "scope": "user.userA"}
-      ]
-    }
-  }
-}
+GET /projects/{projectId}/users/{userId}/{clientId}
 ---
-HTTP 204 No Content
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "config": [
+    {"name": "plugins", "value": "A B", "scope": "user.userA"}
+  ]
+}
 ```
 
 Update the per-user config.
 ```
-PUT /projects/{projectId}/users/{userId}
+PUT /projects/{projectId}/users/{userId}/{clientId}
 {
-  "clients": {
-    "clientA": {
-      "config": [
-        {"name": "plugins", "value": "A B"}
-      ]
-    }
-  }
+  "clientId": "{clientId}",
+  "config": [
+    {"name": "plugins", "value": "A B"}
+  ]
 }
 ---
 HTTP 204 No Content

@@ -34,16 +34,16 @@ class Interpreter(val variables: VariableResolver) {
 
 interface Scope {
     val id: QualifiedId
-    fun splitHead(): Pair<String, Scope>?
+    fun splitHead(): Pair<String?, Scope?>
     fun asString(): String = id.asString()
 }
 
 data class SimpleScope(override val id: QualifiedId) : Scope {
     constructor(string: String) : this(QualifiedId(string))
 
-    override fun splitHead(): Pair<String, Scope>? = id.splitHead()
-            ?.let { (name, tailId) ->
-                Pair(name, SimpleScope(tailId))
+    override fun splitHead(): Pair<String?, Scope?> = id.splitHead()
+            .let { (name, tailId) ->
+                Pair(name, tailId?.let { SimpleScope(it) })
             }
 
     override fun toString() = id.toString()

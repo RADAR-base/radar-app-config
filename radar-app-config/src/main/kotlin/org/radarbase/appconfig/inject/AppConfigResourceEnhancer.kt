@@ -19,53 +19,47 @@ import javax.ws.rs.ext.ContextResolver
 class AppConfigResourceEnhancer(private val config: Config): JerseyResourceEnhancer {
     private val mapper = createMapper()
 
-    override fun enhanceResources(resourceConfig: ResourceConfig) {
-        resourceConfig.packages("org.radarbase.appconfig.resource")
-        resourceConfig.register(ContextResolver { mapper })
+    override val packages: Array<String> = arrayOf("org.radarbase.appconfig.resource")
+
+    override fun ResourceConfig.enhance() {
+        register(ContextResolver { mapper })
     }
 
-    override fun enhanceBinder(binder: AbstractBinder) {
-        binder.apply {
-            // Bind instances. These cannot use any injects themselves
-            bind(config)
-                    .to(Config::class.java)
+    override fun AbstractBinder.enhance() {
+        // Bind instances. These cannot use any injects themselves
+        bind(config)
+                .to(Config::class.java)
 
-            bind(ConditionService::class.java)
-                    .to(ConditionService::class.java)
-                    .`in`(Singleton::class.java)
+        bind(ConditionService::class.java)
+                .to(ConditionService::class.java)
+                .`in`(Singleton::class.java)
 
-            bind(ConfigService::class.java)
-                    .to(ConfigService::class.java)
-                    .`in`(Singleton::class.java)
+        bind(ConfigService::class.java)
+                .to(ConfigService::class.java)
+                .`in`(Singleton::class.java)
 
-            bind(MPProjectService::class.java)
-                    .to(ConfigProjectService::class.java)
-                    .`in`(Singleton::class.java)
+        bind(MPProjectService::class.java)
+                .to(ConfigProjectService::class.java)
+                .`in`(Singleton::class.java)
 
-            bind(ProjectAuthService::class.java)
-                    .to(ProjectService::class.java)
-                    .`in`(Singleton::class.java)
+        bind(ProjectAuthService::class.java)
+                .to(ProjectService::class.java)
+                .`in`(Singleton::class.java)
 
-            bind(ClientService::class.java)
-                    .to(ClientService::class.java)
-                    .`in`(Singleton::class.java)
+        bind(ClientService::class.java)
+                .to(ClientService::class.java)
+                .`in`(Singleton::class.java)
 
-            val variableResolver = DirectVariableResolver()
+        bind(ClientInterpreter::class.java)
+                .to(ClientInterpreter::class.java)
+                .`in`(Singleton::class.java)
 
-            bind(variableResolver)
-                    .to(VariableResolver::class.java)
+        bind(MPClient::class.java)
+                .to(MPClient::class.java)
+                .`in`(PerThread::class.java)
 
-            bind(Interpreter(variableResolver))
-                    .to(Interpreter::class.java)
-
-            // Bind factories.
-            bind(MPClient::class.java)
-                    .to(MPClient::class.java)
-                    .`in`(PerThread::class.java)
-
-            bind(mapper)
-                    .to(ObjectMapper::class.java)
-        }
+        bind(mapper)
+                .to(ObjectMapper::class.java)
     }
 
     companion object {
