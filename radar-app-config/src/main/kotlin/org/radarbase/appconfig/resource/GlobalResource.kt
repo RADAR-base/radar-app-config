@@ -10,7 +10,6 @@ import javax.inject.Singleton
 import javax.ws.rs.*
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 
 @Path("global")
 @Singleton
@@ -21,15 +20,15 @@ class GlobalResource(
         @Context private val configService: ConfigService,
         @Context private val clientService: ClientService
 ) {
-    @PUT
+    @POST
     @Path("config/{clientId}")
     @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.CREATE)
     fun updateConfig(
             @PathParam("clientId") clientId: String,
-            config: ClientConfig): Response {
+            config: ClientConfig): ClientConfig {
         clientService.ensureClient(clientId)
         configService.putGlobalConfig(config, clientId)
-        return Response.noContent().build()
+        return configService.globalConfig(clientId)
     }
 
     @Path("config/{clientId}")

@@ -77,9 +77,21 @@ class DirectVariableResolver : VariableResolver {
     }
 
     override fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Stream<ResolvedVariable> {
-        return list(scopes, prefix)
-                .peek { println(it) }
-                .map { resolve(scopes, it) }
+        val usePrefix = QualifiedId(prefix?.names ?: listOf())
+
+        return scopes.stream()
+                .flatMap { scope ->
+                    var variableStream = variables[scope]?.entries?.stream()
+
+                    if (!usePrefix.isEmpty()) {
+                        variableStream = variableStream
+                                ?.filter { it.key.isPrefixedBy(usePrefix) }
+                    }
+
+                    variableStream
+                            ?.map { ResolvedVariable(scope, it.key, it.value) }
+                            ?: Stream.empty()
+                }
     }
 
     override fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable {

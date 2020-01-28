@@ -1,36 +1,27 @@
 package org.radarbase.appconfig.resource
 
 import org.radarbase.appconfig.domain.OAuthClientList
-import org.radarbase.appconfig.domain.ProjectList
 import org.radarbase.appconfig.service.ClientService
-import org.radarbase.appconfig.service.ConfigProjectService
-import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
-import org.radarbase.jersey.auth.ProjectService
 import org.radarcns.auth.authorization.Permission
+import javax.inject.Singleton
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Context
+import javax.ws.rs.core.MediaType
 
 /** Root path, just forward requests without authentication. */
 @Path("/")
-@Produces("application/json; charset=utf-8")
-@Consumes("application/json")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 @Authenticated
+@Singleton
 class RootResource(
-        @Context private val configService: ConfigService,
-        @Context private val projectAuthService: ProjectService,
-        @Context private val projectService: ConfigProjectService,
         @Context private val clientService: ClientService
 ) {
-    @Path("projects")
-    @GET
-    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.READ)
-    fun listProjects() = ProjectList(projectService.listProjects().toList())
-
     @Path("clients")
     @GET
     @NeedsPermission(Permission.Entity.OAUTHCLIENTS, Permission.Operation.READ)

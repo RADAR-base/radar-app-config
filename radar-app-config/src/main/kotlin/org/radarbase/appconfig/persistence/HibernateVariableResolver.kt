@@ -66,7 +66,10 @@ class HibernateVariableResolver(
         transact {
             query.resultStream
                     .map { it.toResolvedVariable() }
-                    .collect(Collectors.toMap<ResolvedVariable, QualifiedId, ResolvedVariable>({ it.id }, { it }, higherScopedVariable(scopes)))
+                    .collect(Collectors.toMap<ResolvedVariable, VariableKey, ResolvedVariable>({
+                        if (it.scope == scopes[0]) ActualVariableKey(it.id)
+                        else DefaultsVariableKey(it.id)
+                    }, { it }, higherScopedVariable(scopes)))
                     .values
                     .stream()
         }
@@ -157,4 +160,12 @@ class HibernateVariableResolver(
             if (scopes.indexOf(v1.scope) < scopes.indexOf(v2.scope)) v1 else v2
         }
     }
+
 }
+
+sealed class VariableKey {
+    abstract val id: QualifiedId
+}
+
+data class DefaultsVariableKey(override val id: QualifiedId): VariableKey()
+data class ActualVariableKey(override val id: QualifiedId): VariableKey()

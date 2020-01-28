@@ -15,7 +15,7 @@ class ConfigService(
         @Context private val clientService: ClientService
 ) {
     fun globalConfig(clientId: String): ClientConfig {
-        return ClientConfig.fromStream(clientId,
+        return ClientConfig.fromStream(clientId, globalScope,
                 resolver[clientId].resolveAll(listOf(globalScope), null))
     }
 

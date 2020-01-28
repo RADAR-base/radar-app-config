@@ -1,5 +1,6 @@
 package org.radarbase.appconfig.inject
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -54,6 +55,10 @@ class AppConfigResourceEnhancer(private val config: ApplicationConfig): JerseyRe
                 .to(ClientInterpreter::class.java)
                 .`in`(Singleton::class.java)
 
+        bind(UserService::class.java)
+                .to(UserService::class.java)
+                .`in`(Singleton::class.java)
+
         bind(MPClient::class.java)
                 .to(MPClient::class.java)
                 .`in`(PerThread::class.java)
@@ -75,6 +80,7 @@ class AppConfigResourceEnhancer(private val config: ApplicationConfig): JerseyRe
                     .registerModule(SimpleModule().apply {
                         addDeserializer(Expression::class.java, deserializer)
                     })
+                    .setSerializationInclusion(JsonInclude.Include.NON_NULL)
         }
 
     }

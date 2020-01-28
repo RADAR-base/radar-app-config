@@ -88,22 +88,27 @@ HTTP 200 OK
 {
   "clientId": "{clientId}"
   "config": [
-    {"name": "plugins", "value": "A B", "scope": "global"}
+    {"name": "plugins", "value": "A", "scope": "global"}
   ]
 }
 ```
 
 Replace the default config (global scope) for a client. Sys admin only.
 ```
-PUT /global/config/{clientId}
+POST /global/config/{clientId}
 {
-  "clientId": "{clientId}"
   "config": [
-    {"name": "plugins", "value": "A B"}
+    {"name": "plugins", "value": "A"}
   ]
 }
 ---
-HTTP 204 No Content
+HTTP 200 OK
+{
+  "clientId": "{clientId}"
+  "config": [
+    {"name": "plugins", "value": "A"}
+  ]
+}
 ```
 
 Get the per-project config.
@@ -115,45 +120,71 @@ HTTP 200 OK
   "clientId": "{clientId}",
   "config": [
     {"name": "plugins", "value": "A B", "scope": "project.projectA"}
+  ],
+  "defaults": [
+    {"name": "plugins", "value", "A", "scope": "global"
   ]
 }
 ```
 
 Update the per-project config.
 ```
-PUT /projects/{projectId}/config/{clientId}
+POST /projects/{projectId}/config/{clientId}
 {
-  "clientId": "{clientId}",
   "config": [
+    {"name": "rate", "value": "1"}
     {"name": "plugins", "value": "A B"}
   ]
 }
 ---
-HTTP 204 No Content
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "config": [
+    {"name": "plugins", "value": "A B", "scope": "project.projectA"},
+    {"name": "rate", "value": "1", "scope": "project.projectA"}
+  ],
+  "defaults": [
+    {"name": "plugins", "value", "A", "scope": "global"
+  ]
+}
 ```
 
 Get the per-user config. This is the call that end-user clients should make.
 ```
-GET /projects/{projectId}/users/{userId}/{clientId}
+GET /projects/{projectId}/users/{userId}/config/{clientId}
 ---
 HTTP 200 OK
 {
   "clientId": "{clientId}",
   "config": [
     {"name": "plugins", "value": "A B", "scope": "user.userA"}
+  ],
+  "defaults": [
+    {"name": "plugins", "value": "A B", "scope": "project.projectA"},
+    {"name": "rate", "value": "1", "scope": "project.projectA"}
   ]
 }
 ```
 
 Update the per-user config.
 ```
-PUT /projects/{projectId}/users/{userId}/{clientId}
+POST /projects/{projectId}/users/{userId}/config/{clientId}
 {
-  "clientId": "{clientId}",
   "config": [
-    {"name": "plugins", "value": "A B"}
+    {"name": "rate", "value": "1"}
   ]
 }
 ---
-HTTP 204 No Content
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "config": [
+    {"name": "rate", "value": "1", "scope": "user.userA"}
+  ],
+  "defaults": [
+    {"name": "plugins", "value": "A B", "scope": "project.projectA"},
+    {"name": "rate", "value": "1", "scope": "project.projectA"}
+  ]
+}
 ```

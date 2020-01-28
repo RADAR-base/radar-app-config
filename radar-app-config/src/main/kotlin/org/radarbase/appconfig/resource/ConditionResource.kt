@@ -12,6 +12,7 @@ import java.net.URI
 import javax.inject.Singleton
 import javax.ws.rs.*
 import javax.ws.rs.core.Context
+import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.UriInfo
 
@@ -19,8 +20,8 @@ import javax.ws.rs.core.UriInfo
 @Path("/projects/{projectId}/conditions")
 @Singleton
 @Authenticated
-@Produces("application/json; charset=utf-8")
-@Consumes("application/json")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 class ConditionResource(
         @Context private val conditionService: ConditionService,
         @Context private val projectService: ConfigProjectService,
