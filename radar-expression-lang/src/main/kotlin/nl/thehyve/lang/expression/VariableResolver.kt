@@ -8,7 +8,7 @@ import java.util.stream.Stream
 data class ResolvedVariable(val scope: Scope, val id: QualifiedId, val variable: Variable)
 
 interface VariableResolver {
-    fun replace(scope: Scope, variables: Stream<Pair<QualifiedId, Variable>>)
+    fun replace(scope: Scope, prefix: QualifiedId? = null, variables: Stream<Pair<QualifiedId, Variable>>)
     fun register(scope: Scope, id: QualifiedId, variable: Variable)
     fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable
     fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Stream<ResolvedVariable>
@@ -36,6 +36,8 @@ fun Collection<Variable>.toVariable(): CollectionLiteral = CollectionLiteral(thi
 fun Boolean.toVariable(): BooleanLiteral = BooleanLiteral(this)
 
 class DirectVariableResolver : VariableResolver {
+    private val variables = mutableMapOf<Scope, MutableMap<QualifiedId, Variable>>()
+
     override fun list(scopes: List<Scope>, prefix: QualifiedId?): Stream<QualifiedId> {
         var refStream = scopes.stream()
                 .flatMap { variables[it]?.keys?.stream() ?: Stream.empty() }
@@ -51,25 +53,45 @@ class DirectVariableResolver : VariableResolver {
         return refStream
     }
 
-    override fun replace(scope: Scope, variables: Stream<Pair<QualifiedId, Variable>>) {
-        this.variables.remove(scope)
-        this.variables[scope] = variables
-                .collect(Collectors.toMap<Pair<QualifiedId, Variable>, QualifiedId, Variable>({ it.first }, { it.second }))
-                .toMutableMap()
+    override fun replace(scope: Scope, prefix: QualifiedId?, variables: Stream<Pair<QualifiedId, Variable>>) {
+        if (prefix == null) {
+            this.variables[scope] = variables
+                    .collect(Collectors.toMap<Pair<QualifiedId, Variable>, QualifiedId, Variable>({ it.first }, { it.second }))
+                    .toMutableMap()
+        } else {
+            val variableMap = this.variables[scope]
+            val newVariableMap = variableMap?.filterKeys { k -> k.isPrefixedBy(prefix) }?.toMutableMap() ?: mutableMapOf()
+            newVariableMap += variables
+                    .collect(Collectors.toMap<Pair<QualifiedId, Variable>, QualifiedId, Variable>({ it.first }, { it.second }))
+            this.variables[scope] = newVariableMap
+        }
     }
 
-    private val variables = mutableMapOf<Scope, MutableMap<QualifiedId, Variable>>()
-
     override fun register(scope: Scope, id: QualifiedId, variable: Variable) {
-        val root = variables[scope]
-                ?: mutableMapOf<QualifiedId, Variable>().also { variables[scope] = it }
-
+        var root = variables[scope]
+        if (root == null) {
+            root = mutableMapOf()
+            variables[scope] = root
+        }
         root[id] = variable
     }
 
     override fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Stream<ResolvedVariable> {
-        return list(scopes, prefix)
-                .map { resolve(scopes, it) }
+        val usePrefix = QualifiedId(prefix?.names ?: listOf())
+
+        return scopes.stream()
+                .flatMap { scope ->
+                    var variableStream = variables[scope]?.entries?.stream()
+
+                    if (!usePrefix.isEmpty()) {
+                        variableStream = variableStream
+                                ?.filter { it.key.isPrefixedBy(usePrefix) }
+                    }
+
+                    variableStream
+                            ?.map { ResolvedVariable(scope, it.key, it.value) }
+                            ?: Stream.empty()
+                }
     }
 
     override fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable {
@@ -98,5 +120,9 @@ class DirectVariableResolver : VariableResolver {
         } else {
             return result
         }
+    }
+
+    override fun toString(): String {
+        return "DirectVariableResolver(variables=$variables)"
     }
 }

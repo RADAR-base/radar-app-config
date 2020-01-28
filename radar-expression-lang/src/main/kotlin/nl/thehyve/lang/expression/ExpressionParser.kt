@@ -37,8 +37,8 @@ class ExpressionParser(functions: List<Function>) {
             is ComparisonParser.UnaryOperationContext -> toModel()
             is ComparisonParser.ParenExpressionContext -> expression().toModel()
             is ComparisonParser.NullLiteralContext -> NullLiteral()
-            is ComparisonParser.BooleanLiteralContext -> BooleanLiteral.parse(text) ?: throw toException("Cannot map string to boolean literal.")
-            is ComparisonParser.StringLiteralContext -> StringLiteral.parseEscapedString(text)
+            is ComparisonParser.BooleanLiteralContext -> text.toBooleanLiteral() ?: throw toException("Cannot map string to boolean literal.")
+            is ComparisonParser.StringLiteralContext -> text.toUnescapedStringLiteral()
             is ComparisonParser.DecimalLiteralContext,
             is ComparisonParser.IntegerLiteralContext -> BigDecimal(text).toVariable()
             is ComparisonParser.FunctionExpressionContext -> function().toModel()

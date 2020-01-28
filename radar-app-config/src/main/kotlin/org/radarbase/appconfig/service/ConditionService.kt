@@ -1,10 +1,10 @@
 package org.radarbase.appconfig.service
 
-import nl.thehyve.lang.expression.Interpreter
 import nl.thehyve.lang.expression.Scope
 import nl.thehyve.lang.expression.SimpleScope
-import nl.thehyve.lang.expression.VariableResolver
 import org.radarbase.appconfig.domain.Condition
+import org.radarbase.appconfig.inject.ClientInterpreter
+import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.service.ConfigService.Companion.globalScope
 import org.radarbase.appconfig.service.ConfigService.Companion.userScope
 import org.radarbase.appconfig.service.MPProjectService.Companion.projectScope
@@ -12,10 +12,10 @@ import javax.ws.rs.core.Context
 
 
 class ConditionService(
-        @Context private val resolver: VariableResolver,
-        @Context private val interpreter: Interpreter
+        @Context private val resolver: ClientVariableResolver,
+        @Context private val interpreter: ClientInterpreter
 ) {
-    fun matchingConditions(projectId: String, userId: String?): List<Condition> {
+    fun matchingConditions(clientId: String, projectId: String, userId: String?): List<Condition> {
         val allConditions = listOf<Condition>()
 
         val conditionScopes = mutableListOf<Scope>()
@@ -28,7 +28,7 @@ class ConditionService(
         conditionScopes += globalScope
 
         return allConditions
-                .filter { interpreter.interpret(conditionScopes, it.expression).asBoolean() }
+                .filter { interpreter[clientId].interpret(conditionScopes, it.expression).asBoolean() }
     }
 
     fun create(projectId: String, condition: Condition): Condition {
@@ -43,7 +43,7 @@ class ConditionService(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun update(projectId: String, condition: Condition) {
+    fun update(projectId: String, condition: Condition): Condition {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
