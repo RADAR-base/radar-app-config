@@ -39,23 +39,26 @@ internal class ProjectServiceTest {
         resolver["aRMT"].register("project.radar-test", "a.d", 5.toVariable())
         println(resolver["aRMT"])
         assertEquals(
-                ClientConfig("aRMT", listOf(
-                        SingleVariable("a.c", "b", "project.radar-test"),
-                        SingleVariable("a.d", "5", "project.radar-test"))),
+                ClientConfig("aRMT", "project.radar-test", listOf(
+                        SingleVariable("a.c", "b"),
+                        SingleVariable("a.d", "5"))),
                 projectService.projectConfig("aRMT", "radar-test"))
 
         resolver["aRMT"].register("global", "a.c", "f".toVariable())
         resolver["aRMT"].register("global", "a.e", 5.toVariable())
 
         assertEquals(
-                ClientConfig("aRMT", listOf(
-                        SingleVariable("a.c", "b", "project.radar-test"),
-                        SingleVariable("a.d", "5", "project.radar-test"),
-                        SingleVariable("a.e", "5", "global"))),
+                ClientConfig("aRMT", "project.radar-test",
+                        listOf(
+                                SingleVariable("a.c", "b"),
+                                SingleVariable("a.d", "5")),
+                        listOf(
+                                SingleVariable("a.c", "f", "global"),
+                                SingleVariable("a.e", "5", "global"))),
                 projectService.projectConfig("aRMT", "radar-test"))
 
         assertEquals(
-                ClientConfig("aRMT", listOf(
+                ClientConfig("aRMT", "project.radar-demo", listOf(), listOf(
                         SingleVariable("a.c", "f", "global"),
                         SingleVariable("a.e", "5", "global"))),
                 projectService.projectConfig("aRMT", "radar-demo"))
@@ -64,31 +67,31 @@ internal class ProjectServiceTest {
     @Test
     fun putProjectConfig() {
         val configEmpty = projectService.projectConfig("aRMT", "radar-test")
-        assertEquals(ClientConfig("aRMT", listOf()), configEmpty)
-        projectService.putProjectConfig("aRMT", "radar-test", ClientConfig("aRMT", listOf(
+        assertEquals(ClientConfig("aRMT", "project.radar-test", listOf()), configEmpty)
+        projectService.putProjectConfig("aRMT", "radar-test", ClientConfig(null, null, listOf(
                         SingleVariable("c", "b"),
                         SingleVariable("d", "5"))
         ))
 
         val config = projectService.projectConfig("aRMT", "radar-test")
-        assertEquals(ClientConfig("aRMT", listOf(
-                        SingleVariable("c", "b", "project.radar-test"),
-                        SingleVariable("d", "5", "project.radar-test"))), config)
+        assertEquals(ClientConfig("aRMT", "project.radar-test", listOf(
+                        SingleVariable("c", "b"),
+                        SingleVariable("d", "5"))), config)
 
-        projectService.putProjectConfig("aRMT", "radar-test", ClientConfig("aRMT", listOf(
+        projectService.putProjectConfig("aRMT", "radar-test", ClientConfig(null, null, listOf(
                         SingleVariable("c", "b")
         )))
         val configNew = projectService.projectConfig("aRMT", "radar-test")
-        assertEquals(ClientConfig("aRMT", listOf(
-                                SingleVariable("c", "b", "project.radar-test")
+        assertEquals(ClientConfig("aRMT", "project.radar-test", listOf(
+                                SingleVariable("c", "b")
                 )), configNew)
 
-        projectService.putProjectConfig("aRMT", "radar-test", ClientConfig("aRMT", listOf(
+        projectService.putProjectConfig("aRMT", "radar-test", ClientConfig(null, null, listOf(
                         SingleVariable("c", null)
                 )))
         val configNull = projectService.projectConfig("aRMT", "radar-test")
-        assertEquals(ClientConfig("aRMT", listOf(
-                        SingleVariable("c", null, "project.radar-test")
+        assertEquals(ClientConfig("aRMT", "project.radar-test", listOf(
+                        SingleVariable("c", null)
                 )), configNull)
     }
 }

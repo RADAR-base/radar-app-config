@@ -87,6 +87,7 @@ GET /global/config/{clientId}
 HTTP 200 OK
 {
   "clientId": "{clientId}"
+  "scope": "global",
   "config": [
     {"name": "plugins", "value": "A", "scope": "global"}
   ]
@@ -105,6 +106,7 @@ POST /global/config/{clientId}
 HTTP 200 OK
 {
   "clientId": "{clientId}"
+  "scope": "global",
   "config": [
     {"name": "plugins", "value": "A"}
   ]
@@ -118,8 +120,9 @@ GET /projects/{projectId}/config/{clientId}
 HTTP 200 OK
 {
   "clientId": "{clientId}",
+  "scope": "project.projectA",
   "config": [
-    {"name": "plugins", "value": "A B", "scope": "project.projectA"}
+    {"name": "plugins", "value": "A B"}
   ],
   "defaults": [
     {"name": "plugins", "value", "A", "scope": "global"
@@ -140,9 +143,10 @@ POST /projects/{projectId}/config/{clientId}
 HTTP 200 OK
 {
   "clientId": "{clientId}",
+  "scope": "project.projectA",
   "config": [
-    {"name": "plugins", "value": "A B", "scope": "project.projectA"},
-    {"name": "rate", "value": "1", "scope": "project.projectA"}
+    {"name": "plugins", "value": "A B"},
+    {"name": "rate", "value": "1"}
   ],
   "defaults": [
     {"name": "plugins", "value", "A", "scope": "global"
@@ -157,8 +161,9 @@ GET /projects/{projectId}/users/{userId}/config/{clientId}
 HTTP 200 OK
 {
   "clientId": "{clientId}",
+  "scope": "user.userA",
   "config": [
-    {"name": "plugins", "value": "A B", "scope": "user.userA"}
+    {"name": "plugins", "value": "A B"}
   ],
   "defaults": [
     {"name": "plugins", "value": "A B", "scope": "project.projectA"},
@@ -179,8 +184,9 @@ POST /projects/{projectId}/users/{userId}/config/{clientId}
 HTTP 200 OK
 {
   "clientId": "{clientId}",
+  "scope": "user.userA",
   "config": [
-    {"name": "rate", "value": "1", "scope": "user.userA"}
+    {"name": "rate", "value": "1"}
   ],
   "defaults": [
     {"name": "plugins", "value": "A B", "scope": "project.projectA"},

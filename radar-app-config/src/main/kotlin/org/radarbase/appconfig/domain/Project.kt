@@ -2,10 +2,8 @@ package org.radarbase.appconfig.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import nl.thehyve.lang.expression.Expression
-import nl.thehyve.lang.expression.QualifiedId
 import nl.thehyve.lang.expression.ResolvedVariable
 import nl.thehyve.lang.expression.Scope
-import org.radarbase.appconfig.inject.ClientVariableResolver
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -25,31 +23,16 @@ data class ConditionList(val conditions: List<Condition>)
 
 data class Condition(val id: Long?, val name: String?, val title: String? = null, val expression: Expression, val config: Map<String, Map<String, String>>? = null)
 
-data class ClientConfig(val clientId: String?, val config: List<SingleVariable>, val defaults: List<SingleVariable>? = null) {
+data class ClientConfig(val clientId: String?, val scope: String?, val config: List<SingleVariable>, val defaults: List<SingleVariable>? = null) {
     companion object {
-        fun fromStream(resolver: ClientVariableResolver, clientId: String, scopes: List<Scope>, prefix: QualifiedId?): ClientConfig {
-            val innerScope = scopes[0]
-            val configs = resolver[clientId].resolveAll(scopes, null)
-                    .collect(Collectors.groupingBy<ResolvedVariable, Boolean> { it.scope == innerScope })
-
-            return ClientConfig(clientId,
-                    configs[true]!!
-                            .map { (_, id, variable) ->
+        fun fromStream(clientId: String, scope: Scope, configStream: Stream<ResolvedVariable>): ClientConfig {
+            val configs = configStream.collect(Collectors.groupingBy<ResolvedVariable, Boolean> { it.scope == scope })
+            return ClientConfig(clientId, scope.asString(),
+                    configs[true]
+                            ?.map { (_, id, variable) ->
                                 SingleVariable(id.asString(), variable.asOptString())
-                            },
-                    configs[false]
-                            ?.map { (scope, id, variable) ->
-                                SingleVariable(id.asString(), variable.asOptString(), scope.asString())
-                            })
-        }
-
-        fun fromStream(clientId: String, innerScope: Scope, configStream: Stream<ResolvedVariable>): ClientConfig {
-            val configs = configStream.collect(Collectors.groupingBy<ResolvedVariable, Boolean> { it.scope == innerScope })
-            return ClientConfig(clientId,
-                    configs[true]!!
-                            .map { (_, id, variable) ->
-                                SingleVariable(id.asString(), variable.asOptString())
-                            },
+                            }
+                            ?: listOf(),
                     configs[false]
                             ?.map { (scope, id, variable) ->
                                 SingleVariable(id.asString(), variable.asOptString(), scope.asString())

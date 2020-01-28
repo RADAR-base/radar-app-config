@@ -31,7 +31,6 @@ internal class UserServiceTest {
         val auth = mock<Auth> {}
         val mpClient = MPClient(config, auth)
         val conditionService = ConditionService(resolver, ClientInterpreter(resolver))
-        val clientService = ClientService(mpClient)
         userService = UserService(mpClient, conditionService, resolver)
         projectService = MPProjectService(mpClient, resolver)
     }
@@ -39,32 +38,32 @@ internal class UserServiceTest {
     @Test
     fun putUserConfig() {
         val configEmpty = userService.userConfig("aRMT", "radar-test", "a")
-        assertEquals(ClientConfig("aRMT", listOf()), configEmpty)
-        userService.putUserConfig("aRMT", "a", ClientConfig("aRMT", listOf(
+        assertEquals(ClientConfig("aRMT", "user.a", listOf()), configEmpty)
+        userService.putUserConfig("aRMT", "a", ClientConfig(null, null, listOf(
                 SingleVariable("c", "b"),
                 SingleVariable("d", "5"))
         ))
 
         val config = userService.userConfig("aRMT", "radar-test", "a")
-        assertEquals(ClientConfig("aRMT", listOf(
-                SingleVariable("c", "b", "user.a"),
-                SingleVariable("d", "5", "user.a"))), config)
+        assertEquals(ClientConfig("aRMT", "user.a", listOf(
+                SingleVariable("c", "b"),
+                SingleVariable("d", "5"))), config)
 
-        userService.putUserConfig("aRMT", "a", ClientConfig("aRMT", listOf(
+        userService.putUserConfig("aRMT", "a", ClientConfig(null, null, listOf(
                 SingleVariable("c", "b")
         )))
         val configNew = userService.userConfig("aRMT", "radar-test", "a")
-        assertEquals(ClientConfig("aRMT", listOf(
-                SingleVariable("c", "b", "user.a")
+        assertEquals(ClientConfig("aRMT", "user.a", listOf(
+                SingleVariable("c", "b")
         )), configNew)
 
-        projectService.putProjectConfig("aRMT", "radar-test", ClientConfig("aRMT", listOf(
+        projectService.putProjectConfig("aRMT", "radar-test", ClientConfig(null, null, listOf(
                 SingleVariable("d", "else")
         )))
         val configNull = userService.userConfig("aRMT", "radar-test", "a")
-        assertEquals(ClientConfig("aRMT", listOf(
-                SingleVariable("c", "b", "user.a"),
-                SingleVariable("d", "else", "project.radar-test")
+        assertEquals(ClientConfig("aRMT", "user.a", listOf(
+                SingleVariable("c", "b")),
+                listOf(SingleVariable("d", "else", "project.radar-test")
         )), configNull)
     }
 }
