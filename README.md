@@ -194,3 +194,29 @@ HTTP 200 OK
   ]
 }
 ```
+
+## Docker usage
+
+Start the stack with
+
+```
+docker-compose up -d
+```
+
+and once you're finished, stop it with
+
+```
+docker-compose down
+```
+
+
+Then you can test requests with Postman at root URL `http://localhost:8080/appconfig/api/`. Start a Postman query. Add OAuth2 authorization and press the _Get new access token_ button. Use
+```
+Callback URL: http://localhost:8080/appconfig/login
+Auth URL: http://localhost:8080/managementportal/oauth/authorize
+Access Token URL: http://localhost:8080/managementportal/oauth/token
+Client ID: appconfig_frontend
+```
+Leave `Client Secret`, `Scope` and `State` empty. Log in with user `admin`, password `admin` and accept the request. Once this is accepted, scroll down to indicate _Use token_. Now you can make any requests to the radar-app-config API.
+
+To have any projects or subjects, these should be created by going to <http://localhost:8080/managementportal/> and logging in again with `admin`, `admin`.
