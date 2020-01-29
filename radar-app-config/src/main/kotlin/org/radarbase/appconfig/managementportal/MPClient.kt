@@ -27,6 +27,9 @@ class MPClient(
     private val clientSecret: String = config.authentication.clientSecret ?: throw IllegalArgumentException("Cannot configure managementportal client without client secret")
     private val httpClient = OkHttpClient()
     private val baseUrl: HttpUrl = config.authentication.url.toHttpUrlOrNull()
+            ?.newBuilder()
+            ?.addPathSegment("") // force trailing slash
+            ?.build()
             ?: throw MalformedURLException("Cannot parse base URL ${config.authentication.url} as an URL")
     private val mapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     private val projectListReader = mapper.readerFor(object : TypeReference<List<Project>>(){})

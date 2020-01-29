@@ -13,12 +13,19 @@ import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.managementportal.MPClient
 import org.radarbase.appconfig.service.*
 import org.radarbase.jersey.auth.ProjectService
+import org.radarbase.jersey.config.ConfigLoader
 import org.radarbase.jersey.config.JerseyResourceEnhancer
 import javax.inject.Singleton
 import javax.ws.rs.ext.ContextResolver
 
 class AppConfigResourceEnhancer(private val config: ApplicationConfig): JerseyResourceEnhancer {
     private val mapper = createMapper()
+
+    override val classes: Array<Class<*>> = if (config.isCorsEnabled) arrayOf(
+            ConfigLoader.Filters.cors,
+            ConfigLoader.Filters.logResponse)
+        else arrayOf(
+            ConfigLoader.Filters.logResponse)
 
     override val packages: Array<String> = arrayOf("org.radarbase.appconfig.resource")
 

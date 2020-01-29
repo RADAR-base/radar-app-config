@@ -1,17 +1,17 @@
-baseUri: http://0.0.0.0:8090/appconfig
+baseUri: http://0.0.0.0:8090/appconfig/api
 isJmxEnabled: false
 
 inject:
   enhancerFactory: org.radarbase.appconfig.inject.ManagementPortalEnhancerFactory
 
 authentication:
-  url: https://radar-test.thehyve.net/managementportal/
+  url: http://managementportal:8080/managementportal/
   clientId: appconfig
-  clientSecret: appconfig_test
+  clientSecret: test
   resourceName: res_appconfig
 
 jdbc:
   driver: "org.h2.Driver"
-  url: "jdbc:h2:./h2"
+  url: "jdbc:h2:./data/h2"
   user:
   password:
