@@ -19,6 +19,7 @@
                 aria-label="Name"
                 [readonly]="group.value.default"
                 [ngClass]="{'disabled' : group.value.default}"
+                (blur)="onBlur($event)"
               >
             </div>
             <div class="td form-group">
@@ -28,6 +29,7 @@
                 formControlName="value"
                 [placeholder]="__.value"
                 aria-label="Value"
+                (blur)="onBlur($event)"
               >
             </div>
             <div class="td form-group">
@@ -44,8 +46,8 @@
       add_circle</mat-icon>{{__.addANameValueConfiguration}}</button>
   </div>
   <div class="sidebar-config">
-    <button class="btn btn-primary" (click)="onPublish()">{{__.publish}}</button>
-    <button class="btn btn-primary" (click)="onReset()">{{__.reset}}</button>
+    <button class="btn btn-primary" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onPublish()">{{__.publish}}</button>
+    <button class="btn btn-primary" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onReset()">{{__.reset}}</button>
     <button class="btn btn-primary" (click)="onCancel()">{{__.cancel}}</button>
   </div>
 </div>

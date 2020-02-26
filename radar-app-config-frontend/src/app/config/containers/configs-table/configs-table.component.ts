@@ -14,6 +14,7 @@ export class ConfigsTableComponent implements OnInit {
   @Input() configObject;
   @Output() save = new EventEmitter();
   configForm: FormGroup;
+  private updateEnabled: boolean = false;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -72,17 +73,57 @@ export class ConfigsTableComponent implements OnInit {
 
   onReset() {
     this.initialize();
+    this.updateEnabled = false;
   }
 
   onCancel() {
     const tempObject = {...this.route.snapshot.queryParams};
     delete tempObject.client;
     // TODO clients or global clients or users or groups?
-    console.log(this.global);
+    // console.log(this.global);
     if (this.global) {
       this.router.navigate(['/global-clients'], {queryParams: tempObject});
     } else {
       this.router.navigate(['/clients'], {queryParams: tempObject});
     }
+  }
+  
+  // if change occurred save and reset activate
+  // if change focus from input happens, check the change
+  onBlur(event){
+    const configValue = this.getConfigFormValue().config;
+    // console.log(configValue);
+    // if (this.updateEnabled === true) {return;}
+    // console.log('onBlur',event);
+    // console.log(this.configObject);
+    // console.log(this.configForm.value.config);
+    for (let i=0;i<configValue.length;i++){
+      if(!this.configObject[i]) {this.updateEnabled = true; return;}
+    //   // console.log(this.configObject[i].name != this.configForm.value.config[i].name);
+    //   // console.log(this.configObject[i].value != this.configForm.value.config[i].value);
+      if(this.configObject[i].name != configValue[i].name) {
+        this.updateEnabled = true;
+        return;
+        // console.log('updateEnabled');
+      }
+      if(this.configObject[i].value != configValue[i].value) {
+        this.updateEnabled = true;
+        return;
+        // console.log('updateEnabled');
+      }
+    }
+    this.updateEnabled = false;
+  }
+
+  getConfigFormValue() {
+    // console.log(this.configForm.value.config);
+    let newConfigFormValue = [];
+    for(let i=0;i<this.configForm.value.config.length;i++){
+      if(this.configForm.value.config[i].name !== "" && this.configForm.value.config[i].value !== "" ){
+        newConfigFormValue.push(this.configForm.value.config[i]);
+      }
+    }
+    return {config: newConfigFormValue};
+
   }
 }

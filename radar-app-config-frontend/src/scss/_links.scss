@@ -21,21 +21,25 @@ a {
 
 .btn{
   cursor: pointer;
-	display: flex;
+  display: flex;
   align-items: center;
-	justify-content: center;
-	width: 100%;
+  justify-content: center;
+  width: 100%;
   padding: 1em 2em;
   text-transform: uppercase;
   color: $color__accent;
-	background-color: $color__accent_bg;
+  background-color: $color__accent_bg;
   border: none;
   border-radius: 0.25em;
   box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
   &.active{
-		background-color: $color__main_bg;
-      color: $color__main;
-	}
+    background-color: $color__main_bg;
+    color: $color__main;
+  }
+  &.disabled{
+    cursor: initial;
+    background-color: #ccc;
+  }
 }
 
 .auto-width{
