@@ -10,7 +10,7 @@
         <div class="breadcrumb-item-label">{{__.application}}:</div>
         <app-dropdown *ngIf="clients" [data]="clients" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>
       </div>
-      <div class="breadcrumb-item" *ngIf="users">
+      <div class="breadcrumb-item">
         <div class="breadcrumb-item-label">{{__.user}}:</div>
         <app-dropdown *ngIf="users" [data]="users" [selected]="userId" (change)="onUserChange($event)"></app-dropdown>
       </div>

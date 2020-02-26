@@ -36,11 +36,11 @@ export class ToastService {
     this.show(message, args);
   }
 
-  showCustomToast(customTpl) {
-    this.show(customTpl, {
-      classname: 'bg-info text-light',
-      delay: 3000,
-      autohide: true
-    });
-  }
+  // showCustomToast(customTpl) {
+  //   this.show(customTpl, {
+  //     classname: 'bg-info text-light',
+  //     delay: 3000,
+  //     autohide: true
+  //   });
+  // }
 }

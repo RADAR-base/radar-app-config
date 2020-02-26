@@ -8,11 +8,12 @@ import {Project} from '@app/project/models/project';
 import {Client} from '@app/client/models/client';
 import {ToastService} from '@app/shared/services/toast.service';
 import strings from '@i18n/strings.json';
+import {User} from "@app/user/models/user";
 
 @Component({
   selector: 'app-configs',
   templateUrl: './configs.component.html',
-  styleUrls: ['./configs.component.scss']
+  // styleUrls: ['./configs.component.scss']
 })
 
 export class ConfigsComponent implements OnInit {
@@ -20,12 +21,12 @@ export class ConfigsComponent implements OnInit {
 
   private projectId;
   private clientId;
-  private readonly userId;
+  private userId;
   private configs;
 
-  private projects: [Project];
-  private clients: [Client];
-  private users: [Client];
+  private projects: [Project] | null;
+  private clients: [Client] | null;
+  private users: [User] | null;
   private loading = true;
 
   constructor(
@@ -40,9 +41,13 @@ export class ConfigsComponent implements OnInit {
   async ngOnInit() {
     this.projectId = this.activatedRoute.snapshot.queryParams.project;
     this.clientId = this.activatedRoute.snapshot.queryParams.client;
+    this.userId = this.activatedRoute.snapshot.queryParams.user;
 
     this.projects = await this.getProjects();
     this.clients = await this.getClients();
+    console.log(this.clients);
+    this.users = await this.getUsers();
+    console.log(this.users);
 
     this.updateConfigs();
   }
@@ -57,6 +62,13 @@ export class ConfigsComponent implements OnInit {
     if (!this.clientId) { return; }
     const {clients} = history.state;
     return (clients ? clients : this.clientService.getAllClients());
+  }
+
+  getUsers() {
+    console.log(this.userId);
+    if (!this.userId) { return; }
+    const {users} = history.state;
+    return (users ? users : this.userService.getUsersByProjectId(this.projectId));
   }
 
   onProjectChange(event) {

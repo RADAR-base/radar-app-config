@@ -9,8 +9,9 @@ import strings from '@i18n/strings.json';
 @Component({
   selector: 'app-clients',
   templateUrl: './clients.component.html',
-  styleUrls: ['./clients.component.scss']
+  // styleUrls: ['./clients.component.scss']
 })
+
 export class ClientsComponent implements OnInit {
   private __ = strings;
   private loading = false;

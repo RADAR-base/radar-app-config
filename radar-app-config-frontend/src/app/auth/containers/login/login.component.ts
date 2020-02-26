@@ -14,8 +14,7 @@ export class LoginComponent implements OnInit {
 
   private __ = strings;
 
-  // TODO Imp: loading is not used
-  loading = false;
+  private loading = false;
 
   constructor(
     private authService: AuthService,
@@ -24,12 +23,10 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // TODO Q: What is pipe(first)?
     this.activatedRoute.queryParams.pipe(first()).subscribe(params => {
       const {code} = params;
       let {returnUrl} = params;
 
-      // TODO Q: Necessary?
       if (returnUrl) {
         localStorage.setItem('returnUrl', returnUrl);
       }
@@ -52,6 +49,7 @@ export class LoginComponent implements OnInit {
               }
             },
             error => {
+              console.log(error);
               // TODO Imp: logger
               // this.error = error;
               this.loading = false;
@@ -62,6 +60,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    this.loading = true;
     this.authService.authorize();
   }
 }

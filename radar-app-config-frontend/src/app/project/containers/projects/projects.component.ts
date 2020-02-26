@@ -9,7 +9,7 @@ import strings from '@i18n/strings.json';
 @Component({
   selector: 'app-projects',
   templateUrl: './projects.component.html',
-  styleUrls: ['./projects.component.scss']
+  // styleUrls: ['./projects.component.scss']
 })
 export class ProjectsComponent implements OnInit {
   private __ = strings;

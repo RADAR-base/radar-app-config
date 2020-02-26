@@ -11,7 +11,7 @@ import strings from '@i18n/strings.json';
 @Component({
   selector: 'app-config-selection-page',
   templateUrl: './config-selection-page.component.html',
-  styleUrls: ['./config-selection-page.component.scss']
+  // styleUrls: ['./config-selection-page.component.scss']
 })
 export class ConfigSelectionPageComponent implements OnInit {
   private __ = strings;

@@ -10,7 +10,7 @@ import strings from '@i18n/strings.json';
 @Component({
   selector: 'app-global-configs',
   templateUrl: './global-configs.component.html',
-  styleUrls: ['./global-configs.component.scss']
+  // styleUrls: ['./global-configs.component.scss']
 })
 
 export class GlobalConfigsComponent implements OnInit {
@@ -18,7 +18,7 @@ export class GlobalConfigsComponent implements OnInit {
 
   private clientId: string;
   private configs;
-  private clients: [Client];
+  private clients: [Client] | null;
   private loading = true;
   // private backButtonObject;
 

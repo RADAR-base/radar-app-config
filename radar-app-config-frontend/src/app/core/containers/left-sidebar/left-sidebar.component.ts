@@ -4,7 +4,7 @@ import strings from '@i18n/strings.json';
 @Component({
   selector: 'app-left-sidebar',
   templateUrl: './left-sidebar.component.html',
-  styleUrls: ['./left-sidebar.component.scss'],
+  // styleUrls: ['./left-sidebar.component.scss'],
 })
 
 

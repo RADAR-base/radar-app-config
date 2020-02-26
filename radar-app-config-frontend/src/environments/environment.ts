@@ -11,5 +11,4 @@ export const environment = {
   authCallback: 'http://localhost:4200/appconfig/login',
   appUrl: 'http://localhost:4200',
   baseURL: 'http://localhost:8085/upload/api',
-
 };

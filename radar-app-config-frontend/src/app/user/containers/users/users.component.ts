@@ -14,7 +14,7 @@ import strings from '@i18n/strings.json';
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss']
+  // styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
 

@@ -8,7 +8,7 @@ const routes: Routes = [
   {
     path: 'admin-main',
     component: AdminSelectionPageComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, AdminGuard]
   },
   {
     path: 'config-selection',

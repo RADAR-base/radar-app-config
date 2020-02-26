@@ -1,7 +1,8 @@
 <div class="container">
   <div>
     <h1>{{__.login}}</h1>
-    <div class="m-1">
+    <div class="main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>
+    <div *ngIf="!loading">
       <button class="btn btn-primary auto-width" (click)="login()">{{__.loginWithManagementPortalAdmin}}</button>
     </div>
   </div>

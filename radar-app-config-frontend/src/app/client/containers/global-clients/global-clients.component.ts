@@ -6,8 +6,9 @@ import strings from '@i18n/strings.json';
 @Component({
   selector: 'app-global-clients',
   templateUrl: './global-clients.component.html',
-  styleUrls: ['./global-clients.component.scss']
+  // styleUrls: ['./global-clients.component.scss']
 })
+
 export class GlobalClientsComponent implements OnInit {
   private __ = strings;
   private loading = false;
