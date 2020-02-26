@@ -1,0 +1,33 @@
+<div class="container-flex">
+  <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
+  <div class="container-main">
+    <div aria-label="breadcrumb" class="breadcrumb">
+      <div class="breadcrumb-item">
+        <div class="breadcrumb-item-label">{{__.project}}:</div>
+        <app-dropdown *ngIf="projects" [data]="projects" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>
+      </div>
+      <div class="breadcrumb-item">
+        <div class="breadcrumb-item-label">{{__.application}}:</div>
+        <app-dropdown *ngIf="clients" [data]="clients" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>
+      </div>
+    </div>
+    <div class="container-content">
+      <div class="main-container-header">
+        <h2>{{__.selectAUser}}</h2>
+      </div>
+      <div class="main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>
+      <div *ngIf="!loading" class="container-cards">
+        <div *ngFor="let user of users" class="card">
+          <a [routerLink]="['/configs']" [queryParams]="makeQueryParams(user.name)" [state]="makeState()">
+            <div class="">
+              <div class="card-body">
+                <h5 class="card-title">{{user.name}}</h5>
+                <h5 class="card-title">{{user.id}}</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

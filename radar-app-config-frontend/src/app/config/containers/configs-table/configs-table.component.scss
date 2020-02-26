@@ -1,0 +1,73 @@
+@import '../../../../styles.scss';
+
+$color__table_border: #ccc;
+
+.config-wrapper{
+  display: flex;
+  flex-wrap: wrap;
+}
+.container-config{
+  width: 100%;
+  @media screen and (min-width: $size__small){
+    width: 75%;
+  }
+}
+
+.sidebar-config{
+  width: 100%;
+  padding-left: 0;
+  padding-top: 2em;
+  @media screen and (min-width: $size__small){
+    width: 25%;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 2em;
+  }
+  .btn{
+    display: block;
+    margin-bottom: 0.5em;
+  }
+}
+
+.table{border-bottom: 1px solid $color__table_border;}
+
+.thead{
+  display: flex;
+  .th{
+    width: 47%;
+    padding: 8px;
+    &.icon{
+      width: 5%;
+    }
+  }
+}
+
+.tr{
+  display: flex;
+  border: 1px solid $color__table_border;
+  border-bottom: none;
+  .td{
+    border-right: solid $color__table_border 1px;
+    width: 47%;
+    p{
+      line-height: 48px;
+      height: 48px;
+      margin: 0;
+      padding: 0 0.5em;
+      color: #999;
+    }
+    &.icon{
+      width: 5%;
+    }
+    input{
+      width: 100%;
+      padding: 8px;
+      border: none;
+      height: 48px;
+      //font-family: 'Montserrat';
+      &.disabled{
+        color: #999;
+      }
+    }
+  }
+}

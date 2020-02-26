@@ -1,0 +1,87 @@
+{
+  "globalConfigs":[
+    {
+      "clientId": "pRMT",
+      "id": "pRMT",
+      "config": [
+        {"name": "plugins 01", "value": "A0 B0 1", "scope": "global"},
+        {"name": "plugins 02", "value": "A0 B0 2", "scope": ""},
+        {"name": "plugins 03", "value": "A0 B0 3", "scope": "global"},
+        {"name": "plugins 04", "value": "A0 B0 4", "scope": "global"},
+        {"name": "plugins 05", "value": "A0 B0 5", "scope": ""}
+      ]
+    },
+    {
+      "clientId": "ManagementPortalapp",
+      "id": "ManagementPortalapp",
+      "config": [
+        {"name": "plugins 11", "value": "A1 B1 1", "scope": "global"},
+        {"name": "plugins 12", "value": "A1 B1 2", "scope": ""},
+        {"name": "plugins 13", "value": "A1 B1 3", "scope": "global"},
+        {"name": "plugins 14", "value": "A1 B1 4", "scope": "global"},
+        {"name": "plugins 15", "value": "A1 B1 5", "scope": ""}
+      ]
+    },
+    {
+      "clientId": "radar_restapi",
+      "id": "radar_restapi",
+      "config": [
+        {"name": "plugins 21", "value": "A2 B2 1", "scope": "global"},
+        {"name": "plugins 22", "value": "A2 B2 2", "scope": ""},
+        {"name": "plugins 23", "value": "A2 B2 3", "scope": "global"},
+        {"name": "plugins 24", "value": "A2 B2 4", "scope": "global"},
+        {"name": "plugins 25", "value": "A2 B2 5", "scope": ""}
+      ]
+    }
+  ],
+  "nonGlobalConfigs":[
+    {
+      "clientId": "pRMT",
+      "id": "pRMT",
+      "config": [
+        {"name": "plugins ngc01", "value": "A0 B0 1", "scope": "global"},
+        {"name": "plugins ngc02", "value": "A0 B0 2", "scope": ""},
+        {"name": "plugins ngc03", "value": "A0 B0 3", "scope": "global"},
+        {"name": "plugins ngc04", "value": "A0 B0 4", "scope": "global"},
+        {"name": "plugins ngc05", "value": "A0 B0 5", "scope": ""}
+      ],
+      "defaults": [
+        {"name": "plugins ngc01", "value": "def value A B 0", "scope": "global"},
+        {"name": "plugins ngc03", "value": "def value A0 B0 3", "scope": "global"},
+        {"name": "plugins ngc04", "value": "def value A0 B0 4", "scope": "global"}
+      ]
+    },
+    {
+      "clientId": "ManagementPortalapp",
+      "id": "ManagementPortalapp",
+      "config": [
+        {"name": "plugins ngc11", "value": "A1 B1 1", "scope": "global"},
+        {"name": "plugins ngc12", "value": "A1 B1 2", "scope": ""},
+        {"name": "plugins ngc13", "value": "A1 B1 3", "scope": "global"},
+        {"name": "plugins ngc14", "value": "A1 B1 4", "scope": "global"},
+        {"name": "plugins ngc15", "value": "A1 B1 5", "scope": ""}
+      ],
+      "defaults": [
+        {"name": "plugins ngc11", "value": "def value A1 B1 1", "scope": "global"},
+        {"name": "plugins ngc13", "value": "def value A1 B1 3", "scope": "global"},
+        {"name": "plugins ngc14", "value": "def value A1 B1 4", "scope": "global"}
+      ]
+    },
+    {
+      "clientId": "radar_restapi",
+      "id": "radar_restapi",
+      "config": [
+        {"name": "plugins ngc21", "value": "A2 B2 1", "scope": "global"},
+        {"name": "plugins ngc22", "value": "A2 B2 2", "scope": ""},
+        {"name": "plugins ngc23", "value": "A2 B2 3", "scope": "global"},
+        {"name": "plugins ngc24", "value": "A2 B2 4", "scope": "global"},
+        {"name": "plugins ngc25", "value": "A2 B2 5", "scope": ""}
+      ],
+      "defaults": [
+        {"name": "plugins ngc21", "value": "def value A2 B2 1", "scope": "global"},
+        {"name": "plugins ngc23", "value": "def value A2 B2 3", "scope": "global"},
+        {"name": "plugins ngc24", "value": "def value A2 B2 4", "scope": "global"}
+      ]
+    }
+  ]
+}

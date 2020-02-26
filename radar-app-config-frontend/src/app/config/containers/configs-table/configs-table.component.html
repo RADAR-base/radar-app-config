@@ -1,0 +1,51 @@
+<div class="config-wrapper">
+  <div class="container-config">
+    <form [formGroup]="configForm">
+      <div class="table">
+        <div class="thead">
+          <div class="th">{{__.name}}</div>
+          <div class="th">{{__.value}}</div>
+          <div class="th">{{__.defaultValue}}</div>
+          <div class="th icon"></div>
+        </div>
+        <div class="tbody" formArrayName="config" *ngFor="let group of getFormData.controls; let i=index">
+          <div class="tr" [formGroupName]="i.toString()">
+            <div class="td form-group">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="name"
+                [placeholder]="__.name"
+                aria-label="Name"
+                [readonly]="group.value.default"
+                [ngClass]="{'disabled' : group.value.default}"
+              >
+            </div>
+            <div class="td form-group">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="value"
+                [placeholder]="__.value"
+                aria-label="Value"
+              >
+            </div>
+            <div class="td form-group">
+              <p>{{group.value.default}}</p>
+            </div>
+            <div>
+              <button (click)="remove(i)" class="btn-icon btn-primary" [ngClass]="{'disabled' : group.value.default}" [disabled]="group.value.default"><mat-icon>delete</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <button (click)="addConfig()" class="btn btn-primary add-config"><mat-icon>
+      add_circle</mat-icon>{{__.addANameValueConfiguration}}</button>
+  </div>
+  <div class="sidebar-config">
+    <button class="btn btn-primary" (click)="onPublish()">{{__.publish}}</button>
+    <button class="btn btn-primary" (click)="onReset()">{{__.reset}}</button>
+    <button class="btn btn-primary" (click)="onCancel()">{{__.cancel}}</button>
+  </div>
+</div>

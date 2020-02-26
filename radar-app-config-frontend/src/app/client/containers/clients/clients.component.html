@@ -1,0 +1,28 @@
+<div class="container-flex">
+  <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
+  <div class="container-main">
+    <div aria-label="breadcrumb" class="breadcrumb">
+      <div class="breadcrumb-item">
+        <div class="breadcrumb-item-label">{{__.project}}:</div>
+        <app-dropdown *ngIf="projects" [data]="projects" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>
+      </div>
+    </div>
+    <div class="container-content">
+      <div class="main-container-header">
+        <h2>{{__.selectAnApplication}}</h2>
+      </div>
+      <div class="main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>
+      <div *ngIf="!loading" class="container-cards">
+        <div *ngFor="let client of clients" class="card">
+          <a [routerLink]="['/config-selection']" [queryParams]="makeQueryParams(client.clientId)" [state]="makeState()">
+            <div class="">
+              <div class="card-body">
+                <h5 class="card-title">{{client.clientId}}</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

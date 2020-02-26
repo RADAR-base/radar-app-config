@@ -1,0 +1,24 @@
+<div class="container-flex">
+  <app-left-sidebar class="container-left"></app-left-sidebar>
+  <div class="container-main">
+    <div class="container-content">
+      <div class="main-container-header"><h2>{{__.selectAProject}}</h2></div>
+      <div class="main-container-loader" *ngIf="loading"><h2>{{__.loading}}</h2></div>
+      <div *ngIf="!loading" class="container-cards">
+        <div *ngFor="let project of projects" class="card">
+          <a [routerLink]="['/clients']" [queryParams]="makeQueryParams(project.name)" [state]="makeState()">
+            <div class="">
+              <div class="card-body">
+                <h5 class="card-title">{{project.projectName}}</h5>
+                <p class="card-text">{{ project.description }}</p>
+                <p *ngIf="project.organization" class="card-text"><small class="text-muted">{{__.organization}}: {{ project.organization }}</small></p>
+                <p *ngIf="project.location" class="card-text"><small class="text-muted">{{__.location}}: {{ project.location }}</small></p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-right"></div>
+</div>

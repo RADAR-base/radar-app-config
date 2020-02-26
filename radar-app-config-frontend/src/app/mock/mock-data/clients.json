@@ -1,0 +1,58 @@
+{
+  "clients": [
+    {
+      "clientId": "ManagementPortalapp"
+    },
+    {
+      "clientId": "Mezurio"
+    },
+    {
+      "clientId": "THINC-IT"
+    },
+    {
+      "clientId": "aRMT"
+    },
+    {
+      "clientId": "altoida-test-client"
+    },
+    {
+      "clientId": "appconfig"
+    },
+    {
+      "clientId": "appconfig_frontend"
+    },
+    {
+      "clientId": "certh-banking-app"
+    },
+    {
+      "clientId": "grafana_import"
+    },
+    {
+      "clientId": "mp_to_grafana"
+    },
+    {
+      "clientId": "pRMT"
+    },
+    {
+      "clientId": "radar_dashboard"
+    },
+    {
+      "clientId": "radar_redcap_integrator"
+    },
+    {
+      "clientId": "radar_rest_sources_auth"
+    },
+    {
+      "clientId": "radar_restapi"
+    },
+    {
+      "clientId": "radar_upload_backend"
+    },
+    {
+      "clientId": "radar_upload_connect"
+    },
+    {
+      "clientId": "radar_upload_frontend"
+    }
+  ]
+}

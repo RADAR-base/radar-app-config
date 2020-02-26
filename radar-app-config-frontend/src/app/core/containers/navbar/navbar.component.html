@@ -1,0 +1,29 @@
+<nav class="navbar">
+  <div class="site-branding">
+    <div class="logo"><img src="assets/radar-logo.png" alt="radar-base"></div>
+    <div class="site-text-wrapper">
+      <div class="site-description">{{__.radarBase}}</div>
+      <div class="site-title"><a class="navbar-brand" routerLink="/">{{__.appConfig}}</a></div>
+    </div>
+  </div>
+  <div>
+    <ul class="navbar-nav">
+      <li *ngIf="currentUser && isAdmin" class="nav-item">
+        <a class="nav-link" [routerLink]="['/global-clients']">{{__.globalConfigurations}}</a>
+      </li>
+      <li *ngIf="currentUser" class="nav-item">
+        <a class="nav-link" [routerLink]="['/projects']">{{__.projects}}</a>
+      </li>
+      <li *ngIf="currentUser" class="nav-item">
+        <a class="nav-link" (click)="logout()">{{__.logout}}</a>
+      </li>
+      <li *ngIf="currentUser" class="nav-item">
+        Hello {{currentUser.username}} {{currentUser.role}}
+      </li>
+      <li *ngIf="currentUser" class="nav-item">
+        <span class="separator"></span>
+        <a class="nav-link" href="http://github.com"><mat-icon>help</mat-icon></a>
+      </li>
+    </ul>
+  </div>
+</nav>

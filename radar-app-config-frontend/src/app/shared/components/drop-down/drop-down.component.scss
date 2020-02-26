@@ -1,0 +1,63 @@
+@import '../../../../styles.scss';
+
+.dropdown{
+  background-color: $color__accent;
+  position: relative;
+  ul,li{margin:0;padding:0;list-style: none;}
+  li{
+    cursor: pointer;
+  }
+  .dd-head{
+    height: 48px;
+    padding: 8px;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 0.25em;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .dd-head-title{
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mat-icon{
+      font-size: 1.5em;//width: 16px;height: 16px;
+    }
+  }
+  .dd-body{
+    border: 1px solid #999;
+    border-top: none;
+    position: absolute;
+    width: 100%;
+    z-index: 20;
+    display: none;
+    &.active{display: block;}
+    .dropdown-list{
+      background-color: $color__accent;
+      .dropdown-item{
+        padding: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        &:hover{
+          background-color: rgba($color: $color__accent_bg, $alpha: 0.3);
+        }
+        &.active{
+          background-color: $color__accent_bg;
+          color: $color__accent;
+        }
+      }
+    }
+  }
+}
+
+
+.dropdown-toggle{
+  cursor: pointer;
+}
+
+.dropdown-item{
+  cursor: pointer;
+}

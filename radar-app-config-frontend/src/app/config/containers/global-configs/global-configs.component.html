@@ -1,0 +1,18 @@
+<div class="container-flex">
+  <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
+  <div class="container-main full-width">
+
+    <div aria-label="breadcrumb" class="breadcrumb">
+      <div class="breadcrumb-item">
+        <div class="breadcrumb-item-label">{{__.application}}:</div>
+        <app-dropdown *ngIf="clients" [data]="clients" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>
+      </div>
+    </div>
+
+    <div class="container-content">
+      <h1>{{__.globalConfigurations}}</h1>
+      <h2>{{__.configurations}}</h2>
+      <app-configs-table *ngIf="!loading" [global]="true" [configObject]="configs" (save)="onSave($event)"></app-configs-table>
+    </div>
+  </div>
+</div>
