@@ -21,6 +21,7 @@ export class NavbarComponent {
 
   private currentUser: User;
   private isAdmin: boolean;
+  private isNavMenuActive: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {
     this.authService.currentUser.subscribe(() => {
@@ -36,6 +37,11 @@ export class NavbarComponent {
     this.authService.logout();
     this.currentUser = null;
     localStorage.removeItem('returnUrl');
+    this.isNavMenuActive = false;
     this.router.navigate(['/login']);
+  }
+
+  onNavbarTogglerClick() {
+    this.isNavMenuActive = !this.isNavMenuActive;
   }
 }

@@ -6,23 +6,36 @@
       <div class="site-title"><a class="navbar-brand" routerLink="/">{{__.appConfig}}</a></div>
     </div>
   </div>
-  <div>
+  <button class="navbar-toggler"
+          type="button" data-toggle="collapse"
+          data-target="#navbarsExampleDefault"
+          aria-controls="navbarsExampleDefault"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          (click)="onNavbarTogglerClick()">
+    <mat-icon class="menu-icon" [ngClass]="{'active': !isNavMenuActive}">menu</mat-icon>
+    <mat-icon class="close-icon" [ngClass]="{'active': isNavMenuActive}">close</mat-icon>
+  </button>
+  <div class="navbar-menu" [ngClass]="{'active': isNavMenuActive}">
     <ul class="navbar-nav">
-      <li *ngIf="currentUser && isAdmin" class="nav-item">
+      <li *ngIf="currentUser && isAdmin" class="nav-item" (click)="onNavbarTogglerClick()">
         <a class="nav-link" [routerLink]="['/global-clients']">{{__.globalConfigurations}}</a>
       </li>
-      <li *ngIf="currentUser" class="nav-item">
+      <li *ngIf="currentUser" class="nav-item" (click)="onNavbarTogglerClick()">
         <a class="nav-link" [routerLink]="['/projects']">{{__.projects}}</a>
       </li>
-      <li *ngIf="currentUser" class="nav-item">
+      <li *ngIf="!currentUser" class="nav-item" (click)="onNavbarTogglerClick()">
+        <a class="nav-link" [routerLink]="['/login']">{{__.login}}</a>
+      </li>
+      <li *ngIf="currentUser" class="nav-item" (click)="onNavbarTogglerClick()">
         <a class="nav-link" (click)="logout()">{{__.logout}}</a>
       </li>
-      <li *ngIf="currentUser" class="nav-item">
+      <li *ngIf="currentUser" class="nav-item greeting">
         Hello {{currentUser.username}} {{currentUser.role}}
       </li>
-      <li *ngIf="currentUser" class="nav-item">
+      <li *ngIf="currentUser" class="nav-item" >
         <span class="separator"></span>
-        <a class="nav-link" href="http://github.com"><mat-icon>help</mat-icon></a>
+        <a class="nav-link" href="http://github.com" ><mat-icon>help</mat-icon></a>
       </li>
     </ul>
   </div>
