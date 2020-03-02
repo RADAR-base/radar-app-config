@@ -25,17 +25,12 @@ services:
       JAVA_OPTS: -Xmx256m  # maximum heap size for the JVM running ManagementPortal, increase this as necessary
     volumes:
       - ./etc/mp-config/:/mp-includes/config
-    networks:
-      - api
-      - mp
     labels:
       - "traefik.http.routers.managementportal.rule=PathPrefix(`/managementportal`)"
       - "traefik.http.services.managementportal.loadbalancer.server.port=8080"
 
   mp-postgresql:
     image: bitnami/postgresql:latest
-    networks:
-      - mp
     environment:
       - POSTGRESQL_USERNAME=radarcns
       - POSTGRESQL_PASSWORD=radarcns
@@ -56,26 +51,32 @@ services:
       - ./etc/appconfig.yml:/etc/radar-app-config/appconfig.yml
     depends_on:
       - managementportal
-    networks:
-      - api
     labels:
       - "traefik.http.routers.appconfig.rule=PathPrefix(`/appconfig/api`)"
       - "traefik.http.services.appconfig.loadbalancer.server.port=8090"
 
   traefik:
     image: traefik:2.1
-    networks:
-      - default
-      - api
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --api.insecure=true --providers.docker
     ports:
       - "8080:80"
 
+  smtp:
+    image: namshi/smtp
+    container_name: smtp
+    restart: always
+    ports:
+      - "25:25"
+    environment:
+      - GMAIL_USER=
+      - GMAIL_PASSWORD=
+
 networks:
   api:
     internal: true
   mp:
     internal: true
-
+  mail:
+    internal: true
