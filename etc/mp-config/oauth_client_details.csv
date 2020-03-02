@@ -5,4 +5,4 @@ THINC-IT;res_ManagementPortal,res_gateway;secret;MEASUREMENT.CREATE,SUBJECT.UPDA
 radar_upload_connect;res_ManagementPortal,res_upload;upload_secret;SUBJECT.READ,SUBJECT.UPDATE,PROJECT.READ,SOURCE.READ,SOURCETYPE.READ,MEASUREMENT.CREATE;client_credentials;;;43200;259200;{};
 radar_upload_frontend;res_ManagementPortal,res_upload;;SOURCETYPE.READ,MEASUREMENT.CREATE,PROJECT.READ,SUBJECT.READ;authorization_code;http://localhost:8080/upload/login;3600;78000;;
 appconfig;res_ManagementPortal;test;SOURCETYPE.READ,MEASUREMENT.CREATE,PROJECT.READ,SUBJECT.READ,OAUTHCLIENTS.READ;client_credentials;;3600;78000;;
-appconfig_frontend;res_appconfig;;SOURCETYPE.READ,MEASUREMENT.CREATE,PROJECT.READ,PROJECT.CREATE,PROJECT.UPDATE,SUBJECT.READ,SUBJECT.UPDATE,OAUTHCLIENTS.READ;authorization_code,refresh_token;http://localhost:8080/appconfig/login;3600;78000;;
+appconfig_frontend;res_appconfig;;SOURCETYPE.READ,MEASUREMENT.CREATE,PROJECT.READ,PROJECT.CREATE,PROJECT.UPDATE,SUBJECT.READ,SUBJECT.UPDATE,OAUTHCLIENTS.READ;authorization_code,refresh_token;http://localhost:4200/login;3600;78000;;
