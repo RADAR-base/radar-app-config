@@ -69,9 +69,11 @@ services:
     restart: always
     ports:
       - "25:25"
-    environment:
-      - GMAIL_USER=
-      - GMAIL_PASSWORD=
+    env_file:
+      - etc/smtp.env
+#    environment:
+#      - GMAIL_USER=
+#      - GMAIL_PASSWORD=
 
 networks:
   api:
