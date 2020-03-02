@@ -10,3 +10,4 @@ radar-app-config/src/test
 radar-expression-lang/build
 radar-expression-lang/out
 radar-expression-lang/src/test
+docker-compose.yml
