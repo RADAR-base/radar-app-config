@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {Client} from '@app/client/models/client';
 import {ToastService} from '@app/shared/services/toast.service';
+import {environment} from "@environments/environment";
 
 /**
  * Client Service
@@ -16,7 +17,7 @@ export class ClientService {
 
 
   private getAllClientsObservable(): Observable<[Client]> {
-    return this.http.get<any>(`/api/clients`);
+    return this.http.get<any>(`${environment.backendUrl}/clients`);
   }
 
   async getAllClients(): Promise<[Client] | void> {

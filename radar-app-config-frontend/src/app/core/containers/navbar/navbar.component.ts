@@ -17,11 +17,11 @@ export class NavbarComponent {
   /**
    * @ignore
    */
-  private __ = strings;
+  __ = strings;
 
-  private currentUser: User;
-  private isAdmin: boolean;
-  private isNavMenuActive: boolean = false;
+  currentUser: User;
+  isAdmin: boolean;
+  isNavMenuActive: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {
     this.authService.currentUser.subscribe(() => {

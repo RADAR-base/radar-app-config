@@ -13,11 +13,11 @@ import strings from '@i18n/strings.json';
 })
 
 export class ClientsComponent implements OnInit {
-  private __ = strings;
-  private loading = false;
-  private projectId;
-  private clients: [Client] | void;
-  private projects: [Project];
+  __ = strings;
+  loading = false;
+  projectId;
+  clients: [Client] | void;
+  projects: [Project];
 
   constructor(
     private clientService: ClientService,

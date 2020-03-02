@@ -9,7 +9,7 @@ import strings from '@i18n/strings.json';
 
 
 export class LeftSidebarComponent{
-  private __ = strings;
+  __ = strings;
   @Input() backButton: {routerLink: any, queryParams: any, name: string};
   @HostBinding('class') class = 'container-left';
 

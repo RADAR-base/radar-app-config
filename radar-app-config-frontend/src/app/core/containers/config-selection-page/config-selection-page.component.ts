@@ -14,12 +14,12 @@ import strings from '@i18n/strings.json';
   // styleUrls: ['./config-selection-page.component.scss']
 })
 export class ConfigSelectionPageComponent implements OnInit {
-  private __ = strings;
+  __ = strings;
 
-  private projectId;
-  private clientId;
-  private projects: [Project];
-  private clients: [Client];
+  projectId;
+  clientId;
+  projects: [Project];
+  clients: [Client];
 
   constructor(
     private configService: ConfigService,

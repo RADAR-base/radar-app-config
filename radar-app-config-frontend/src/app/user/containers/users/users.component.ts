@@ -18,16 +18,16 @@ import strings from '@i18n/strings.json';
 })
 export class UsersComponent implements OnInit {
 
-  private __ = strings;
+  __ = strings;
 
-  private projectId;
-  private clientId;
+  projectId;
+  clientId;
 
-  private projects: [Project];
-  private clients: [Client];
-  private users: [User] | void;
+  projects: [Project];
+  clients: [Client];
+  users: [User] | void;
 
-  private loading = true;
+  loading = true;
 
   constructor(
     private userService: UserService,

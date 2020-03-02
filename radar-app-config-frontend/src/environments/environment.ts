@@ -5,10 +5,9 @@
 export const environment = {
   envName: 'dev',
   production: false,
-
+  baseURL: 'http://localhost:4200/',
   authAPI: 'http://localhost:8080/managementportal/oauth',
+  authCallback: 'http://localhost:4200/login',
   clientId: 'appconfig_frontend',
-  authCallback: 'http://localhost:4200/appconfig/login',
-  appUrl: 'http://localhost:4200',
-  baseURL: 'http://localhost:8085/upload/api',
+  backendUrl: '/api',
 };

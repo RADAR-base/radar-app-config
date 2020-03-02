@@ -13,5 +13,5 @@ export class PageNotFoundComponent {
   /**
    * @ignore
    */
-  private __ = strings;
+  __ = strings;
 }

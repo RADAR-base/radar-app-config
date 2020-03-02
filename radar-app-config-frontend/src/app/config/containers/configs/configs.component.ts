@@ -17,17 +17,17 @@ import {User} from "@app/user/models/user";
 })
 
 export class ConfigsComponent implements OnInit {
-  private __ = strings;
+  __ = strings;
 
-  private projectId;
-  private clientId;
-  private userId;
-  private configs;
+  projectId;
+  clientId;
+  userId;
+  configs;
 
-  private projects: [Project] | null;
-  private clients: [Client] | null;
-  private users: [User] | null;
-  private loading = true;
+  projects: [Project] | null;
+  clients: [Client] | null;
+  users: [User] | null;
+  loading = true;
 
   constructor(
     private projectService: ProjectService,

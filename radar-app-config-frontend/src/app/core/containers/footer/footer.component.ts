@@ -14,5 +14,5 @@ export class FooterComponent {
   /**
    * @ignore
    */
-  private __ = strings;
+  __ = strings;
 }

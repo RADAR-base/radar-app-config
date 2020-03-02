@@ -10,9 +10,9 @@ import strings from '@i18n/strings.json';
 })
 
 export class GlobalClientsComponent implements OnInit {
-  private __ = strings;
-  private loading = false;
-  private clients: [Client] | void;
+  __ = strings;
+  loading = false;
+  clients: [Client] | void;
 
   constructor(private clientService: ClientService) {}
 

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import {Config} from '@app/config/models/config';
 import {ToastService} from '@app/shared/services/toast.service';
 import {Observable} from 'rxjs';
+import {environment} from "@environments/environment";
 
 /**
  * Config Service
@@ -15,7 +16,7 @@ export class ConfigService {
   constructor(private http: HttpClient, private toastService: ToastService) { }
 
   private getGlobalConfigByClientIdObservable(clientId): Observable<Config> {
-    return this.http.get<Config>(`/api/global/config/${clientId}`);
+    return this.http.get<Config>(`${environment.backendUrl}/global/config/${clientId}`);
   }
 
   async getGlobalConfigByClientId(clientId) {

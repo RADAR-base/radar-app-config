@@ -12,8 +12,8 @@ export class DropDownComponent implements OnInit {
   @Input() selected;
   // tslint:disable-next-line:no-output-native
   @Output() change: EventEmitter<string> = new EventEmitter<string>();
-  private head;
-  private headIsActive: boolean;
+  head;
+  headIsActive: boolean;
 
   constructor(
     private eRef: ElementRef,

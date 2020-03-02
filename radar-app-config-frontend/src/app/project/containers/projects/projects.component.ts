@@ -12,9 +12,9 @@ import strings from '@i18n/strings.json';
   // styleUrls: ['./projects.component.scss']
 })
 export class ProjectsComponent implements OnInit {
-  private __ = strings;
-  private loading = true;
-  private projects: [Project] | void;
+  __ = strings;
+  loading = true;
+  projects: [Project] | void;
 
   constructor(private projectService: ProjectService) {}
 

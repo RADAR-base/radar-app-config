@@ -18,6 +18,8 @@ import {ConfigModule} from '@app/config/config.module';
 import {UserModule} from '@app/user/user.module';
 import {UserRoutingModule} from '@app/user/user-routing.module';
 import {MockModule} from '@app/mock/mock.module';
+import {APP_BASE_HREF} from "@angular/common";
+import {environment} from "@environments/environment";
 
 @NgModule({
   declarations: [
@@ -42,6 +44,9 @@ import {MockModule} from '@app/mock/mock.module';
     ProjectRoutingModule,
     AuthRoutingModule,
     AppRoutingModule,
+  ],
+  providers: [
+    { provide: APP_BASE_HREF, useValue: environment.baseURL },
   ],
   bootstrap: [AppComponent]
 })

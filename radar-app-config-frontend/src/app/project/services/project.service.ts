@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Project} from '@app/project/models/project';
 import {ToastService} from '@app/shared/services/toast.service';
+import {environment} from "@environments/environment";
 
 /**
  * Project Service
@@ -15,7 +16,7 @@ export class ProjectService {
   constructor(private http: HttpClient, private toastService: ToastService) {}
 
   private getAllProjectsObservable(): Observable<[Project]> {
-    return this.http.get<any>(`/api/projects`);
+    return this.http.get<any>(`${environment.backendUrl}/projects`);
   }
 
   async getAllProjects(): Promise<[Project] | void> {

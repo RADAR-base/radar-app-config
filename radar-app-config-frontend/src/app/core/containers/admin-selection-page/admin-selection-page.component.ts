@@ -10,5 +10,5 @@ import strings from '@i18n/strings.json';
   // styleUrls: ['./admin-selection-page.component.scss']
 })
 export class AdminSelectionPageComponent {
-  private __ = strings;
+  __ = strings;
 }

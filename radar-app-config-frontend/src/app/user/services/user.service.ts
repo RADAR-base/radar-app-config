@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {User} from '@app/user/models/user';
 import {ToastService} from '@app/shared/services/toast.service';
 import {Observable} from 'rxjs';
+import {environment} from "@environments/environment";
 
 /**
  * User Service
@@ -15,7 +16,7 @@ export class UserService {
   constructor(private http: HttpClient, private toastService: ToastService) {}
 
   private getUsersByProjectIdObservable(projectId): Observable<[User]> {
-    return this.http.get<any>(`/api/projects/${projectId}/users/`);
+    return this.http.get<any>(`${environment.backendUrl}/projects/${projectId}/users/`);
   }
 
   async getUsersByProjectId(projectId): Promise<[User] | void> {

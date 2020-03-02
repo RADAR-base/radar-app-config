@@ -14,12 +14,12 @@ import strings from '@i18n/strings.json';
 })
 
 export class GlobalConfigsComponent implements OnInit {
-  private __ = strings;
+  __ = strings;
 
-  private clientId: string;
-  private configs;
-  private clients: [Client] | null;
-  private loading = true;
+  clientId: string;
+  configs;
+  clients: [Client] | null;
+  loading = true;
   // private backButtonObject;
 
   constructor(

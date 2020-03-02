@@ -12,9 +12,9 @@ import strings from '@i18n/strings.json';
 })
 export class LoginComponent implements OnInit {
 
-  private __ = strings;
+  __ = strings;
 
-  private loading = false;
+  loading = false;
 
   constructor(
     private authService: AuthService,

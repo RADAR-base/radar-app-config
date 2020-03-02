@@ -9,12 +9,12 @@ import {ActivatedRoute, Router} from '@angular/router';
   styleUrls: ['./configs-table.component.scss']
 })
 export class ConfigsTableComponent implements OnInit {
-  private __ = strings;
+  __ = strings;
   @Input() global;
   @Input() configObject;
   @Output() save = new EventEmitter();
   configForm: FormGroup;
-  private updateEnabled: boolean = false;
+  updateEnabled: boolean = false;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
