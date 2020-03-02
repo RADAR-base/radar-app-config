@@ -10,4 +10,6 @@ out/
 h2.*.db
 
 docker-compose.yml
+
 etc/smtp.env
+etc/
