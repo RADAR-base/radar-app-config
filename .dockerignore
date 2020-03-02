@@ -11,3 +11,4 @@ radar-expression-lang/build
 radar-expression-lang/out
 radar-expression-lang/src/test
 docker-compose.yml
+etc/smtp.env
