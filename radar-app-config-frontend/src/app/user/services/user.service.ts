@@ -23,6 +23,7 @@ export class UserService {
     return await this.getUsersByProjectIdObservable(projectId).toPromise()
       .then((data: any) => {
         const results: [User] = data.users;
+        results.forEach(d => d.name = d.id);
         this.toastService.showSuccess(`Users of Project: ${projectId} loaded.`);
         return results;
       })

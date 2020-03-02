@@ -18,10 +18,10 @@
       <div class="main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>
       <div *ngIf="!loading" class="container-cards">
         <div *ngFor="let user of users" class="card">
-          <a [routerLink]="['/configs']" [queryParams]="makeQueryParams(user.name)" [state]="makeState()">
+          <a [routerLink]="['/configs']" [queryParams]="makeQueryParams(user.id)" [state]="makeState()">
             <div class="">
               <div class="card-body">
-                <h5 class="card-title">{{user.name}}</h5>
+<!--                <h5 class="card-title">{{user.name}}</h5>-->
                 <h5 class="card-title">{{user.id}}</h5>
               </div>
             </div>

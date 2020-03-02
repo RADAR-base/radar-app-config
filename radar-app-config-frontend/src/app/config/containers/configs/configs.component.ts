@@ -45,6 +45,7 @@ export class ConfigsComponent implements OnInit {
 
     this.projects = await this.getProjects();
     this.clients = await this.getClients();
+    console.log(this.userId);
     console.log(this.clients);
     this.users = await this.getUsers();
     console.log(this.users);
