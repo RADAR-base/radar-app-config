@@ -9,6 +9,7 @@ import org.radarbase.appconfig.service.UserService
 import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
+import org.radarbase.jersey.auth.ProjectService
 import org.radarbase.jersey.exception.HttpNotFoundException
 import org.radarcns.auth.authorization.Permission
 import javax.inject.Singleton
@@ -24,7 +25,7 @@ import javax.ws.rs.core.MediaType
 @Singleton
 class UserResource(
         @Context private val userService: UserService,
-        @Context private val projectService: ProjectAuthService,
+        @Context private val projectService: ProjectService,
         @Context private val clientService: ClientService
 ) {
     @GET
