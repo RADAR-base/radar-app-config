@@ -1,8 +1,0 @@
-client_id;resource_ids;client_secret;scope;authorized_grant_types;redirect_uri;authorities;access_token_validity;refresh_token_validity;additional_information;autoapprove
-pRMT;res_ManagementPortal,res_gateway;;MEASUREMENT.CREATE,SUBJECT.UPDATE,SUBJECT.READ,PROJECT.READ,SOURCETYPE.READ,SOURCE.READ,SOURCETYPE.READ,SOURCEDATA.READ,USER.READ,ROLE.READ;refresh_token,authorization_code;;;43200;7948800;{"dynamic_registration": true};
-aRMT;res_ManagementPortal,res_gateway;secret;MEASUREMENT.CREATE,SUBJECT.UPDATE,SUBJECT.READ,PROJECT.READ,SOURCETYPE.READ,SOURCE.READ,SOURCETYPE.READ,SOURCEDATA.READ,USER.READ,ROLE.READ;refresh_token,authorization_code;;;43200;7948800;{"dynamic_registration": true};
-THINC-IT;res_ManagementPortal,res_gateway;secret;MEASUREMENT.CREATE,SUBJECT.UPDATE,SUBJECT.READ,PROJECT.READ,SOURCETYPE.READ,SOURCE.READ,SOURCETYPE.READ,SOURCEDATA.READ,USER.READ,ROLE.READ;refresh_token,authorization_code;;;43200;7948800;{"dynamic_registration": true};
-radar_upload_connect;res_ManagementPortal,res_upload;upload_secret;SUBJECT.READ,SUBJECT.UPDATE,PROJECT.READ,SOURCE.READ,SOURCETYPE.READ,MEASUREMENT.CREATE;client_credentials;;;43200;259200;{};
-radar_upload_frontend;res_ManagementPortal,res_upload;;SOURCETYPE.READ,MEASUREMENT.CREATE,PROJECT.READ,SUBJECT.READ;authorization_code;http://localhost:8080/upload/login;3600;78000;;
-appconfig;res_ManagementPortal;test;SOURCETYPE.READ,MEASUREMENT.CREATE,PROJECT.READ,SUBJECT.READ,OAUTHCLIENTS.READ;client_credentials;;3600;78000;;
-appconfig_frontend;res_appconfig;;SOURCETYPE.READ,MEASUREMENT.CREATE,PROJECT.READ,PROJECT.CREATE,PROJECT.UPDATE,SUBJECT.READ,SUBJECT.UPDATE,OAUTHCLIENTS.READ;authorization_code,refresh_token;http://localhost:4200/login;3600;78000;;
