@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
                 if (currentUser.role !== Roles.SYSTEM_ADMIN) {
                   this.router.navigateByUrl('projects');
                 } else {
-                  this.router.navigateByUrl('admin-main');
+                  this.router.navigateByUrl('global-clients');
                 }
               }
             },

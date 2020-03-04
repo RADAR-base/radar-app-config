@@ -20,8 +20,8 @@ export class DropDownComponent implements OnInit {
     private toastService: ToastService) {}
 
   ngOnInit() {
-    this.head = this.data.find(d => d.name == this.selected ); // TODO
-    if (!this.head) { this.toastService.showError('Id error'); } // TODO
+    this.head = this.data.find(d => d.name == this.selected);
+    if (!this.head) { this.toastService.showError('Id error'); }
   }
 
   onHeadClick() {

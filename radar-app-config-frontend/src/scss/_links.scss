@@ -78,3 +78,17 @@ a {
   box-shadow: none;
   .mat-icon{margin-right: 8px;}
 }
+
+.tabs-container {
+  padding: 1em;
+  background-color: #fff;
+  .tab-button {
+    background-color: #ccc;
+    color: #000;
+    text-align: center;
+
+    &.active {
+      background-color: #999;
+    }
+  }
+}

@@ -1,5 +1,13 @@
 <div class="container-flex">
-  <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
+  <div class="container-left">
+    <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
+<!--    <app-left-sidebar></app-left-sidebar>-->
+    <div class="tabs-container">
+      <a class="btn tab-button active" [routerLink]="['/global-clients']">Global Configurations</a>
+      <a class="btn tab-button" [routerLink]="['/projects']">Projects</a>
+    </div>
+  </div>
+
   <div class="container-main full-width">
 
     <div aria-label="breadcrumb" class="breadcrumb">
