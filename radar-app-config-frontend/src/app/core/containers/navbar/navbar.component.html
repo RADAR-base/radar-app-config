@@ -31,7 +31,7 @@
         <a class="nav-link" (click)="logout()">{{__.logout}}</a>
       </li>
       <li *ngIf="currentUser" class="nav-item greeting">
-        Hello {{currentUser.username}} {{currentUser.role}}
+        Hello {{currentUser.username}}
       </li>
       <li *ngIf="currentUser" class="nav-item" >
         <span class="separator"></span>

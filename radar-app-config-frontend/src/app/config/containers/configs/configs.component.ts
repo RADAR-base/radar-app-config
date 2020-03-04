@@ -36,19 +36,26 @@ export class ConfigsComponent implements OnInit {
     private configService: ConfigService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private toastService: ToastService) {}
+    private toastService: ToastService) {console.log('cons');}
 
   async ngOnInit() {
+    this.activatedRoute.queryParams.subscribe(() => {
+      this.init();
+    });
+    // this.activatedRoute.params.subscribe(routeParams => {
+    //   //this.loadUserDetail(routeParams.id);
+    //   //this.init();
+    // });
+  }
+
+  async init(){
     this.projectId = this.activatedRoute.snapshot.queryParams.project;
     this.clientId = this.activatedRoute.snapshot.queryParams.client;
     this.userId = this.activatedRoute.snapshot.queryParams.user;
 
     this.projects = await this.getProjects();
     this.clients = await this.getClients();
-    console.log(this.userId);
-    console.log(this.clients);
     this.users = await this.getUsers();
-    console.log(this.users);
 
     this.updateConfigs();
   }
@@ -66,7 +73,6 @@ export class ConfigsComponent implements OnInit {
   }
 
   getUsers() {
-    console.log(this.userId);
     if (!this.userId) { return; }
     const {users} = history.state;
     return (users ? users : this.userService.getUsersByProjectId(this.projectId));
@@ -118,8 +124,31 @@ export class ConfigsComponent implements OnInit {
     }
   }
 
+  isActive(name){
+    switch (name){
+      case 'group':
+        return false;
+      case 'user':
+        return !!this.userId;
+      case 'config':
+        return !!(!this.userId && this.clientId && this.projectId);
+    }
+  }
+
+  makeState() {
+    return {projects: this.projects, clients: this.clients};
+  }
+
+  makeQueryParams() {
+    return {project: this.projectId, client: this.clientId};
+  }
+
   makeBackButton() {
     if (!this.clientId || !this.projectId) { return; }
     return {routerLink: ['/clients'], queryParams: {project: this.projectId}, name: 'Applications'};
+  }
+
+  onTabButtonClick() {
+    this.init();
   }
 }

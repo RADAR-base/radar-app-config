@@ -23,7 +23,7 @@
       <div class="main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>
       <div *ngIf="!loading" class="container-cards">
         <div *ngFor="let client of clients" class="card">
-          <a [routerLink]="['/config-selection']" [queryParams]="makeQueryParams(client.clientId)" [state]="makeState()">
+          <a [routerLink]="['/configs']" [queryParams]="makeQueryParams(client.clientId)" [state]="makeState()">
             <div class="">
               <div class="card-body">
                 <h5 class="card-title">{{client.clientId}}</h5>
