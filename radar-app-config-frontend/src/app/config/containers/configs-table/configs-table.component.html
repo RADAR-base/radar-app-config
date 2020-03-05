@@ -1,16 +1,19 @@
-<div class="config-wrapper">
-  <div class="container-config">
+<div class="row config-wrapper">
+  <div class="col-md-10 container-config">
     <form [formGroup]="configForm">
-      <div class="table">
-        <div class="thead">
-          <div class="th">{{__.name}}</div>
-          <div class="th">{{__.value}}</div>
-          <div class="th">{{__.defaultValue}}</div>
-          <div class="th icon"></div>
-        </div>
-        <div class="tbody" formArrayName="config" *ngFor="let group of getFormData.controls; let i=index">
-          <div class="tr" [formGroupName]="i.toString()">
-            <div class="td form-group">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">{{__.name}}</th>
+            <th scope="col">{{__.value}}</th>
+            <th scope="col">{{__.defaultValue}}</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody formArrayName="config" *ngFor="let group of getFormData.controls; let i=index">
+          <tr [formGroupName]="i.toString()">
+<!--            <th scope="row">1</th>-->
+            <td class="form-group">
               <input
                 type="text"
                 class="form-control"
@@ -19,35 +22,34 @@
                 aria-label="Name"
                 [readonly]="group.value.default"
                 [ngClass]="{'disabled' : group.value.default}"
-                (blur)="onBlur($event)"
-              >
-            </div>
-            <div class="td form-group">
+                (blur)="onBlur($event)">
+            </td>
+            <td>
               <input
-                type="text"
-                class="form-control"
-                formControlName="value"
-                [placeholder]="__.value"
-                aria-label="Value"
-                (blur)="onBlur($event)"
+                      type="text"
+                      class="form-control"
+                      formControlName="value"
+                      [placeholder]="__.value"
+                      aria-label="Value"
+                      (blur)="onBlur($event)"
               >
-            </div>
-            <div class="td form-group">
+            </td>
+            <td>
               <p>{{group.value.default}}</p>
-            </div>
-            <div>
-              <button (click)="remove(i)" class="btn-icon btn-primary" [ngClass]="{'disabled' : group.value.default}" [disabled]="group.value.default"><mat-icon>delete</mat-icon></button>
-            </div>
-          </div>
-        </div>
-      </div>
+            </td>
+            <td>
+              <button (click)="remove(i)" class="btn btn-primary" [ngClass]="{'disabled' : group.value.default}" [disabled]="group.value.default"><mat-icon>delete</mat-icon></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </form>
-    <button (click)="addConfig()" class="btn btn-primary add-config"><mat-icon>
+    <button mat-button (click)="addConfig()" class="btn btn-primary btn-block add-config"><mat-icon>
       add_circle</mat-icon>{{__.addANameValueConfiguration}}</button>
   </div>
-  <div class="sidebar-config">
-    <button class="btn btn-primary" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onPublish()">{{__.publish}}</button>
-    <button class="btn btn-primary" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onReset()">{{__.reset}}</button>
-    <button class="btn btn-primary" (click)="onCancel()">{{__.cancel}}</button>
+  <div class="col-md-2 sidebar-config">
+    <button class="btn btn-primary btn-block" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onPublish()">{{__.publish}}</button>
+    <button class="btn btn-primary btn-block" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onReset()">{{__.reset}}</button>
+    <button class="btn btn-primary btn-block" (click)="onCancel()">{{__.cancel}}</button>
   </div>
 </div>

@@ -1,4 +1,5 @@
 @import '../../../../styles.scss';
+/*
 
 .navbar{
   position: fixed;
@@ -164,6 +165,25 @@
     margin-left: 1em;
   }
 }
+*/
 
+.site-branding{
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  .logo{
+    img{height:3em;}
+  }
+  .site-text-wrapper {
+    font-size: 1rem;
+    line-height: 1.25rem;
+    .site-description {
+    }
 
+    .site-title {
+      //font-size: 1.1rem;
+      font-weight: bold;
+    }
+  }
+}
 

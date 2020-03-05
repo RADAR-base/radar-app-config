@@ -79,7 +79,7 @@ export class ConfigsComponent implements OnInit {
   }
 
   onProjectChange(event) {
-    this.projectId = event.id;
+    this.projectId = event.name;
     const tempObject = {...this.activatedRoute.snapshot.queryParams};
     tempObject.project = this.projectId;
     this.updateConfigs();

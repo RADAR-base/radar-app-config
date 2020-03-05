@@ -9,6 +9,7 @@ import {CoreRoutingModule} from '@app/core/core-routing.module';
 import { LeftSidebarComponent } from './containers/left-sidebar/left-sidebar.component';
 import { ConfigSelectionPageComponent } from './containers/config-selection-page/config-selection-page.component';
 import {SharedModule} from '@app/shared/shared.module';
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -24,11 +25,12 @@ import {SharedModule} from '@app/shared/shared.module';
     FooterComponent,
     LeftSidebarComponent
   ],
-  imports: [
-    CommonModule,
-    MatIconModule,
-    CoreRoutingModule,
-    SharedModule
-  ]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        CoreRoutingModule,
+        SharedModule,
+        MatButtonModule
+    ]
 })
 export class CoreModule { }

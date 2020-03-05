@@ -1,31 +1,30 @@
-<div class="container-flex">
-  <div class="container-left">
-    <app-left-sidebar></app-left-sidebar>
-    <div class="tabs-container">
-      <a class="btn tab-button" [routerLink]="['/global-clients']">Global Configurations</a>
-      <a class="btn tab-button active" [routerLink]="['/projects']">Projects</a>
+<div class="container-fluid my-5">
+  <div class="row">
+    <div class="col-md-2">
+      <app-left-sidebar></app-left-sidebar>
+        <div class="btn-group-vertical w-100 my-2" role="group" aria-label="Button group">
+          <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/global-clients']">Global Configurations</a>
+          <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/projects']">Projects</a>
+        </div>
     </div>
-  </div>
-<!--  <app-left-sidebar class="container-left"></app-left-sidebar>-->
-  <div class="container-main">
-    <div class="container-content">
-      <div class="main-container-header"><h2>{{__.selectAProject}}</h2></div>
-      <div class="main-container-loader" *ngIf="loading"><h2>{{__.loading}}</h2></div>
-      <div *ngIf="!loading" class="container-cards">
-        <div *ngFor="let project of projects" class="card">
-          <a [routerLink]="['/clients']" [queryParams]="makeQueryParams(project.name)" [state]="makeState()">
-            <div class="">
+    <div class="col-md-8">
+      <div class="row"><h2>{{__.selectAProject}}</h2></div>
+      <div class="row" *ngIf="loading"><h2>{{__.loading}}</h2></div>
+      <div *ngIf="!loading" class="row container-cards">
+        <div *ngFor="let project of projects" class="col-lg-4 p-1 m-0">
+          <div class="card">
+            <a [routerLink]="['/clients']" [queryParams]="makeQueryParams(project.name)" [state]="makeState()">
               <div class="card-body">
                 <h5 class="card-title">{{project.projectName}}</h5>
                 <p class="card-text">{{ project.description }}</p>
                 <p *ngIf="project.organization" class="card-text"><small class="text-muted">{{__.organization}}: {{ project.organization }}</small></p>
                 <p *ngIf="project.location" class="card-text"><small class="text-muted">{{__.location}}: {{ project.location }}</small></p>
               </div>
-            </div>
-          </a>
+            </a>
+          </div>
         </div>
       </div>
     </div>
+    <div class="col-md-2"></div>
   </div>
-  <div class="container-right"></div>
 </div>

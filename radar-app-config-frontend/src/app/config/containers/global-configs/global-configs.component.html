@@ -1,26 +1,57 @@
-<div class="container-flex">
-  <div class="container-left">
-    <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
-<!--    <app-left-sidebar></app-left-sidebar>-->
-    <div class="tabs-container">
-      <a class="btn tab-button active" [routerLink]="['/global-clients']">Global Configurations</a>
-      <a class="btn tab-button" [routerLink]="['/projects']">Projects</a>
-    </div>
-  </div>
-
-  <div class="container-main full-width">
-
-    <div aria-label="breadcrumb" class="breadcrumb">
-      <div class="breadcrumb-item">
-        <div class="breadcrumb-item-label">{{__.application}}:</div>
-        <app-dropdown *ngIf="clients" [data]="clients" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>
+<div class="container-fluid my-5">
+  <div class="row">
+    <div class="col-md-2">
+      <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
+      <div class="btn-group-vertical w-100 my-2" role="group" aria-label="Button group">
+        <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/global-clients']">Global Configurations</a>
+        <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/projects']">Projects</a>
       </div>
     </div>
-
-    <div class="container-content">
-      <h1>{{__.globalConfigurations}}</h1>
-      <h2>{{__.configurations}}</h2>
-      <app-configs-table *ngIf="!loading" [global]="true" [configObject]="configs" (save)="onSave($event)"></app-configs-table>
+    <div class="col-md-10">
+      <div class="row">
+        <div class="col-md-10">
+          <div class="row">
+<!--            <div class="col-md-6">-->
+<!--              <div class="" *ngIf="projects">-->
+<!--                <div class="">{{__.project}}:</div>-->
+<!--                <app-dropdown *ngIf="projects" [data]="projects" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>-->
+<!--              </div>-->
+<!--            </div>-->
+            <div class="col-md-6">
+              <div class="" *ngIf="clients">
+                <div class="">{{__.application}}:</div>
+                  <div ngbDropdown class="d-inline-block">
+                      <button class="btn btn-outline-primary" id="clients" ngbDropdownToggle>{{clientId}}</button>
+                      <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="clients">
+                          <button ngbDropdownItem class="dropdown-item" *ngFor="let client of clients" (click)="onClientChange(client)" >{{client.id}}</button>
+                      </div>
+                  </div>
+<!--                <app-dropdown *ngIf="clients" [data]="clients" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>-->
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="" *ngIf="users">
+                <div class="">{{__.user}}:</div>
+                <app-dropdown *ngIf="users" [data]="users" [selected]="userId" (change)="onUserChange($event)"></app-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2"></div>
+      </div>
+      <div class="container-fluid">
+        <div class="container-content">
+          <div class="row">
+            <h1>{{__.globalConfigurations}}</h1>
+          </div>
+          <div class="row">
+            <h2>{{__.configurations}}</h2>
+          </div>
+          <app-configs-table *ngIf="!loading" [global]="true" [configObject]="configs" (save)="onSave($event)"></app-configs-table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

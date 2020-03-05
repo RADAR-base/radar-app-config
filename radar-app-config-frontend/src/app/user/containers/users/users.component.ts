@@ -59,11 +59,11 @@ export class UsersComponent implements OnInit {
   }
 
   onProjectChange(event) {
-    this.projectId = event.id;
+    this.projectId = event.name;
     const tempObject = {...this.activatedRoute.snapshot.queryParams};
     tempObject.project = this.projectId;
     this.updateUsers();
-    this.router.navigate(['/configs'], {queryParams: tempObject});
+    this.router.navigate(['/users'], {queryParams: tempObject});
   }
 
   onClientChange(event) {
@@ -71,7 +71,7 @@ export class UsersComponent implements OnInit {
     const tempObject = {...this.activatedRoute.snapshot.queryParams};
     tempObject.client = this.clientId;
     this.updateUsers();
-    this.router.navigate(['/configs'], {queryParams: tempObject});
+    this.router.navigate(['/users'], {queryParams: tempObject});
   }
 
   async updateUsers() {

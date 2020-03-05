@@ -8,17 +8,21 @@ import {SharedModule} from '@app/shared/shared.module';
 import { ConfigsTableComponent } from './containers/configs-table/configs-table.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material';
+import {MatButtonModule} from "@angular/material/button";
+import {NgbDropdownModule} from "@ng-bootstrap/ng-bootstrap";
 
 @NgModule({
   declarations: [ConfigsComponent, GlobalConfigsComponent, ConfigsTableComponent],
-  imports: [
-    CommonModule,
-    RouterModule,
-    CoreModule,
-    SharedModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatIconModule
-  ]
+    imports: [
+        CommonModule,
+        RouterModule,
+        CoreModule,
+        SharedModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatButtonModule,
+        NgbDropdownModule
+    ]
 })
 export class ConfigModule { }

@@ -38,8 +38,9 @@ export class ClientsComponent implements OnInit {
   }
 
   onProjectChange(d) {
+    console.log(d);
     this.updateClients();
-    this.projectId = d.id;
+    this.projectId = d.name;
     this.router.navigate(['/clients'], {queryParams: {project: this.projectId}});
   }
 

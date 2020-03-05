@@ -1,48 +1,62 @@
-<div class="container-flex">
-    <div class="container-left">
-        <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
-<!--        <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>-->
-        <!--    <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>-->
-        <!--    <app-left-sidebar></app-left-sidebar>-->
-        <div class="tabs-container">
-            <a class="btn tab-button" [routerLink]="['/global-clients']">Global Configurations</a>
-            <a class="btn tab-button active" [routerLink]="['/projects']">Projects</a>
-        </div>
-
-        <div class="tabs-container">
-            <a class="btn tab-button" [routerLink]="['/configs']" [queryParams]="makeQueryParams()" [state]="makeState()">All groups and users</a>
-            <a class="btn tab-button" [routerLink]="['/groups']" [queryParams]="makeQueryParams()" [state]="makeState()">Groups</a>
-            <a class="btn tab-button active" [routerLink]="['/users']" [queryParams]="makeQueryParams()" [state]="makeState()">Users</a>
-        </div>
-    </div>
-  <div class="container-main">
-    <div aria-label="breadcrumb" class="breadcrumb">
-      <div class="breadcrumb-item">
-        <div class="breadcrumb-item-label">{{__.project}}:</div>
-        <app-dropdown *ngIf="projects" [data]="projects" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>
-      </div>
-      <div class="breadcrumb-item">
-        <div class="breadcrumb-item-label">{{__.application}}:</div>
-        <app-dropdown *ngIf="clients" [data]="clients" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>
-      </div>
-    </div>
-    <div class="container-content">
-      <div class="main-container-header">
-        <h2>{{__.selectAUser}}</h2>
-      </div>
-      <div class="main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>
-      <div *ngIf="!loading" class="container-cards">
-        <div *ngFor="let user of users" class="card">
-          <a [routerLink]="['/configs']" [queryParams]="makeQueryParams(user.id)" [state]="makeState()">
-            <div class="">
-              <div class="card-body">
-<!--                <h5 class="card-title">{{user.name}}</h5>-->
-                <h5 class="card-title">{{user.id}}</h5>
-              </div>
+<div class="container-fluid my-5">
+    <div class="row">
+        <div class="col-md-2">
+            <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
+            <div class="btn-group-vertical w-100 my-2" role="group" aria-label="Button group with nested dropdown">
+                <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/global-clients']">Global Configurations</a>
+                <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/projects']">Projects</a>
             </div>
-          </a>
+            <div class="btn-group-vertical w-100 my-2" role="group" aria-label="Button group with nested dropdown">
+                <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/configs']" [queryParams]="makeQueryParams()" [state]="makeState()">All groups and users</a>
+                <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/groups']" [queryParams]="makeQueryParams()" [state]="makeState()">Groups</a>
+                <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/users']" [queryParams]="makeQueryParams()" [state]="makeState()">Users</a>
+            </div>
         </div>
-      </div>
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="" *ngIf="projects">
+                        <div class="">{{__.project}}:</div>
+
+                        <div ngbDropdown class="d-inline-block">
+                            <button class="btn btn-outline-primary" id="projects" ngbDropdownToggle>{{projectId}}</button>
+                            <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="projects">
+                                <button ngbDropdownItem class="dropdown-item" *ngFor="let project of projects" (click)="onProjectChange(project)" >{{project.projectName}}</button>
+                            </div>
+                        </div>
+<!--                        <app-dropdown *ngIf="projects" [data]="projects" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>-->
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="" *ngIf="clients">
+                        <div class="">{{__.application}}:</div>
+                        <div ngbDropdown class="d-inline-block">
+                            <button class="btn btn-outline-primary" id="clients" ngbDropdownToggle>{{clientId}}</button>
+                            <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="clients">
+                                <button ngbDropdownItem class="dropdown-item" *ngFor="let client of clients" (click)="onClientChange(client)" >{{client.id}}</button>
+                            </div>
+                        </div>
+<!--                        <app-dropdown *ngIf="clients" [data]="clients" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>-->
+                    </div>
+                </div>
+            </div>
+            <div class="row main-container-header">
+                <h2>{{__.selectAUser}}</h2>
+            </div>
+            <div class="row main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>
+            <div *ngIf="!loading" class="row container-cards">
+                <div *ngFor="let user of users" class="col p-1 m-0">
+                    <div class="card">
+                        <a [routerLink]="['/configs']" [queryParams]="makeQueryParams(user.id)" [state]="makeState()">
+                            <div class="card-body">
+                                <!--<h5 class="card-title">{{user.name}}</h5>-->
+                                <h5 class="card-title">{{user.id}}</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
     </div>
-  </div>
 </div>

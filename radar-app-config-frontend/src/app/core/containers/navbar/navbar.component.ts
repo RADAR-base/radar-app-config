@@ -23,6 +23,8 @@ export class NavbarComponent {
   isAdmin: boolean;
   isNavMenuActive: boolean = false;
 
+  navbarOpen = false;
+
   constructor(private authService: AuthService, private router: Router) {
     this.authService.currentUser.subscribe(() => {
       this.currentUser = this.authService.currentDecodedUserValue;
@@ -43,5 +45,9 @@ export class NavbarComponent {
 
   onNavbarTogglerClick() {
     this.isNavMenuActive = !this.isNavMenuActive;
+  }
+
+  toggleNavbar() {
+    this.navbarOpen = !this.navbarOpen;
   }
 }
