@@ -47,9 +47,9 @@
       add_circle</mat-icon>{{__.addANameValueConfiguration}}</button>
   </div>
   <div class="col-md-2 sidebar-config">
-    <button class="btn btn-primary btn-block" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onPublish()">{{__.publish}}</button>
-    <button class="btn btn-primary btn-block" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onReset()">{{__.reset}}</button>
-    <button class="btn btn-primary btn-block" (click)="onCancel()">{{__.cancel}}</button>
+    <button class="btn btn-primary btn-block" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onPublish(modalContent)">{{__.publish}}</button>
+    <button class="btn btn-primary btn-block" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onReset(modalContent)">{{__.reset}}</button>
+    <button class="btn btn-primary btn-block" (click)="onCancel(modalContent)">{{__.cancel}}</button>
   </div>
 </div>
 
