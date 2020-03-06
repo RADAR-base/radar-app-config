@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import strings from '@i18n/strings.json';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
+import {ModalDismissReasons, NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-configs-table',
@@ -9,16 +10,20 @@ import {ActivatedRoute, Router} from '@angular/router';
   styleUrls: ['./configs-table.component.scss']
 })
 export class ConfigsTableComponent implements OnInit {
+
   __ = strings;
   @Input() global;
   @Input() configObject;
   @Output() save = new EventEmitter();
   configForm: FormGroup;
   updateEnabled: boolean = false;
+  modalHeader: any = "Modal Header";
+  modalDescription: any = "Modal Description";
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private fb: FormBuilder) {}
+              private fb: FormBuilder,
+              private _modalService: NgbModal) {}
 
   ngOnInit() {
     this.initialize();
@@ -60,8 +65,27 @@ export class ConfigsTableComponent implements OnInit {
     control.removeAt(index);
   }
 
-  onPublish() {
-    this.save.emit(this.configForm.value);
+  // onPublish() {
+  //   this.save.emit(this.configForm.value);
+  // }
+
+  onPublish(content) {
+    this.modalHeader = 'Publish configuration';
+    this.modalDescription= {
+      firstLine: `You are going to publish new configurations. Are you sure?`,
+      secondLine: `All configuration will be overwritten permanently.`,
+      thirdLine: `This operation cannot be undone.`
+    };
+    // this._modalService.open(NgbdModalConfirmAutofocus);
+    // this.save.emit(this.configForm.value);
+
+    this._modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      console.log(`Closed with: ${result}`);
+      this.save.emit(this.configForm.value);
+    }, (reason) => {
+      console.log(`Dismissed ${ConfigsTableComponent.getDismissReason(reason)}`);
+      // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
   }
 
   initialize() {
@@ -71,21 +95,64 @@ export class ConfigsTableComponent implements OnInit {
     this.getConfigs();
   }
 
-  onReset() {
-    this.initialize();
-    this.updateEnabled = false;
+  // onReset() {
+  //   this.initialize();
+  //   this.updateEnabled = false;
+  // }
+
+  onReset(content) {
+    this.modalHeader = 'Reset configuration';
+    this.modalDescription= {
+      firstLine: `You are going to reset configurations. Are you sure?`,
+      secondLine: `All configuration will be reset to previous one.`,
+      thirdLine: `This operation cannot be undone.`
+    };
+    this._modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      console.log(`Closed with: ${result}`);
+      this.initialize();
+      this.updateEnabled = false;
+    }, (reason) => {
+      console.log(`Dismissed ${ConfigsTableComponent.getDismissReason(reason)}`);
+      // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+    // this._modalService.open(NgbdModalConfirmAutofocus);
   }
 
-  onCancel() {
-    const tempObject = {...this.route.snapshot.queryParams};
-    delete tempObject.client;
-    // TODO clients or global clients or users or groups?
-    // console.log(this.global);
-    if (this.global) {
-      this.router.navigate(['/global-clients'], {queryParams: tempObject});
-    } else {
-      this.router.navigate(['/clients'], {queryParams: tempObject});
-    }
+  // onCancel() {
+  //   const tempObject = {...this.route.snapshot.queryParams};
+  //   delete tempObject.client;
+  //   // TODO clients or global clients or users or groups?
+  //   // console.log(this.global);
+  //   if (this.global) {
+  //     this.router.navigate(['/global-clients'], {queryParams: tempObject});
+  //   } else {
+  //     this.router.navigate(['/clients'], {queryParams: tempObject});
+  //   }
+  // }
+
+  onCancel(content) {
+    this.modalHeader = 'Cancel configuration';
+    this.modalDescription= {
+      firstLine: `You are going to cancel configurations. Are you sure?`,
+      secondLine: `All configuration will not be saved.`,
+      thirdLine: `This operation cannot be undone.`
+    };
+    this._modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      console.log(`Closed with: ${result}`);
+      const tempObject = {...this.route.snapshot.queryParams};
+      delete tempObject.client;
+      // TODO clients or global clients or users or groups?
+      // console.log(this.global);
+      if (this.global) {
+        this.router.navigate(['/global-clients'], {queryParams: tempObject});
+      } else {
+        this.router.navigate(['/clients'], {queryParams: tempObject});
+      }
+    }, (reason) => {
+      console.log(`Dismissed ${ConfigsTableComponent.getDismissReason(reason)}`);
+      // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+    // this._modalService.open(MODALS[name]);
   }
   
   // if change occurred save and reset activate
@@ -115,6 +182,7 @@ export class ConfigsTableComponent implements OnInit {
     this.updateEnabled = false;
   }
 
+
   getConfigFormValue() {
     // console.log(this.configForm.value.config);
     let newConfigFormValue = [];
@@ -125,5 +193,25 @@ export class ConfigsTableComponent implements OnInit {
     }
     return {config: newConfigFormValue};
 
+  }
+
+  open(content) {
+    this._modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      console.log(`Closed with: ${result}`);
+      // this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      console.log(`Dismissed ${ConfigsTableComponent.getDismissReason(reason)}`);
+      // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+
+  private static getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return  `with: ${reason}`;
+    }
   }
 }
