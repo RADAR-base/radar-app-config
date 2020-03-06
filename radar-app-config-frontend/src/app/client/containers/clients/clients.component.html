@@ -9,31 +9,22 @@
     </div>
     <div class="col-md-8">
       <div class="row">
-        <div class="col-md-6">
-          <div class="" *ngIf="projects">
-            <div class="">{{__.project}}:</div>
-            <div ngbDropdown class="d-inline-block">
-              <button class="btn btn-outline-primary" id="sortMenu" ngbDropdownToggle>{{projectId}}</button>
-              <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="">
-                <button ngbDropdownItem class="dropdown-item" *ngFor="let project of projects" (click)="onProjectChange(project)" >{{project.projectName}}</button>
-              </div>
-            </div>
-            <!-- <app-dropdown *ngIf="projects" [data]="projects" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown> -->
-          </div>
+        <app-dropdown class="col-md-6" [data]="projects" [field]="'projectName'" [label]="__.project" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>
+      </div>
+      <div class="container-fluid my-5">
+          <div class="row main-container-header">
+          <h2>{{__.selectAnApplication}}</h2>
         </div>
-      </div>
-      <div class="row main-container-header">
-        <h2>{{__.selectAnApplication}}</h2>
-      </div>
-      <div class="row main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>
-      <div *ngIf="!loading" class="row container-cards">
-        <div *ngFor="let client of clients" class="col-lg-4 p-1 m-0">
-          <div class="card">
-            <a [routerLink]="['/configs']" [queryParams]="makeQueryParams(client.clientId)" [state]="makeState()">
-              <div class="card-body">
-                <h5 class="card-title">{{client.clientId}}</h5>
-              </div>
-            </a>
+        <div class="row main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>
+        <div *ngIf="!loading" class="row container-cards">
+          <div *ngFor="let client of clients" class="col-lg-4 p-1 m-0">
+            <div class="card">
+              <a [routerLink]="['/configs']" [queryParams]="makeQueryParams(client.clientId)" [state]="makeState()">
+                <div class="card-body">
+                  <h5 class="card-title">{{client.clientId}}</h5>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -1,16 +1,27 @@
-<div class="dropdown">
-  <div *ngIf="head">
-    <div class="dd-head" (click)="onHeadClick()" [ngClass]="(headIsActive)?'active':''">
-      <div class="dd-head-title">{{head.name}}</div>
-      <div class="icon">
-        <mat-icon>keyboard_arrow_down</mat-icon>
+<!--<div class="dropdown">-->
+<!--  <div *ngIf="head">-->
+<!--    <div class="dd-head" (click)="onHeadClick()" [ngClass]="(headIsActive)?'active':''">-->
+<!--      <div class="dd-head-title">{{head.name}}</div>-->
+<!--      <div class="icon">-->
+<!--        <mat-icon>keyboard_arrow_down</mat-icon>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="dd-body" [ngClass]="{'active': headIsActive}">-->
+<!--      <ul class="dropdown-list">-->
+<!--        <li class="dropdown-item" *ngFor="let d of data" (click)="onItemClick(d)" [ngClass]="{'active': d.id == head.id}">{{d.name}}</li>-->
+<!--      </ul>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<ng-container class="col-md-6" *ngIf="data">
+  <div class="btn-group mr-3 w-100 align-items-center">
+    <span class="flex-shrink-0 mr-3">{{label}}:</span>
+    <div class="btn-group w-100" ngbDropdown role="group" aria-label="Button group">
+      <button class="btn btn-outline-primary" ngbDropdownToggle>{{selected}}</button>
+      <div ngbDropdownMenu class="dropdown-menu w-100">
+        <button ngbDropdownItem class="dropdown-item" *ngFor="let item of data" (click)="onChange(item)" >{{item[field]}}</button>
       </div>
     </div>
-    <div class="dd-body" [ngClass]="{'active': headIsActive}">
-      <ul class="dropdown-list">
-        <li class="dropdown-item" *ngFor="let d of data" (click)="onItemClick(d)" [ngClass]="{'active': d.id == head.id}">{{d.name}}</li>
-      </ul>
-    </div>
   </div>
-</div>
-
+</ng-container>

@@ -10,34 +10,40 @@ import {ToastService} from '@app/shared/services/toast.service';
 export class DropDownComponent implements OnInit {
   @Input() data;
   @Input() selected;
+  @Input() label;
+  @Input() field;
   // tslint:disable-next-line:no-output-native
   @Output() change: EventEmitter<string> = new EventEmitter<string>();
   head;
   headIsActive: boolean;
 
   constructor(
-    private eRef: ElementRef,
-    private toastService: ToastService) {}
+    // private eRef: ElementRef,
+    // private toastService: ToastService)
+  ){}
 
   ngOnInit() {
-    this.head = this.data.find(d => d.name == this.selected);
-    if (!this.head) { this.toastService.showError('Id error'); }
+    // this.head = this.data.find(d => d.name == this.selected);
+    // if (!this.head) { this.toastService.showError('Id error'); }
   }
 
-  onHeadClick() {
-    this.headIsActive = !this.headIsActive;
-  }
-
-  onItemClick(item) {
-    this.headIsActive = !this.headIsActive;
-    this.head = item;
-    this.change.emit(item);
-  }
-
-  @HostListener('document:click', ['$event'])
-  clickout(event) {
-    if (!this.eRef.nativeElement.contains(event.target)) {
-      this.headIsActive = false;
-    }
+  // onHeadClick() {
+  //   this.headIsActive = !this.headIsActive;
+  // }
+  //
+  // onItemClick(item) {
+  //   this.headIsActive = !this.headIsActive;
+  //   this.head = item;
+  //   this.change.emit(item);
+  // }
+  //
+  // @HostListener('document:click', ['$event'])
+  // clickout(event) {
+  //   if (!this.eRef.nativeElement.contains(event.target)) {
+  //     this.headIsActive = false;
+  //   }
+  // }
+  onChange(item: any) {
+    
   }
 }

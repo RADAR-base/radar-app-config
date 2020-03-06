@@ -12,7 +12,6 @@
         </thead>
         <tbody formArrayName="config" *ngFor="let group of getFormData.controls; let i=index">
           <tr [formGroupName]="i.toString()">
-<!--            <th scope="row">1</th>-->
             <td class="form-group">
               <input
                 type="text"

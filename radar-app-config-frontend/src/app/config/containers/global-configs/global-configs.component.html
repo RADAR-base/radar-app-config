@@ -10,38 +10,14 @@
     <div class="col-md-10">
       <div class="row">
         <div class="col-md-10">
-          <div class="row">
-<!--            <div class="col-md-6">-->
-<!--              <div class="" *ngIf="projects">-->
-<!--                <div class="">{{__.project}}:</div>-->
-<!--                <app-dropdown *ngIf="projects" [data]="projects" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>-->
-<!--              </div>-->
-<!--            </div>-->
-            <div class="col-md-6">
-              <div class="" *ngIf="clients">
-                <div class="">{{__.application}}:</div>
-                  <div ngbDropdown class="d-inline-block">
-                      <button class="btn btn-outline-primary" id="clients" ngbDropdownToggle>{{clientId}}</button>
-                      <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="clients">
-                          <button ngbDropdownItem class="dropdown-item" *ngFor="let client of clients" (click)="onClientChange(client)" >{{client.id}}</button>
-                      </div>
-                  </div>
-<!--                <app-dropdown *ngIf="clients" [data]="clients" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>-->
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="" *ngIf="users">
-                <div class="">{{__.user}}:</div>
-                <app-dropdown *ngIf="users" [data]="users" [selected]="userId" (change)="onUserChange($event)"></app-dropdown>
-              </div>
-            </div>
+          <div class="row my-1">
+            <app-dropdown class="col-md-6" [data]="clients" [selected]="clientId" [label]="__.application" [field]="'id'" (change)="onClientChange($event)"></app-dropdown>
           </div>
         </div>
+<!--      </div>-->
         <div class="col-md-2"></div>
       </div>
-      <div class="container-fluid">
+      <div class="container-fluid my-5">
         <div class="container-content">
           <div class="row">
             <h1>{{__.globalConfigurations}}</h1>
