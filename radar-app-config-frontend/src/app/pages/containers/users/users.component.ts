@@ -1,33 +1,40 @@
 import { Component, OnInit } from '@angular/core';
-import {Project} from '@app/pages/models/project';
-import {Client} from '@app/pages/models/client';
-import {ConfigService} from '@app/pages/services/config.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {ToastService} from '@app/shared/services/toast.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import {ProjectService} from '@app/pages/services/project.service';
 import {ClientService} from '@app/pages/services/client.service';
+import {UserService} from '@app/pages/services/user.service';
+import {Project} from '@app/pages/models/project';
+import {Client} from '@app/pages/models/client';
+import {User} from '@app/pages/models/user';
 import strings from '@i18n/strings.json';
 
+/**
+ * Users Component
+ */
 @Component({
-  selector: 'app-config-selection-page',
-  templateUrl: './config-selection-page.component.html',
-  // styleUrls: ['./config-selection-page.component.scss']
+  selector: 'app-users',
+  templateUrl: './users.component.html',
+  // styleUrls: ['./users.component.scss']
 })
-export class ConfigSelectionPageComponent implements OnInit {
+export class UsersComponent implements OnInit {
+
   __ = strings;
 
   projectId;
   clientId;
+
   projects: [Project];
   clients: [Client];
+  users: [User] | void;
+
+  loading = true;
 
   constructor(
-    private configService: ConfigService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private toastService: ToastService,
+    private userService: UserService,
+    private clientService: ClientService,
     private projectService: ProjectService,
-    private clientService: ClientService) {}
+    private activatedRoute: ActivatedRoute,
+    private router: Router) {}
 
   async ngOnInit() {
     this.projectId = this.activatedRoute.snapshot.queryParams.project;
@@ -35,6 +42,8 @@ export class ConfigSelectionPageComponent implements OnInit {
 
     this.projects = await this.getProjects();
     this.clients = await this.getClients();
+
+    this.updateUsers();
   }
 
   getProjects() {
@@ -50,25 +59,33 @@ export class ConfigSelectionPageComponent implements OnInit {
   }
 
   onProjectChange(event) {
-    this.projectId = event.id;
+    this.projectId = event.name;
     const tempObject = {...this.activatedRoute.snapshot.queryParams};
     tempObject.project = this.projectId;
-    this.router.navigate(['/configs'], {queryParams: tempObject});
+    this.updateUsers();
+    this.router.navigate(['/users'], {queryParams: tempObject});
   }
 
   onClientChange(event) {
     this.clientId = event.id;
     const tempObject = {...this.activatedRoute.snapshot.queryParams};
     tempObject.client = this.clientId;
-    this.router.navigate(['/configs'], {queryParams: tempObject});
+    this.updateUsers();
+    this.router.navigate(['/users'], {queryParams: tempObject});
+  }
+
+  async updateUsers() {
+    this.loading = true;
+    this.users = await this.userService.getUsersByProjectId(this.projectId);
+    this.loading = false;
   }
 
   makeState() {
-    return {projects: this.projects, clients: this.clients};
+    return {projects: this.projects, clients: this.clients, users: this.users};
   }
 
-  makeQueryParams() {
-    return {project: this.projectId, client: this.clientId};
+  makeQueryParams(userId) {
+    return {project: this.projectId, client: this.clientId, user: userId};
   }
 
   makeBackButton() {

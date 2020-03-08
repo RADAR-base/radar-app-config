@@ -1,0 +1,37 @@
+<div class="my-3 my-md-5">
+    <div class="row">
+        <div class="col-md-2">
+            <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
+            <div class="btn-group-vertical w-100 mb-3 mb-md-0" role="group" aria-label="Button group with nested dropdown">
+                <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/global-clients']">Global Configurations</a>
+                <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/projects']">Projects</a>
+            </div>
+            <div class="btn-group-vertical w-100 mb-3 mb-md-0" role="group" aria-label="Button group with nested dropdown">
+                <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/configs']" [queryParams]="makeQueryParams()" [state]="makeState()">All groups and users</a>
+                <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/groups']" [queryParams]="makeQueryParams()" [state]="makeState()">Groups</a>
+                <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/users']" [queryParams]="makeQueryParams()" [state]="makeState()">Users</a>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="row mb-3">
+                <app-dropdown class="col-md-6" [data]="projects" [field]="'projectName'" [label]="__.project" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>
+                <app-dropdown class="col-md-6" [data]="clients" [field]="'id'" [label]="__.application" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>
+            </div>
+                    <h2>{{__.selectAUser}}</h2>
+            <div class="row my-5" *ngIf="loading"><h2>{{__.loading}}</h2></div>
+                <div *ngIf="!loading" class="row my-3">
+                    <div *ngFor="let user of users" class="col-lg-4 mb-3">
+                        <div class="card">
+                            <a [routerLink]="['/configs']" [queryParams]="makeQueryParams(user.id)" [state]="makeState()">
+                                <div class="card-body">
+                                    <!--<h5 class="card-title">{{user.name}}</h5>-->
+                                    <h5 class="card-title">{{user.id}}</h5>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>
