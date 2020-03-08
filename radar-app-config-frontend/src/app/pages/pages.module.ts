@@ -17,6 +17,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {ProjectsComponent} from "@app/pages/containers/projects/projects.component";
 // import {ProjectRoutingModule} from "@app/pages/project/project-routing.module";
 import {UsersComponent} from "@app/pages/containers/users/users.component";
+import {PagesRoutingModule} from "@app/pages/pages-routing.module";
 
 @NgModule({
     declarations: [ClientsComponent, GlobalClientsComponent, ConfigsComponent, GlobalConfigsComponent, ConfigsTableComponent,
@@ -44,6 +45,7 @@ import {UsersComponent} from "@app/pages/containers/users/users.component";
         // RouterModule,
         // SharedModule,
         // NgbDropdownModule
+        PagesRoutingModule
 
     ]
 })
