@@ -13,6 +13,7 @@ import {MockModule} from '@app/mock/mock.module';
 import {APP_BASE_HREF} from "@angular/common";
 import {environment} from "@environments/environment";
 import {PagesModule} from "@app/pages/pages.module";
+import {PagesRoutingModule} from "@app/pages/pages-routing.module";
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import {PagesModule} from "@app/pages/pages.module";
   ],
   imports: [
     SharedModule,
+    PagesModule,
     MockModule,
     BrowserModule,
     BrowserAnimationsModule,
@@ -27,9 +29,9 @@ import {PagesModule} from "@app/pages/pages.module";
     AuthModule,
     CoreModule,
     CoreRoutingModule,
+      PagesRoutingModule,
     AuthRoutingModule,
-    AppRoutingModule,
-    PagesModule
+    AppRoutingModule
   ],
   providers: [
     { provide: APP_BASE_HREF, useValue: environment.baseURL },
