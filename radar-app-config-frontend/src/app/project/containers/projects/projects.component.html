@@ -1,17 +1,19 @@
-<div class="container-fluid my-5">
+<div class="my-3 my-md-5">
   <div class="row">
     <div class="col-md-2">
       <app-left-sidebar></app-left-sidebar>
-        <div class="btn-group-vertical w-100 my-2" role="group" aria-label="Button group">
-          <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/global-clients']">Global Configurations</a>
-          <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/projects']">Projects</a>
-        </div>
+      <div class="btn-group-vertical w-100 mb-3 mb-md-0" role="group" aria-label="Button group">
+        <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/global-clients']">Global Configurations</a>
+        <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/projects']">Projects</a>
+      </div>
     </div>
     <div class="col-md-8">
-      <div class="row"><h2>{{__.selectAProject}}</h2></div>
-      <div class="row" *ngIf="loading"><h2>{{__.loading}}</h2></div>
-      <div *ngIf="!loading" class="row container-cards">
-        <div *ngFor="let project of projects" class="col-lg-4 p-1 m-0">
+<!--      <div class="row">-->
+        <h2>{{__.selectAProject}}</h2>
+<!--      </div>-->
+      <div class="row my-5" *ngIf="loading"><h2>{{__.loading}}</h2></div>
+      <div *ngIf="!loading" class="row my-3">
+        <div *ngFor="let project of projects" class="col-lg-4 mb-3">
           <div class="card">
             <a [routerLink]="['/clients']" [queryParams]="makeQueryParams(project.name)" [state]="makeState()">
               <div class="card-body">

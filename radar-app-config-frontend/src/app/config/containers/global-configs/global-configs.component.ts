@@ -42,6 +42,7 @@ export class GlobalConfigsComponent implements OnInit {
   }
 
   onClientChange(event) {
+    console.log("change", event);
     this.clientId = event.id;
     this.updateConfigs();
     this.router.navigate(['/global-configs'], {queryParams: {client: this.clientId}}).then(() => {});

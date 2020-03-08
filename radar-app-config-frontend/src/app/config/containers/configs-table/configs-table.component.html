@@ -1,4 +1,5 @@
-<div class="row config-wrapper">
+<div class="container-fluid">
+  <div class="row">
   <div class="col-md-10 container-config">
     <form [formGroup]="configForm">
       <table class="table">
@@ -25,32 +26,34 @@
             </td>
             <td>
               <input
-                      type="text"
-                      class="form-control"
-                      formControlName="value"
-                      [placeholder]="__.value"
-                      aria-label="Value"
-                      (blur)="onBlur($event)"
-              >
+                type="text"
+                class="form-control"
+                formControlName="value"
+                [placeholder]="__.value"
+                aria-label="Value"
+                (blur)="onBlur($event)">
             </td>
-            <td>
+            <td style="width: 33%;">
               <p>{{group.value.default}}</p>
             </td>
-            <td>
-              <button (click)="remove(i)" class="btn btn-primary" [ngClass]="{'disabled' : group.value.default}" [disabled]="group.value.default"><mat-icon>delete</mat-icon></button>
+            <td style="width: 16px;">
+              <button (click)="remove(i)" class="btn btn-primary" [ngClass]="{'disabled' : group.value.default}" [disabled]="group.value.default">
+                <mat-icon style="font-size: 16px;width: 16px; height:16px">delete</mat-icon>
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
     </form>
-    <button mat-button (click)="addConfig()" class="btn btn-primary btn-block add-config"><mat-icon>
+    <button mat-button (click)="addConfig()" class="btn btn-primary btn-block add-config"><mat-icon class="mr-1">
       add_circle</mat-icon>{{__.addANameValueConfiguration}}</button>
   </div>
-  <div class="col-md-2 sidebar-config">
+  <div class="col-md-2 sidebar-config mt-5 mt-md-0">
     <button class="btn btn-primary btn-block" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onPublish(modalContent)">{{__.publish}}</button>
     <button class="btn btn-primary btn-block" [ngClass]="{'disabled' : !updateEnabled}" [disabled]="!updateEnabled" (click)="onReset(modalContent)">{{__.reset}}</button>
     <button class="btn btn-primary btn-block" (click)="onCancel(modalContent)">{{__.cancel}}</button>
   </div>
+</div>
 </div>
 
 <ng-template #modalContent let-modal>

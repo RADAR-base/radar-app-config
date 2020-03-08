@@ -1,23 +1,26 @@
-<div class="container-fluid my-5">
+<div class="my-3 my-md-5">
   <div class="row">
     <div class="col-md-2">
       <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
-      <div class="btn-group-vertical w-100 my-2" role="group" aria-label="Button group with nested dropdown">
+      <div class="btn-group-vertical w-100 mb-3 mb-md-0" role="group" aria-label="Button group with nested dropdown">
         <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/global-clients']">Global Configurations</a>
         <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/projects']">Projects</a>
       </div>
     </div>
     <div class="col-md-8">
-      <div class="row">
+      <div class="row mb-3">
         <app-dropdown class="col-md-6" [data]="projects" [field]="'projectName'" [label]="__.project" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>
       </div>
-      <div class="container-fluid my-5">
-          <div class="row main-container-header">
+<!--      <div class="container-fluid my-5">-->
+<!--          <div class="row main-container-header">-->
           <h2>{{__.selectAnApplication}}</h2>
-        </div>
-        <div class="row main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>
-        <div *ngIf="!loading" class="row container-cards">
-          <div *ngFor="let client of clients" class="col-lg-4 p-1 m-0">
+<!--        </div>-->
+      <div class="row my-5" *ngIf="loading"><h2>{{__.loading}}</h2></div>
+
+<!--      <div class="row main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>-->
+      <div *ngIf="!loading" class="row my-3">
+<!--        <div *ngIf="!loading" class="row container-cards">-->
+          <div *ngFor="let client of clients" class="col-lg-4 mb-3">
             <div class="card">
               <a [routerLink]="['/configs']" [queryParams]="makeQueryParams(client.clientId)" [state]="makeState()">
                 <div class="card-body">
@@ -28,7 +31,7 @@
           </div>
         </div>
       </div>
-    </div>
+<!--    </div>-->
     <div class="col-md-2"></div>
   </div>
 </div>

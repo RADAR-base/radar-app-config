@@ -1,5 +1,4 @@
-import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
-import {ToastService} from '@app/shared/services/toast.service';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 
 @Component({
   selector: 'app-dropdown',
@@ -7,7 +6,7 @@ import {ToastService} from '@app/shared/services/toast.service';
   styleUrls: ['./drop-down.component.scss']
 })
 
-export class DropDownComponent implements OnInit {
+export class DropDownComponent{
   @Input() data;
   @Input() selected;
   @Input() label;
@@ -17,33 +16,9 @@ export class DropDownComponent implements OnInit {
   head;
   headIsActive: boolean;
 
-  constructor(
-    // private eRef: ElementRef,
-    // private toastService: ToastService)
-  ){}
+  constructor(){}
 
-  ngOnInit() {
-    // this.head = this.data.find(d => d.name == this.selected);
-    // if (!this.head) { this.toastService.showError('Id error'); }
-  }
-
-  // onHeadClick() {
-  //   this.headIsActive = !this.headIsActive;
-  // }
-  //
-  // onItemClick(item) {
-  //   this.headIsActive = !this.headIsActive;
-  //   this.head = item;
-  //   this.change.emit(item);
-  // }
-  //
-  // @HostListener('document:click', ['$event'])
-  // clickout(event) {
-  //   if (!this.eRef.nativeElement.contains(event.target)) {
-  //     this.headIsActive = false;
-  //   }
-  // }
   onChange(item: any) {
-    
+      this.change.emit(item);
   }
 }

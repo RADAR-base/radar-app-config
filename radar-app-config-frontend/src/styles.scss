@@ -1,1 +1,45 @@
+$theme-colors: (
+        "primary": #84329b,
+        "secondary": #02bceb,
+        "success": #004400,
+//$info:          $cyan !default;
+//$warning:       $yellow !default;
+//$danger:        $red !default;
+//$light:         $gray-100 !default;
+        "dark":   #670054 //$gray-800 !default;
+);
+$font-family-sans-serif: 'Montserrat', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$font-family-serif:      Georgia, "Times New Roman", Times, serif !default;
+$font-family-monospace:  Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+$font-family-base:       $font-family-sans-serif !default;
+
+$font-size-base: 0.8rem;
+$h1-font-size: $font-size-base * 2;
+$h2-font-size: $font-size-base * 1.75;// !default;
+$h3-font-size: $font-size-base * 1.5;// !default;
+$h4-font-size: $font-size-base * 1.25;// !default;
+$h5-font-size: $font-size-base * 1;// !default;
+$h6-font-size: $font-size-base;// !default;
+
+
+@import "node_modules/bootstrap/scss/bootstrap";
+//$body-bg: #000;
+//$body-color: #111;
+//$primary = darken(blue, 10%);
 @import './scss/styles';
+a {
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.table th, .table td {
+  padding: 5px;
+}
+//@media (max-width: @screen-xs) {
+//  body{font-size: 10px;}
+//}
+//
+//@media (max-width: @screen-sm) {
+//  body{font-size: 14px;}
+//}

@@ -1,21 +1,22 @@
-<div class="container-fluid my-5">
-  <div class="row">
-    <div class="col text-center">
-<!--      <button class="btn btn-default">Centered button</button>-->
-      <h1 class="text-center">{{__.login}}</h1>
+<div class="py-5">
+    <div class="row">
+      <div class="col text-center">
+        <!--      <button class="btn btn-default">Centered button</button>-->
+        <h1 class="text-center">{{__.login}}</h1>
+      </div>
+
+    </div>
+    <div class="row" *ngIf="loading">
+      <div class="col text-center">
+
+        <!--    <div class="main-container-header" *ngIf="loading">-->
+        <h2 class="text-center">{{__.loading}}</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 text-center mx-auto" *ngIf="!loading">
+        <button class="btn btn-outline-primary btn-block" (click)="login()">{{__.loginWithManagementPortalAdmin}}</button>
+      </div>
     </div>
 
-  </div>
-  <div class="row" *ngIf="loading">
-    <div class="col text-center">
-
-<!--    <div class="main-container-header" *ngIf="loading">-->
-      <h2 class="text-center">{{__.loading}}</h2>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4 text-center mx-auto" *ngIf="!loading">
-      <button class="btn btn-outline-primary btn-block" (click)="login()">{{__.loginWithManagementPortalAdmin}}</button>
-    </div>
-  </div>
 </div>
