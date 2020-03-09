@@ -1,8 +1,4 @@
-<!--<ngb-toast header="Notification header">-->
-<!--  Content of the notification-->
-<!--</ngb-toast>-->
-
-<ngb-toast
+<ngb-toast class="fixed-bottom"
   *ngFor="let toast of toastService.toasts"
   [header]="toast.headertext"
   [class]="toast.classname"

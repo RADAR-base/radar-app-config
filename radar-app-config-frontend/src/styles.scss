@@ -1,13 +1,14 @@
 $theme-colors: (
-        "primary": #84329b,
-        "secondary": #02bceb,
+        "primary": #4F7D91,
+        "secondary": #CCCCCC,
         "success": #004400,
-//$info:          $cyan !default;
-//$warning:       $yellow !default;
+        // "info": $cyan,
+        // "warning": $yellow,
         "danger": #cc0000,
-//$light:         $gray-100 !default;
-        "dark":   #670054 //$gray-800 !default;
+        // "light": $gray-100,
+        "dark":   #4F7D91
 );
+
 $font-family-sans-serif: 'Montserrat', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
 $font-family-serif:      Georgia, "Times New Roman", Times, serif !default;
 $font-family-monospace:  Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
@@ -32,5 +33,12 @@ a {
 
 .table th, .table td {
   padding: 5px;
+}
+
+.ngb-toasts{
+  position: fixed;
+  bottom: 1em;
+  top: auto !important;
+  right: 0 !important;
 }
 

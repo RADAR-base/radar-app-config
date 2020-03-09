@@ -2,11 +2,11 @@
   <div class="row">
     <div class="col-md-2">
       <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
-      <div class="btn-group-vertical w-100 mb-3 mb-md-0" role="group" aria-label="Button group">
+      <div class="btn-group-vertical w-100 mb-3 mb-md-3" role="group" aria-label="Button group">
         <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/global-clients']">Global Configurations</a>
         <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/projects']">Projects</a>
       </div>
-      <div class="btn-group-vertical w-100 mb-3 mb-md-0" role="group" aria-label="Button group with nested dropdown">
+      <div class="btn-group-vertical w-100 mb-3 mb-md-3" role="group" aria-label="Button group with nested dropdown">
         <a class="btn btn-secondary btn tab-button" [ngClass]="{'active': isActive('config')}" [routerLink]="['/configs']" [queryParams]="makeQueryParams()" [state]="makeState()">All groups and users</a>
         <a class="btn btn-secondary btn tab-button" [ngClass]="{'active': isActive('group')}" [routerLink]="['/groups']" [queryParams]="makeQueryParams()" [state]="makeState()">Groups</a>
         <a class="btn btn-secondary btn tab-button" [ngClass]="{'active': isActive('user')}" [routerLink]="['/users']" [queryParams]="makeQueryParams()" [state]="makeState()">Users</a>

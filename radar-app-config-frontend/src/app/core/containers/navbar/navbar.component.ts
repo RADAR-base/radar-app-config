@@ -1,7 +1,7 @@
 import { Component} from '@angular/core';
 import {User} from '@app/auth/models/user';
 import {AuthService} from '@app/auth/services/auth.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import strings from '@i18n/strings.json';
 
 /**
@@ -25,7 +25,7 @@ export class NavbarComponent {
 
   navbarOpen = false;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router){
     this.authService.currentUser.subscribe(() => {
       this.currentUser = this.authService.currentDecodedUserValue;
       this.isAdmin = this.authService.isAdmin;
@@ -43,11 +43,11 @@ export class NavbarComponent {
     this.router.navigate(['/login']);
   }
 
-  onNavbarTogglerClick() {
-    this.isNavMenuActive = !this.isNavMenuActive;
-  }
-
   toggleNavbar() {
     this.navbarOpen = !this.navbarOpen;
+  }
+
+  closeNavbar(){
+    this.navbarOpen = false;
   }
 }

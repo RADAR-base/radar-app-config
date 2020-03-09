@@ -18,7 +18,7 @@
   <div class="btn-group mr-3 w-100 align-items-center">
     <span class="flex-shrink-0 mr-3">{{label}}:</span>
     <div class="btn-group w-100" ngbDropdown role="group" aria-label="Button group">
-      <button class="btn btn-outline-primary" ngbDropdownToggle>{{selected}}</button>
+      <button class="btn btn-primary" ngbDropdownToggle>{{selected}}</button>
       <div ngbDropdownMenu class="dropdown-menu w-100">
         <button ngbDropdownItem class="dropdown-item" *ngFor="let item of data" (click)="onChange(item)" >{{item[field]}}</button>
       </div>
