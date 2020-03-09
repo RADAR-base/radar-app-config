@@ -8,8 +8,8 @@ import strings from '@i18n/strings.json';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  // styleUrls: ['./login.component.scss']
 })
+
 export class LoginComponent implements OnInit {
 
   __ = strings;
@@ -50,8 +50,6 @@ export class LoginComponent implements OnInit {
             },
             error => {
               console.log(error);
-              // TODO Imp: logger
-              // this.error = error;
               this.loading = false;
             }
           );
