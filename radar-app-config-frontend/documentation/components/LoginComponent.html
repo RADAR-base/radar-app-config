@@ -262,8 +262,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="62"
-                            class="link-to-prism">src/app/auth/containers/login/login.component.ts:62</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="60"
+                            class="link-to-prism">src/app/auth/containers/login/login.component.ts:60</a></div>
                 </td>
             </tr>
 
@@ -392,8 +392,8 @@ import strings from &#x27;@i18n/strings.json&#x27;;
 @Component({
   selector: &#x27;app-login&#x27;,
   templateUrl: &#x27;./login.component.html&#x27;,
-  // styleUrls: [&#x27;./login.component.scss&#x27;]
 })
+
 export class LoginComponent implements OnInit {
 
   __ &#x3D; strings;
@@ -428,14 +428,12 @@ export class LoginComponent implements OnInit {
                 if (currentUser.role !&#x3D;&#x3D; Roles.SYSTEM_ADMIN) {
                   this.router.navigateByUrl(&#x27;projects&#x27;);
                 } else {
-                  this.router.navigateByUrl(&#x27;admin-main&#x27;);
+                  this.router.navigateByUrl(&#x27;global-clients&#x27;);
                 }
               }
             },
             error &#x3D;&gt; {
               console.log(error);
-              // TODO Imp: logger
-              // this.error &#x3D; error;
               this.loading &#x3D; false;
             }
           );
@@ -452,12 +450,20 @@ export class LoginComponent implements OnInit {
     </div>
 
     <div class="tab-pane fade " id="c-templateData">
-        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;container&quot;&gt;
-  &lt;div&gt;
-    &lt;h1&gt;{{__.login}}&lt;/h1&gt;
-    &lt;div class&#x3D;&quot;main-container-header&quot; *ngIf&#x3D;&quot;loading&quot;&gt;&lt;h2&gt;{{__.loading}}&lt;/h2&gt;&lt;/div&gt;
-    &lt;div *ngIf&#x3D;&quot;!loading&quot;&gt;
-      &lt;button class&#x3D;&quot;btn btn-primary auto-width&quot; (click)&#x3D;&quot;login()&quot;&gt;{{__.loginWithManagementPortalAdmin}}&lt;/button&gt;
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;py-5&quot;&gt;
+  &lt;div class&#x3D;&quot;row&quot;&gt;
+    &lt;div class&#x3D;&quot;col text-center&quot;&gt;
+      &lt;h1 class&#x3D;&quot;text-center&quot;&gt;{{__.login}}&lt;/h1&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class&#x3D;&quot;row&quot; *ngIf&#x3D;&quot;loading&quot;&gt;
+    &lt;div class&#x3D;&quot;col text-center&quot;&gt;
+      &lt;h2 class&#x3D;&quot;text-center&quot;&gt;{{__.loading}}&lt;/h2&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class&#x3D;&quot;row&quot;&gt;
+    &lt;div class&#x3D;&quot;col-md-4 text-center mx-auto&quot; *ngIf&#x3D;&quot;!loading&quot;&gt;
+      &lt;button class&#x3D;&quot;btn btn-outline-primary btn-block&quot; (click)&#x3D;&quot;login()&quot;&gt;{{__.loginWithManagementPortalAdmin}}&lt;/button&gt;
     &lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;
@@ -490,7 +496,7 @@ export class LoginComponent implements OnInit {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="container">  <div>    <h1>{{__.login}}</h1>    <div class="main-container-header" *ngIf="loading"><h2>{{__.loading}}</h2></div>    <div *ngIf="!loading">      <button class="btn btn-primary auto-width" (click)="login()">{{__.loginWithManagementPortalAdmin}}</button>    </div>  </div></div></div>'
+        var COMPONENT_TEMPLATE = '<div><div class="py-5">  <div class="row">    <div class="col text-center">      <h1 class="text-center">{{__.login}}</h1>    </div>  </div>  <div class="row" *ngIf="loading">    <div class="col text-center">      <h2 class="text-center">{{__.loading}}</h2>    </div>  </div>  <div class="row">    <div class="col-md-4 text-center mx-auto" *ngIf="!loading">      <button class="btn btn-outline-primary btn-block" (click)="login()">{{__.loginWithManagementPortalAdmin}}</button>    </div>  </div></div></div>'
     var COMPONENTS = [{'name': 'AdminSelectionPageComponent', 'selector': 'app-admin-selection-page'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ClientsComponent', 'selector': 'app-clients'},{'name': 'ConfigsComponent', 'selector': 'app-configs'},{'name': 'ConfigSelectionPageComponent', 'selector': 'app-config-selection-page'},{'name': 'ConfigsTableComponent', 'selector': 'app-configs-table'},{'name': 'DropDownComponent', 'selector': 'app-dropdown'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'GlobalClientsComponent', 'selector': 'app-global-clients'},{'name': 'GlobalConfigsComponent', 'selector': 'app-global-configs'},{'name': 'LeftSidebarComponent', 'selector': 'app-left-sidebar'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'NavbarComponent', 'selector': 'app-navbar'},{'name': 'PageNotFoundComponent', 'selector': 'app-page-not-found'},{'name': 'ProjectsComponent', 'selector': 'app-projects'},{'name': 'ToastComponent', 'selector': 'app-toasts'},{'name': 'UsersComponent', 'selector': 'app-users'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'LoginComponent'};

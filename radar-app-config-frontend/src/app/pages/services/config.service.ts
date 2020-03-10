@@ -46,20 +46,39 @@ export class ConfigService {
     return this.http.get<Config>(`/api/projects/${projectId}/config/${clientId}`);
   }
 
+  /*
+  {
+    "clientId": "{clientId}",
+    "scope": "project.projectA",
+    "config": [
+      {"name": "plugins", "value": "A B"}
+    ],
+    "defaults": [
+      {"name": "plugins", "value", "A", "scope": "global"
+    ]
+  }
+  */
   async getConfigByProjectIdClientId(projectId, clientId) {
     return await this.getConfigByProjectIdClientIdObservable(projectId, clientId).toPromise()
       .then((data: any) => {
+        const result = [];
         const {config, defaults} = data;
+        defaults.forEach(d => {
+          result.push(d);
+        });
         config.forEach(c => {
-          if (defaults) {
-            const defaultValues = defaults.filter(d => d.name === c.name && d.scope === 'global');
-            if (defaultValues.length > 0) {
-              c.default = defaultValues[0].value;
-            }
+          const matchedItem = result.filter(d => c.name === d.name);
+          if(matchedItem.length>0){
+            const index = result.indexOf(matchedItem[0]);
+            result[index].default = result[index].value;
+            result[index].value = c.value;
+          }else{
+            result.push(c);
           }
         });
+
         this.toastService.showSuccess(`Configurations of Project: ${projectId} - Application: ${clientId} loaded.`);
-        return config;
+        return result;
       })
       .catch(e => {
         this.toastService.showError(e);
@@ -81,7 +100,17 @@ export class ConfigService {
     });
   }
 
+  /*
+  POST /projects/{projectId}/config/{clientId}
+  {
+    "config": [
+      {"name": "rate", "value": "1"}
+      {"name": "plugins", "value": "A B"}
+    ]
+  }
+  */
   postConfigByProjectIdAndClientId(projectId, clientId, payload) {
+    console.log('payload', payload);
     return this.http.post(`/api/projects/${projectId}/config/${clientId}`, payload, {
       headers: {
         'Content-Type': 'application/json'

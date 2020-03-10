@@ -162,7 +162,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/shared/components/toast/toast.component.ts:25</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/shared/components/toast/toast.component.ts:9</a></div>
                             </td>
                         </tr>
 
@@ -231,8 +231,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="27"
-                            class="link-to-prism">src/app/shared/components/toast/toast.component.ts:27</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="12"
+                            class="link-to-prism">src/app/shared/components/toast/toast.component.ts:12</a></div>
                 </td>
             </tr>
 
@@ -302,7 +302,7 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/shared/components/toast/toast.component.ts:26</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/shared/components/toast/toast.component.ts:10</a></div>
                             </td>
                         </tr>
 
@@ -321,37 +321,18 @@ import {ToastService} from &#x27;@app/shared/services/toast.service&#x27;;
 @Component({
   selector: &#x27;app-toasts&#x27;,
   templateUrl: &#x27;./toast.component.html&#x27;,
-  // template: &#x27;&#x27;, // &#x60;
-  //   &lt;ngb-toast
-  //     *ngFor&#x3D;&quot;let toast of toastService.toasts&quot;
-  //     [header]&#x3D;&quot;toast.headertext&quot;
-  //     [class]&#x3D;&quot;toast.classname&quot;
-  //     [autohide]&#x3D;&quot;toast.autohide&quot;
-  //     [delay]&#x3D;&quot;toast.delay || 5000&quot;
-  //     (hide)&#x3D;&quot;toastService.remove(toast)&quot;
-  //   &gt;
-  //       &lt;ng-template [ngIf]&#x3D;&quot;isTemplate(toast)&quot; [ngIfElse]&#x3D;&quot;text&quot;&gt;
-  //           &lt;ng-template [ngTemplateOutlet]&#x3D;&quot;toast.textOrTpl&quot;&gt;&lt;/ng-template&gt;
-  //       &lt;/ng-template&gt;
-  //       &lt;ng-template #text&gt;{{ toast.textOrTpl }}&lt;/ng-template&gt;
-  //   &lt;/ngb-toast&gt;
-  // &#x60;,
-  // tslint:disable-next-line:no-host-metadata-property
   host: {&#x27;[class.ngb-toasts]&#x27;: &#x27;true&#x27;}
 })
 export class ToastComponent {
   constructor(public toastService: ToastService) {}
+
   isTemplate(toast) { return toast.textOrTpl instanceof TemplateRef; }
 }
 </code></pre>
     </div>
 
     <div class="tab-pane fade " id="c-templateData">
-        <pre class="line-numbers"><code class="language-html">&lt;!--&lt;ngb-toast header&#x3D;&quot;Notification header&quot;&gt;--&gt;
-&lt;!--  Content of the notification--&gt;
-&lt;!--&lt;/ngb-toast&gt;--&gt;
-
-&lt;ngb-toast
+        <pre class="line-numbers"><code class="language-html">&lt;ngb-toast class&#x3D;&quot;fixed-bottom&quot;
   *ngFor&#x3D;&quot;let toast of toastService.toasts&quot;
   [header]&#x3D;&quot;toast.headertext&quot;
   [class]&#x3D;&quot;toast.classname&quot;
@@ -392,7 +373,7 @@ export class ToastComponent {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><!--<ngb-toast header="Notification header">--><!--  Content of the notification--><!--</ngb-toast>--><ngb-toast  *ngFor="let toast of toastService.toasts"  [header]="toast.headertext"  [class]="toast.classname"  [autohide]="toast.autohide"  [delay]="toast.delay || 5000"  (hide)="toastService.remove(toast)">  <ng-template [ngIf]="isTemplate(toast)" [ngIfElse]="text">    <ng-template [ngTemplateOutlet]="toast.textOrTpl"></ng-template>  </ng-template>  <ng-template #text>{{ toast.textOrTpl }}</ng-template></ngb-toast></div>'
+        var COMPONENT_TEMPLATE = '<div><ngb-toast class="fixed-bottom"  *ngFor="let toast of toastService.toasts"  [header]="toast.headertext"  [class]="toast.classname"  [autohide]="toast.autohide"  [delay]="toast.delay || 5000"  (hide)="toastService.remove(toast)">  <ng-template [ngIf]="isTemplate(toast)" [ngIfElse]="text">    <ng-template [ngTemplateOutlet]="toast.textOrTpl"></ng-template>  </ng-template>  <ng-template #text>{{ toast.textOrTpl }}</ng-template></ngb-toast></div>'
     var COMPONENTS = [{'name': 'AdminSelectionPageComponent', 'selector': 'app-admin-selection-page'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ClientsComponent', 'selector': 'app-clients'},{'name': 'ConfigsComponent', 'selector': 'app-configs'},{'name': 'ConfigSelectionPageComponent', 'selector': 'app-config-selection-page'},{'name': 'ConfigsTableComponent', 'selector': 'app-configs-table'},{'name': 'DropDownComponent', 'selector': 'app-dropdown'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'GlobalClientsComponent', 'selector': 'app-global-clients'},{'name': 'GlobalConfigsComponent', 'selector': 'app-global-configs'},{'name': 'LeftSidebarComponent', 'selector': 'app-left-sidebar'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'NavbarComponent', 'selector': 'app-navbar'},{'name': 'PageNotFoundComponent', 'selector': 'app-page-not-found'},{'name': 'ProjectsComponent', 'selector': 'app-projects'},{'name': 'ToastComponent', 'selector': 'app-toasts'},{'name': 'UsersComponent', 'selector': 'app-users'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'ToastComponent'};

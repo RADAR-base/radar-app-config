@@ -58,7 +58,7 @@
     <h3>File</h3>
 </p>
 <p class="comment">
-    <code>src/app/project/containers/projects/projects.component.ts</code>
+    <code>src/app/pages/containers/projects/projects.component.ts</code>
 </p>
 
     <p class="comment">
@@ -183,7 +183,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/project/containers/projects/projects.component.ts:17</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/pages/containers/projects/projects.component.ts:17</a></div>
                             </td>
                         </tr>
 
@@ -253,7 +253,7 @@
             <tr>
                 <td class="col-md-4">
                     <div class="io-line">Defined in <a href="" data-line="30"
-                            class="link-to-prism">src/app/project/containers/projects/projects.component.ts:30</a></div>
+                            class="link-to-prism">src/app/pages/containers/projects/projects.component.ts:30</a></div>
                 </td>
             </tr>
 
@@ -319,7 +319,7 @@
             <tr>
                 <td class="col-md-4">
                     <div class="io-line">Defined in <a href="" data-line="26"
-                            class="link-to-prism">src/app/project/containers/projects/projects.component.ts:26</a></div>
+                            class="link-to-prism">src/app/pages/containers/projects/projects.component.ts:26</a></div>
                 </td>
             </tr>
 
@@ -360,7 +360,7 @@
             <tr>
                 <td class="col-md-4">
                     <div class="io-line">Defined in <a href="" data-line="21"
-                            class="link-to-prism">src/app/project/containers/projects/projects.component.ts:21</a></div>
+                            class="link-to-prism">src/app/pages/containers/projects/projects.component.ts:21</a></div>
                 </td>
             </tr>
 
@@ -401,7 +401,7 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/project/containers/projects/projects.component.ts:15</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/pages/containers/projects/projects.component.ts:15</a></div>
                             </td>
                         </tr>
 
@@ -427,7 +427,7 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/project/containers/projects/projects.component.ts:16</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/pages/containers/projects/projects.component.ts:16</a></div>
                             </td>
                         </tr>
 
@@ -454,7 +454,7 @@
                     </tr>
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/project/containers/projects/projects.component.ts:17</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/pages/containers/projects/projects.component.ts:17</a></div>
                             </td>
                         </tr>
 
@@ -468,8 +468,8 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit } from &#x27;@angular/core&#x27;;
-import {Project} from &#x27;@app/project/models/project&#x27;;
-import {ProjectService} from &#x27;@app/project/services/project.service&#x27;;
+import {Project} from &#x27;@app/pages/models/project&#x27;;
+import {ProjectService} from &#x27;@app/pages/services/project.service&#x27;;
 import strings from &#x27;@i18n/strings.json&#x27;;
 
 /**
@@ -504,29 +504,35 @@ export class ProjectsComponent implements OnInit {
     </div>
 
     <div class="tab-pane fade " id="c-templateData">
-        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;container-flex&quot;&gt;
-  &lt;app-left-sidebar class&#x3D;&quot;container-left&quot;&gt;&lt;/app-left-sidebar&gt;
-  &lt;div class&#x3D;&quot;container-main&quot;&gt;
-    &lt;div class&#x3D;&quot;container-content&quot;&gt;
-      &lt;div class&#x3D;&quot;main-container-header&quot;&gt;&lt;h2&gt;{{__.selectAProject}}&lt;/h2&gt;&lt;/div&gt;
-      &lt;div class&#x3D;&quot;main-container-loader&quot; *ngIf&#x3D;&quot;loading&quot;&gt;&lt;h2&gt;{{__.loading}}&lt;/h2&gt;&lt;/div&gt;
-      &lt;div *ngIf&#x3D;&quot;!loading&quot; class&#x3D;&quot;container-cards&quot;&gt;
-        &lt;div *ngFor&#x3D;&quot;let project of projects&quot; class&#x3D;&quot;card&quot;&gt;
-          &lt;a [routerLink]&#x3D;&quot;[&#x27;/clients&#x27;]&quot; [queryParams]&#x3D;&quot;makeQueryParams(project.name)&quot; [state]&#x3D;&quot;makeState()&quot;&gt;
-            &lt;div class&#x3D;&quot;&quot;&gt;
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;my-3 my-md-5&quot;&gt;
+  &lt;div class&#x3D;&quot;row&quot;&gt;
+    &lt;div class&#x3D;&quot;col-md-2&quot;&gt;
+      &lt;app-left-sidebar&gt;&lt;/app-left-sidebar&gt;
+      &lt;div class&#x3D;&quot;btn-group-vertical w-100 mb-3 mb-md-0&quot; role&#x3D;&quot;group&quot; aria-label&#x3D;&quot;Button group&quot;&gt;
+        &lt;a class&#x3D;&quot;btn btn-secondary btn-block tab-button&quot; [routerLink]&#x3D;&quot;[&#x27;/global-clients&#x27;]&quot;&gt;Global Configurations&lt;/a&gt;
+        &lt;a class&#x3D;&quot;btn btn-secondary btn-block tab-button active&quot; [routerLink]&#x3D;&quot;[&#x27;/projects&#x27;]&quot;&gt;Projects&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class&#x3D;&quot;col-md-8&quot;&gt;
+      &lt;h2&gt;{{__.selectAProject}}&lt;/h2&gt;
+      &lt;div class&#x3D;&quot;row my-5&quot; *ngIf&#x3D;&quot;loading&quot;&gt;&lt;h2&gt;{{__.loading}}&lt;/h2&gt;&lt;/div&gt;
+      &lt;div *ngIf&#x3D;&quot;!loading&quot; class&#x3D;&quot;row my-3&quot;&gt;
+        &lt;div *ngFor&#x3D;&quot;let project of projects&quot; class&#x3D;&quot;col-lg-4 mb-3&quot;&gt;
+          &lt;div class&#x3D;&quot;card&quot;&gt;
+            &lt;a [routerLink]&#x3D;&quot;[&#x27;/clients&#x27;]&quot; [queryParams]&#x3D;&quot;makeQueryParams(project.name)&quot; [state]&#x3D;&quot;makeState()&quot;&gt;
               &lt;div class&#x3D;&quot;card-body&quot;&gt;
                 &lt;h5 class&#x3D;&quot;card-title&quot;&gt;{{project.projectName}}&lt;/h5&gt;
                 &lt;p class&#x3D;&quot;card-text&quot;&gt;{{ project.description }}&lt;/p&gt;
                 &lt;p *ngIf&#x3D;&quot;project.organization&quot; class&#x3D;&quot;card-text&quot;&gt;&lt;small class&#x3D;&quot;text-muted&quot;&gt;{{__.organization}}: {{ project.organization }}&lt;/small&gt;&lt;/p&gt;
                 &lt;p *ngIf&#x3D;&quot;project.location&quot; class&#x3D;&quot;card-text&quot;&gt;&lt;small class&#x3D;&quot;text-muted&quot;&gt;{{__.location}}: {{ project.location }}&lt;/small&gt;&lt;/p&gt;
               &lt;/div&gt;
-            &lt;/div&gt;
-          &lt;/a&gt;
+            &lt;/a&gt;
+          &lt;/div&gt;
         &lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
+    &lt;div class&#x3D;&quot;col-md-2&quot;&gt;&lt;/div&gt;
   &lt;/div&gt;
-  &lt;div class&#x3D;&quot;container-right&quot;&gt;&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
     </div>
@@ -557,7 +563,7 @@ export class ProjectsComponent implements OnInit {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="container-flex">  <app-left-sidebar class="container-left"></app-left-sidebar>  <div class="container-main">    <div class="container-content">      <div class="main-container-header"><h2>{{__.selectAProject}}</h2></div>      <div class="main-container-loader" *ngIf="loading"><h2>{{__.loading}}</h2></div>      <div *ngIf="!loading" class="container-cards">        <div *ngFor="let project of projects" class="card">          <a [routerLink]="[\'/clients\']" [queryParams]="makeQueryParams(project.name)" [state]="makeState()">            <div class="">              <div class="card-body">                <h5 class="card-title">{{project.projectName}}</h5>                <p class="card-text">{{ project.description }}</p>                <p *ngIf="project.organization" class="card-text"><small class="text-muted">{{__.organization}}: {{ project.organization }}</small></p>                <p *ngIf="project.location" class="card-text"><small class="text-muted">{{__.location}}: {{ project.location }}</small></p>              </div>            </div>          </a>        </div>      </div>    </div>  </div>  <div class="container-right"></div></div></div>'
+        var COMPONENT_TEMPLATE = '<div><div class="my-3 my-md-5">  <div class="row">    <div class="col-md-2">      <app-left-sidebar></app-left-sidebar>      <div class="btn-group-vertical w-100 mb-3 mb-md-0" role="group" aria-label="Button group">        <a class="btn btn-secondary btn-block tab-button" [routerLink]="[\'/global-clients\']">Global Configurations</a>        <a class="btn btn-secondary btn-block tab-button active" [routerLink]="[\'/projects\']">Projects</a>      </div>    </div>    <div class="col-md-8">      <h2>{{__.selectAProject}}</h2>      <div class="row my-5" *ngIf="loading"><h2>{{__.loading}}</h2></div>      <div *ngIf="!loading" class="row my-3">        <div *ngFor="let project of projects" class="col-lg-4 mb-3">          <div class="card">            <a [routerLink]="[\'/clients\']" [queryParams]="makeQueryParams(project.name)" [state]="makeState()">              <div class="card-body">                <h5 class="card-title">{{project.projectName}}</h5>                <p class="card-text">{{ project.description }}</p>                <p *ngIf="project.organization" class="card-text"><small class="text-muted">{{__.organization}}: {{ project.organization }}</small></p>                <p *ngIf="project.location" class="card-text"><small class="text-muted">{{__.location}}: {{ project.location }}</small></p>              </div>            </a>          </div>        </div>      </div>    </div>    <div class="col-md-2"></div>  </div></div></div>'
     var COMPONENTS = [{'name': 'AdminSelectionPageComponent', 'selector': 'app-admin-selection-page'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ClientsComponent', 'selector': 'app-clients'},{'name': 'ConfigsComponent', 'selector': 'app-configs'},{'name': 'ConfigSelectionPageComponent', 'selector': 'app-config-selection-page'},{'name': 'ConfigsTableComponent', 'selector': 'app-configs-table'},{'name': 'DropDownComponent', 'selector': 'app-dropdown'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'GlobalClientsComponent', 'selector': 'app-global-clients'},{'name': 'GlobalConfigsComponent', 'selector': 'app-global-configs'},{'name': 'LeftSidebarComponent', 'selector': 'app-left-sidebar'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'NavbarComponent', 'selector': 'app-navbar'},{'name': 'PageNotFoundComponent', 'selector': 'app-page-not-found'},{'name': 'ProjectsComponent', 'selector': 'app-projects'},{'name': 'ToastComponent', 'selector': 'app-toasts'},{'name': 'UsersComponent', 'selector': 'app-users'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'ProjectsComponent'};

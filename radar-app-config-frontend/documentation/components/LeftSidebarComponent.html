@@ -293,8 +293,8 @@ export class LeftSidebarComponent{
     </div>
 
     <div class="tab-pane fade " id="c-templateData">
-        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;backs-container&quot; *ngIf&#x3D;&quot;backButton&quot;&gt;
-  &lt;a class&#x3D;&quot;btn&quot; [routerLink]&#x3D;&quot;backButton.routerLink&quot; [queryParams]&#x3D;&quot;backButton.queryParams&quot;&gt;
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;btn-group-vertical w-100 mb-3&quot; role&#x3D;&quot;group&quot; aria-label&#x3D;&quot;Button group&quot; *ngIf&#x3D;&quot;backButton&quot;&gt;
+  &lt;a mat-button class&#x3D;&quot;btn btn-primary btn-block&quot; [routerLink]&#x3D;&quot;backButton.routerLink&quot; [queryParams]&#x3D;&quot;backButton.queryParams&quot;&gt;
     &lt;mat-icon&gt;keyboard_arrow_left&lt;/mat-icon&gt;{{__.backTo}}{{backButton.name}}
   &lt;/a&gt;
 &lt;/div&gt;
@@ -327,7 +327,7 @@ export class LeftSidebarComponent{
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="backs-container" *ngIf="backButton">  <a class="btn" [routerLink]="backButton.routerLink" [queryParams]="backButton.queryParams">    <mat-icon>keyboard_arrow_left</mat-icon>{{__.backTo}}{{backButton.name}}  </a></div></div>'
+        var COMPONENT_TEMPLATE = '<div><div class="btn-group-vertical w-100 mb-3" role="group" aria-label="Button group" *ngIf="backButton">  <a mat-button class="btn btn-primary btn-block" [routerLink]="backButton.routerLink" [queryParams]="backButton.queryParams">    <mat-icon>keyboard_arrow_left</mat-icon>{{__.backTo}}{{backButton.name}}  </a></div></div>'
     var COMPONENTS = [{'name': 'AdminSelectionPageComponent', 'selector': 'app-admin-selection-page'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ClientsComponent', 'selector': 'app-clients'},{'name': 'ConfigsComponent', 'selector': 'app-configs'},{'name': 'ConfigSelectionPageComponent', 'selector': 'app-config-selection-page'},{'name': 'ConfigsTableComponent', 'selector': 'app-configs-table'},{'name': 'DropDownComponent', 'selector': 'app-dropdown'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'GlobalClientsComponent', 'selector': 'app-global-clients'},{'name': 'GlobalConfigsComponent', 'selector': 'app-global-configs'},{'name': 'LeftSidebarComponent', 'selector': 'app-left-sidebar'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'NavbarComponent', 'selector': 'app-navbar'},{'name': 'PageNotFoundComponent', 'selector': 'app-page-not-found'},{'name': 'ProjectsComponent', 'selector': 'app-projects'},{'name': 'ToastComponent', 'selector': 'app-toasts'},{'name': 'UsersComponent', 'selector': 'app-users'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'LeftSidebarComponent'};

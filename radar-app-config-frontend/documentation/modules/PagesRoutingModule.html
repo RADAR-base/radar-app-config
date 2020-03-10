@@ -34,7 +34,7 @@
 
 <ol class="breadcrumb">
     <li>Modules</li>
-    <li>CoreRoutingModule</li>
+    <li>PagesRoutingModule</li>
 </ol>
 
 
@@ -54,7 +54,7 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/app/core/core-routing.module.ts</code>
+            <code>src/app/pages/pages-routing.module.ts</code>
         </p>
 
 
@@ -72,28 +72,52 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NgModule } from &#x27;@angular/core&#x27;;
 import { Routes, RouterModule } from &#x27;@angular/router&#x27;;
-// import {AdminSelectionPageComponent} from &#x27;@app/core/containers/admin-selection-page/admin-selection-page.component&#x27;;
-// import {ConfigSelectionPageComponent} from &#x27;@app/core/containers/config-selection-page/config-selection-page.component&#x27;;
-// import {AdminGuard, AuthGuard} from &#x27;@app/auth/helpers&#x27;;
+import {ClientsComponent} from &#x27;@app/pages/containers/clients/clients.component&#x27;;
+import {GlobalClientsComponent} from &#x27;@app/pages/containers/global-clients/global-clients.component&#x27;;
+import {AuthGuard, AdminGuard} from &#x27;@app/auth/helpers&#x27;;
+import {ConfigsComponent} from &quot;@app/pages/containers/configs/configs.component&quot;;
+import {GlobalConfigsComponent} from &quot;@app/pages/containers/global-configs/global-configs.component&quot;;
+import {ProjectsComponent} from &quot;@app/pages/containers/projects/projects.component&quot;;
+import {UsersComponent} from &quot;@app/pages/containers/users/users.component&quot;;
 
 const routes: Routes &#x3D; [
-  // {
-  //   path: &#x27;admin-main&#x27;,
-  //   component: AdminSelectionPageComponent,
-  //   canActivate: [AuthGuard, AdminGuard]
-  // },
-  // {
-  //   path: &#x27;config-selection&#x27;,
-  //   component: ConfigSelectionPageComponent,
-  //   canActivate: [AuthGuard]
-  // },
+    {
+        path: &#x27;clients&#x27;,
+        component: ClientsComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: &#x27;global-clients&#x27;,
+        component: GlobalClientsComponent,
+        canActivate: [AuthGuard, AdminGuard]
+    },
+    {
+        path: &#x27;configs&#x27;,
+        component: ConfigsComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: &#x27;global-configs&#x27;,
+        component: GlobalConfigsComponent,
+        canActivate: [AuthGuard, AdminGuard]
+    },
+    {
+        path: &#x27;projects&#x27;,
+        component: ProjectsComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: &#x27;users&#x27;,
+        component: UsersComponent,
+        canActivate: [AuthGuard]
+    }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
 })
-export class CoreRoutingModule {}
+export class PagesRoutingModule { }
 </code></pre>
     </div>
 </div>
@@ -129,7 +153,7 @@ export class CoreRoutingModule {}
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'module';
-            var COMPODOC_CURRENT_PAGE_URL = 'CoreRoutingModule.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'PagesRoutingModule.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 

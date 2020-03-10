@@ -323,6 +323,7 @@ import {CoreRoutingModule} from &#x27;@app/core/core-routing.module&#x27;;
 import { LeftSidebarComponent } from &#x27;./containers/left-sidebar/left-sidebar.component&#x27;;
 import { ConfigSelectionPageComponent } from &#x27;./containers/config-selection-page/config-selection-page.component&#x27;;
 import {SharedModule} from &#x27;@app/shared/shared.module&#x27;;
+import {MatButtonModule} from &quot;@angular/material/button&quot;;
 
 @NgModule({
   declarations: [
@@ -338,12 +339,13 @@ import {SharedModule} from &#x27;@app/shared/shared.module&#x27;;
     FooterComponent,
     LeftSidebarComponent
   ],
-  imports: [
-    CommonModule,
-    MatIconModule,
-    CoreRoutingModule,
-    SharedModule
-  ]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        CoreRoutingModule,
+        SharedModule,
+        MatButtonModule
+    ]
 })
 export class CoreModule { }
 </code></pre>

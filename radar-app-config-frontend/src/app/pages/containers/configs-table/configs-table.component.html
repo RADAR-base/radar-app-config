@@ -20,8 +20,8 @@
                 formControlName="name"
                 [placeholder]="__.name"
                 aria-label="Name"
-                [readonly]="group.value.default"
-                [ngClass]="{'disabled' : group.value.default}"
+                [readonly]="group.value.scope === 'global'"
+                [ngClass]="{'disabled' : group.value.scope === 'global'}"
                 (blur)="onBlur($event)">
             </td>
             <td>
@@ -37,7 +37,7 @@
               <p>{{group.value.default}}</p>
             </td>
             <td style="width: 16px;">
-              <button (click)="remove(i)" class="btn btn-primary" [ngClass]="{'disabled' : group.value.default}" [disabled]="group.value.default">
+              <button (click)="remove(i)" class="btn btn-primary" [ngClass]="{'disabled' : group.value.scope === 'global'}" [disabled]="group.value.scope === 'global'">
                 <mat-icon style="font-size: 16px;width: 16px; height:16px">delete</mat-icon>
               </button>
             </td>

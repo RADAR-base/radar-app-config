@@ -56,7 +56,7 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/app/client/services/client.service.ts</code>
+            <code>src/app/pages/services/client.service.ts</code>
         </p>
 
             <p class="comment">
@@ -113,12 +113,14 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/client/services/client.service.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/pages/services/client.service.ts:15</a></div>
                             </td>
                         </tr>
 
                 <tr>
                     <td class="col-md-4">
+                            <div class="io-description"><p>constructor</p>
+</div>
                             <div>
                                     <b>Parameters :</b>
                                     <table class="params">
@@ -192,17 +194,25 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="23"
-                            class="link-to-prism">src/app/client/services/client.service.ts:23</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="36"
+                            class="link-to-prism">src/app/pages/services/client.service.ts:36</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>getAllClients</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>    <code>Promise&lt; | void&gt;</code>
+
+                    </div>
+                    <div class="io-description">
+                        <p>clients</p>
 
                     </div>
                 </td>
@@ -233,17 +243,25 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="19"
-                            class="link-to-prism">src/app/client/services/client.service.ts:19</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="28"
+                            class="link-to-prism">src/app/pages/services/client.service.ts:28</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>getAllClientsObservable</p>
+</div>
 
+                    <div>
+                    </div>
                     <div class="io-description">
                         <b>Returns : </b>    <code>Observable&lt;&gt;</code>
+
+                    </div>
+                    <div class="io-description">
+                        <p>clients observable</p>
 
                     </div>
                 </td>
@@ -259,7 +277,7 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Observable } from &#x27;rxjs&#x27;;
 import { Injectable } from &#x27;@angular/core&#x27;;
 import { HttpClient } from &#x27;@angular/common/http&#x27;;
-import {Client} from &#x27;@app/client/models/client&#x27;;
+import {Client} from &#x27;@app/pages/models/client&#x27;;
 import {ToastService} from &#x27;@app/shared/services/toast.service&#x27;;
 import {environment} from &quot;@environments/environment&quot;;
 
@@ -269,15 +287,28 @@ import {environment} from &quot;@environments/environment&quot;;
 @Injectable({
   providedIn: &#x27;root&#x27;
 })
+
 export class ClientService {
 
+  /**
+   * constructor
+   * @params http
+   * toast service
+   */
   constructor(private http: HttpClient, private toastService: ToastService) { }
 
-
+  /**
+   * getAllClientsObservable
+   * @returns clients observable
+   */
   private getAllClientsObservable(): Observable&lt;[Client]&gt; {
     return this.http.get&lt;any&gt;(&#x60;${environment.backendUrl}/clients&#x60;);
   }
 
+  /**
+   * getAllClients
+   * @returns clients
+   */
   async getAllClients(): Promise&lt;[Client] | void&gt; {
     return await this.getAllClientsObservable().toPromise()
       .then((data: any) &#x3D;&gt; {

@@ -544,7 +544,6 @@ export class AuthService {
   }
 
   authorize() {
-    console.log(&#x27;authorize&#x27;);
     if (environment.envName &#x3D;&#x3D;&#x3D; &#x27;mock&#x27; || environment.envName &#x3D;&#x3D;&#x3D; &#x27;mock-researcher&#x27;) {
       // tslint:disable-next-line:max-line-length
       return this.http.get(&#x60;${environment.authAPI}/authorize?client_id&#x3D;${environment.clientId}&amp;response_type&#x3D;code&amp;redirect_uri&#x3D;${environment.authCallback}&#x60;)
