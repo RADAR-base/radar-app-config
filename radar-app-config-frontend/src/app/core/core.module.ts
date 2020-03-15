@@ -10,6 +10,7 @@ import { LeftSidebarComponent } from './containers/left-sidebar/left-sidebar.com
 import { ConfigSelectionPageComponent } from './containers/config-selection-page/config-selection-page.component';
 import {SharedModule} from '@app/shared/shared.module';
 import {MatButtonModule} from "@angular/material/button";
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
   declarations: [
@@ -25,12 +26,13 @@ import {MatButtonModule} from "@angular/material/button";
     FooterComponent,
     LeftSidebarComponent
   ],
-    imports: [
-        CommonModule,
-        MatIconModule,
-        CoreRoutingModule,
-        SharedModule,
-        MatButtonModule
-    ]
+	imports: [
+		CommonModule,
+		MatIconModule,
+		CoreRoutingModule,
+		SharedModule,
+		MatButtonModule,
+		TranslateModule
+	]
 })
 export class CoreModule { }

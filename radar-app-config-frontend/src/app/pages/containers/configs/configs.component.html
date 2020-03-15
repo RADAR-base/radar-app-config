@@ -3,32 +3,75 @@
     <div class="col-md-2">
       <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
       <div class="btn-group-vertical w-100 mb-3 mb-md-3" role="group" aria-label="Button group">
-        <a class="btn btn-secondary btn-block tab-button" [routerLink]="['/global-clients']">Global Configurations</a>
-        <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/projects']">Projects</a>
+        <a class="btn btn-secondary btn-block tab-button"
+           [routerLink]="['/global-clients']">
+          {{'config.globalConfigurations' | translate}}
+        </a>
+        <a class="btn btn-secondary btn-block tab-button active"
+           [routerLink]="['/projects']">
+          {{'project.projects' | translate}}
+        </a>
       </div>
-      <div class="btn-group-vertical w-100 mb-3 mb-md-3" role="group" aria-label="Button group with nested dropdown">
-        <a class="btn btn-secondary btn tab-button" [ngClass]="{'active': isActive('config')}" [routerLink]="['/configs']" [queryParams]="makeQueryParams()" [state]="makeState()">All groups and users</a>
-        <a class="btn btn-secondary btn tab-button" [ngClass]="{'active': isActive('group')}" [routerLink]="['/groups']" [queryParams]="makeQueryParams()" [state]="makeState()">Groups</a>
-        <a class="btn btn-secondary btn tab-button" [ngClass]="{'active': isActive('user')}" [routerLink]="['/users']" [queryParams]="makeQueryParams()" [state]="makeState()">Users</a>
+      <div class="btn-group-vertical w-100 mb-3 mb-md-3" role="group" aria-label="Button group">
+        <a class="btn btn-secondary btn tab-button"
+           [ngClass]="{'active': isActive('config')}"
+           [routerLink]="['/configs']"
+           [queryParams]="makeQueryParams()"
+           [state]="makeState()">
+          {{'client.allGroupsAndUsers' | translate}}
+        </a>
+        <a class="btn btn-secondary btn tab-button"
+           [ngClass]="{'active': isActive('group')}"
+           [routerLink]="['/groups']"
+           [queryParams]="makeQueryParams()"
+           [state]="makeState()">{{'group.groups' | translate}}
+        </a>
+        <a class="btn btn-secondary btn tab-button"
+           [ngClass]="{'active': isActive('user')}"
+           [routerLink]="['/users']"
+           [queryParams]="makeQueryParams()"
+           [state]="makeState()">
+          {{'user.users' | translate}}
+        </a>
       </div>
     </div>
     <div class="col-md-10">
       <div class="row">
         <div class="col-md-10">
           <div class="row mb-3">
-            <app-dropdown class="col-md-6" [data]="projects" [field]="'projectName'" [label]="__.project" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>
-            <app-dropdown class="col-md-6" [data]="clients" [field]="'id'" [label]="__.application" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>
+            <app-dropdown class="col-md-6"
+                          [data]="projects"
+                          [field]="'projectName'"
+                          [label]="'project.project' | translate"
+                          [selected]="projectId"
+                          (change)="onProjectChange($event)"></app-dropdown>
+            <app-dropdown class="col-md-6"
+                          [data]="clients"
+                          [field]="'id'"
+                          [label]="'client.application' | translate"
+                          [selected]="clientId"
+                          (change)="onClientChange($event)"></app-dropdown>
           </div>
           <div class="row mb-3">
-            <app-dropdown class="col-md-6" [data]="users" [field]="'id'" [label]="__.user" [selected]="userId" (change)="onUserChange($event)"></app-dropdown>
+            <app-dropdown class="col-md-6"
+                          [data]="users"
+                          [field]="'id'"
+                          [label]="'user.user' | translate"
+                          [selected]="userId"
+                          (change)="onUserChange($event)"></app-dropdown>
           </div>
         </div>
         <div class="col-md-2"></div>
       </div>
-      <h2>{{__.configurations}}</h2>
-      <div class="row my-5" *ngIf="loading"><h2>{{__.loading}}</h2></div>
+      <h2>{{'config.configurations' | translate}}</h2>
+      <div class="row my-5" *ngIf="loading"><h2>{{'common.loading' | translate}}</h2></div>
       <div *ngIf="!loading" class="row my-3">
-        <app-configs-table class="w-100" *ngIf="!loading && configs" [global]="false" [configObject]="configs" (save)="onSave($event)"></app-configs-table>
+        <app-configs-table
+          class="w-100"
+          *ngIf="!loading && configs"
+          [global]="false"
+          [configObject]="configs"
+          (save)="onSave($event)"></app-configs-table>
       </div>
     </div>
   </div>

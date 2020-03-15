@@ -1,20 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import {Client} from '@app/pages/models/client';
 import {ClientService} from '@app/pages/services/client.service';
-import strings from '@i18n/strings.json';
+import {TranslateService} from "@app/shared/services/translate.service";
 
 @Component({
   selector: 'app-global-clients',
   templateUrl: './global-clients.component.html',
-  // styleUrls: ['./global-clients.component.scss']
 })
 
 export class GlobalClientsComponent implements OnInit {
-  __ = strings;
+
   loading = false;
   clients: [Client] | void;
 
-  constructor(private clientService: ClientService) {}
+  constructor(public translate: TranslateService, private clientService: ClientService) {}
 
   ngOnInit() {
     this.updateClients();

@@ -1,10 +1,12 @@
 <div class="container">
   <div>
     <div>
-      <a class="btn btn-primary fixed-width" [routerLink]="['/global-clients']">{{__.globalConfigurations}}</a>
+      <a class="btn btn-primary fixed-width" [routerLink]="['/global-clients']">
+        {{'config.globalConfigurations' | translate}}
+      </a>
     </div>
     <div>
-      <a class="btn btn-primary fixed-width" [routerLink]="['/projects']">{{__.allProjects}}</a>
+      <a class="btn btn-primary fixed-width" [routerLink]="['/projects']">{{'project.allProjects' | translate}}</a>
     </div>
   </div>
 </div>

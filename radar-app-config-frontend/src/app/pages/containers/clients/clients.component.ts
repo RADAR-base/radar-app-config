@@ -4,22 +4,22 @@ import {Project} from '@app/pages/models/project';
 import {ProjectService} from '@app/pages/services/project.service';
 import {Client} from '@app/pages/models/client';
 import {ClientService} from '@app/pages/services/client.service';
-import strings from '@i18n/strings.json';
+import {TranslateService} from "@app/shared/services/translate.service";
 
 @Component({
   selector: 'app-clients',
   templateUrl: './clients.component.html',
-  // styleUrls: ['./clients.component.scss']
 })
 
 export class ClientsComponent implements OnInit {
-  __ = strings;
+
   loading = false;
   projectId;
   clients: [Client] | void;
   projects: [Project];
 
   constructor(
+    public translate: TranslateService,
     private clientService: ClientService,
     private projectService: ProjectService,
     private activatedRoute: ActivatedRoute,

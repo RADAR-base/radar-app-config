@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Project} from '@app/pages/models/project';
 import {ProjectService} from '@app/pages/services/project.service';
-import strings from '@i18n/strings.json';
+import {TranslateService} from "@app/shared/services/translate.service";
 
 /**
  * Projects Component
@@ -9,14 +9,14 @@ import strings from '@i18n/strings.json';
 @Component({
   selector: 'app-projects',
   templateUrl: './projects.component.html',
-  // styleUrls: ['./projects.component.scss']
 })
+
 export class ProjectsComponent implements OnInit {
-  __ = strings;
+
   loading = true;
   projects: [Project] | void;
 
-  constructor(private projectService: ProjectService) {}
+  constructor(public translate: TranslateService, private projectService: ProjectService) {}
 
   async ngOnInit() {
     this.projects = await this.projectService.getAllProjects();

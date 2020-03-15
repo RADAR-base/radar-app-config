@@ -7,17 +7,15 @@ import {ConfigService} from '@app/pages/services/config.service';
 import {Project} from '@app/pages/models/project';
 import {Client} from '@app/pages/models/client';
 import {ToastService} from '@app/shared/services/toast.service';
-import strings from '@i18n/strings.json';
 import {User} from "@app/pages/models/user";
+import {TranslateService} from "@app/shared/services/translate.service";
 
 @Component({
   selector: 'app-configs',
   templateUrl: './configs.component.html',
-  // styleUrls: ['./configs.component.scss']
 })
 
 export class ConfigsComponent implements OnInit {
-  __ = strings;
 
   projectId;
   clientId;
@@ -30,6 +28,7 @@ export class ConfigsComponent implements OnInit {
   loading = true;
 
   constructor(
+    public translate: TranslateService,
     private projectService: ProjectService,
     private clientService: ClientService,
     private userService: UserService,

@@ -3,16 +3,16 @@
   <div class="container-main full-width">
     <div aria-label="breadcrumb" class="breadcrumb">
       <div class="breadcrumb-item">
-        <div class="breadcrumb-item-label">{{__.project}}:</div>
+        <div class="breadcrumb-item-label">{{'project.project' | translate}}:</div>
         <app-dropdown *ngIf="projects" [data]="projects" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>
       </div>
       <div class="breadcrumb-item">
-        <div class="breadcrumb-item-label">{{__.application}}:</div>
+        <div class="breadcrumb-item-label">{{'client.application' | translate}}:</div>
         <app-dropdown *ngIf="clients" [data]="clients" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>
       </div>
     </div>
     <div class="container-content center">
-      <h2>{{__.configurations}}</h2>
+      <h2>{{'config.configurations' | translate}}</h2>
       <div>
         <h1>Edit Application Configuration for</h1>
         <div>

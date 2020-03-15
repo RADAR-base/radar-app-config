@@ -3,7 +3,9 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {first} from 'rxjs/operators';
 import {AuthService} from '@app/auth/services/auth.service';
 import {Roles} from '@app/auth/enums/roles.enum';
-import strings from '@i18n/strings.json';
+import {TranslateService} from "@app/shared/services/translate.service";
+// import {TranslateService} from "@ngx-translate/core";
+// import strings from '@i18n/strings.json';
 
 @Component({
   selector: 'app-login',
@@ -12,15 +14,19 @@ import strings from '@i18n/strings.json';
 
 export class LoginComponent implements OnInit {
 
-  __ = strings;
+  // __ = strings;
 
   loading = false;
 
   constructor(
+    public translate: TranslateService,
     private authService: AuthService,
     private activatedRoute: ActivatedRoute,
     private router: Router
-  ) {}
+  ) {
+    // translate.addLangs(['en']);
+    // translate.setDefaultLang('en');
+  }
 
   ngOnInit() {
     this.activatedRoute.queryParams.pipe(first()).subscribe(params => {

@@ -1,5 +1,5 @@
 import { Component} from '@angular/core';
-import strings from '@i18n/strings.json';
+import {TranslateService} from "@app/shared/services/translate.service";
 
 /**
  * Page Not Found component
@@ -7,11 +7,8 @@ import strings from '@i18n/strings.json';
 @Component({
   selector: 'app-page-not-found',
   templateUrl: './page-not-found.component.html',
-  // styleUrls: ['./page-not-found.component.scss']
 })
+
 export class PageNotFoundComponent {
-  /**
-   * @ignore
-   */
-  __ = strings;
+  constructor(public translate: TranslateService) {}
 }

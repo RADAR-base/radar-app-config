@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import strings from '@i18n/strings.json';
+import {TranslateService} from "@app/shared/services/translate.service";
+// import strings from '@i18n/strings.json';
 
 /**
  * Admin Selection Page Component
@@ -10,5 +11,6 @@ import strings from '@i18n/strings.json';
   // styleUrls: ['./admin-selection-page.component.scss']
 })
 export class AdminSelectionPageComponent {
-  __ = strings;
+  // __ = strings;
+  constructor(public translate: TranslateService) {}
 }

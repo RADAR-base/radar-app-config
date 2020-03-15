@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import strings from '@i18n/strings.json';
+import {TranslateService} from "@app/shared/services/translate.service";
 
 /**
  * Footer component
@@ -11,8 +11,5 @@ import strings from '@i18n/strings.json';
 })
 
 export class FooterComponent {
-  /**
-   * @ignore
-   */
-  __ = strings;
+  constructor(public translate: TranslateService) {}
 }

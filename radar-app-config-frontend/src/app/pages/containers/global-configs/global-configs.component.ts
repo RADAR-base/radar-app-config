@@ -4,25 +4,22 @@ import {Client} from '@app/pages/models/client';
 import {ConfigService} from '@app/pages/services/config.service';
 import {ToastService} from '@app/shared/services/toast.service';
 import {ClientService} from '@app/pages/services/client.service';
-
-import strings from '@i18n/strings.json';
+import {TranslateService} from "@app/shared/services/translate.service";
 
 @Component({
   selector: 'app-global-configs',
   templateUrl: './global-configs.component.html',
-  // styleUrls: ['./global-configs.component.scss']
 })
 
 export class GlobalConfigsComponent implements OnInit {
-  __ = strings;
 
   clientId: string;
   configs;
   clients: [Client] | null;
   loading = true;
-  // private backButtonObject;
 
   constructor(
+    public translate: TranslateService,
     private clientService: ClientService,
     private configService: ConfigService,
     private activatedRoute: ActivatedRoute,

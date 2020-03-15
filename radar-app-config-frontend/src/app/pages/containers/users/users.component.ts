@@ -6,7 +6,7 @@ import {UserService} from '@app/pages/services/user.service';
 import {Project} from '@app/pages/models/project';
 import {Client} from '@app/pages/models/client';
 import {User} from '@app/pages/models/user';
-import strings from '@i18n/strings.json';
+import {TranslateService} from "@app/shared/services/translate.service";
 
 /**
  * Users Component
@@ -14,11 +14,8 @@ import strings from '@i18n/strings.json';
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
-  // styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
-
-  __ = strings;
 
   projectId;
   clientId;
@@ -30,6 +27,7 @@ export class UsersComponent implements OnInit {
   loading = true;
 
   constructor(
+    public translate: TranslateService,
     private userService: UserService,
     private clientService: ClientService,
     private projectService: ProjectService,

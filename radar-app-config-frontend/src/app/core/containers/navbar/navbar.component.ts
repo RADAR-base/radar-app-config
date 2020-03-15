@@ -2,7 +2,7 @@ import { Component} from '@angular/core';
 import {User} from '@app/auth/models/user';
 import {AuthService} from '@app/auth/services/auth.service';
 import {Router} from '@angular/router';
-import strings from '@i18n/strings.json';
+// import strings from '@i18n/strings.json';
 
 /**
  * Navbar component
@@ -17,7 +17,7 @@ export class NavbarComponent {
   /**
    * @ignore
    */
-  __ = strings;
+  // __ = strings;
 
   currentUser: User;
   isAdmin: boolean;

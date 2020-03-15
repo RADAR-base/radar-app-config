@@ -5,8 +5,8 @@
         <img src="assets/radar-logo.png" alt="radar-base">
     </div>
       <div class="site-text-wrapper">
-        <div class="site-description">{{__.radarBase}}</div>
-        <div class="site-title">{{__.appConfig}}</div>
+        <div class="site-description">{{'general.radarBase' | translate}}</div>
+        <div class="site-title">{{'general.appConfig' | translate}}</div>
       </div>
     </div>
   </a>
@@ -24,22 +24,24 @@
   <div class="collapse navbar-collapse" id="navbar" [ngClass]="{ 'show': navbarOpen }">
     <ul class="navbar-nav ml-auto">
       <li *ngIf="currentUser && isAdmin" class="nav-item" (click)="closeNavbar()">
-        <a class="nav-link" [routerLink]="['/global-clients']">{{__.globalConfigurations}} <span class="sr-only">(current)</span></a>
+        <a class="nav-link" [routerLink]="['/global-clients']">
+          {{'config.globalConfigurations' | translate}} <span class="sr-only">(current)</span>
+        </a>
       </li>
       <li *ngIf="currentUser" class="nav-item" (click)="closeNavbar()">
-        <a class="nav-link" [routerLink]="['/projects']">{{__.projects}}</a>
+        <a class="nav-link" [routerLink]="['/projects']">{{'project.projects' | translate }}</a>
       </li>
       <li *ngIf="!currentUser" class="nav-item" (click)="closeNavbar()">
-        <a class="nav-link" [routerLink]="['/login']">{{__.login}}</a>
+        <a class="nav-link" [routerLink]="['/login']">{{'login.login' | translate}}</a>
       </li>
       <li *ngIf="currentUser" class="nav-item">
-        <span class="nav-link disabled">Hello {{currentUser.username}}!</span>
+        <span class="nav-link disabled">{{'common.hello' | translate}} {{currentUser.username}}!</span>
       </li>
       <li *ngIf="currentUser" class="nav-item">
-        <a class="nav-link" style="cursor: pointer;" (click)="logout()">{{__.logout}}</a>
+        <a class="nav-link" style="cursor: pointer;" (click)="logout()">{{'login.logout' | translate}}</a>
       </li>
       <li class="nav-item" (click)="closeNavbar()">
-        <a class="nav-link" href="{{__.helpUrl}}" target="_blank"><mat-icon>help</mat-icon></a>
+        <a class="nav-link" href="{{'general.helpUrl' | translate}}" target="_blank"><mat-icon>help</mat-icon></a>
       </li>
     </ul>
   </div>

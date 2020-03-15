@@ -14,6 +14,9 @@ import {APP_BASE_HREF} from "@angular/common";
 import {environment} from "@environments/environment";
 import {PagesModule} from "@app/pages/pages.module";
 import {PagesRoutingModule} from "@app/pages/pages-routing.module";
+import {HttpClient} from "@angular/common/http";
+import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 @NgModule({
   declarations: [
@@ -31,7 +34,14 @@ import {PagesRoutingModule} from "@app/pages/pages-routing.module";
     CoreRoutingModule,
       PagesRoutingModule,
     AuthRoutingModule,
-    AppRoutingModule
+    AppRoutingModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: httpTranslateLoader,
+        deps: [HttpClient]
+      }
+    })
   ],
   providers: [
     { provide: APP_BASE_HREF, useValue: environment.baseURL },
@@ -40,3 +50,8 @@ import {PagesRoutingModule} from "@app/pages/pages-routing.module";
 
 })
 export class AppModule { }
+
+// AOT compilation support
+export function httpTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}

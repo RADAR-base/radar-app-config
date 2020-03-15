@@ -18,35 +18,37 @@ import {ProjectsComponent} from "@app/pages/containers/projects/projects.compone
 // import {ProjectRoutingModule} from "@app/pages/project/project-routing.module";
 import {UsersComponent} from "@app/pages/containers/users/users.component";
 import {PagesRoutingModule} from "@app/pages/pages-routing.module";
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
     declarations: [ClientsComponent, GlobalClientsComponent, ConfigsComponent, GlobalConfigsComponent, ConfigsTableComponent,
         ProjectsComponent,UsersComponent],
-    imports: [
-        CommonModule,
-        CoreModule,
-        RouterModule,
-        SharedModule,
-        NgbDropdownModule,
-        // CommonModule,
-        // RouterModule,
-        // CoreModule,
-        // SharedModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatButtonModule,
-        // NgbDropdownModule,
-        // CommonModule,
-        // ProjectRoutingModule,
-        // CoreModule,
-        // CommonModule,
-        // CoreModule,
-        // RouterModule,
-        // SharedModule,
-        // NgbDropdownModule
-        PagesRoutingModule
+	imports: [
+		CommonModule,
+		CoreModule,
+		RouterModule,
+		SharedModule,
+		NgbDropdownModule,
+		// CommonModule,
+		// RouterModule,
+		// CoreModule,
+		// SharedModule,
+		FormsModule,
+		ReactiveFormsModule,
+		MatIconModule,
+		MatButtonModule,
+		// NgbDropdownModule,
+		// CommonModule,
+		// ProjectRoutingModule,
+		// CoreModule,
+		// CommonModule,
+		// CoreModule,
+		// RouterModule,
+		// SharedModule,
+		// NgbDropdownModule
+		PagesRoutingModule,
+		TranslateModule
 
-    ]
+	]
 })
 export class PagesModule { }
