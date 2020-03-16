@@ -29,7 +29,7 @@
     "applications": "Applications",
     "selectAnApplication": "Select an Application",
     "globalApplications": "Global Applications",
-    "allGroupsAndUsers": "All Groups and Users"
+    "allGroupsAndUsers": "All Groups and Participants"
   },
   "footer": {
     "footer": "Place footer content here."
@@ -41,9 +41,9 @@
     "hello": "Hello"
   },
   "user": {
-    "user": "User",
-    "users": "Users",
-    "selectAUser": "Select a User"
+    "user": "Participant",
+    "users": "Participants",
+    "selectAUser": "Select a Participant"
   },
   "group": {
     "group": "Group",
