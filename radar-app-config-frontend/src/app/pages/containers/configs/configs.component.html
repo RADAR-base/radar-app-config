@@ -69,7 +69,7 @@
         <app-configs-table
           class="w-100"
           *ngIf="!loading && configs"
-          [global]="false"
+          [globalConfig]="false"
           [configObject]="configs"
           (save)="onSave($event)"></app-configs-table>
       </div>

@@ -100,6 +100,7 @@ export class ConfigsComponent implements OnInit {
   async updateConfigs() {
     this.loading = true;
     this.configs = await this.configService.getConfigByProjectIdClientId(this.projectId, this.clientId);
+    console.log(this.configs);
     this.loading = false;
   }
 

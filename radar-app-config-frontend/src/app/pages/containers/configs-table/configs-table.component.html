@@ -7,7 +7,8 @@
             <tr>
               <th scope="col">{{'config.name' | translate}}</th>
               <th scope="col">{{'config.value' | translate}}</th>
-              <th scope="col">{{'config.defaultValue' | translate}}</th>
+              <th *ngIf="globalConfig" scope="col"></th>
+              <th *ngIf="!globalConfig" scope="col">{{'config.defaultValue' | translate}}</th>
               <th scope="col"></th>
             </tr>
           </thead>
@@ -22,7 +23,7 @@
                   aria-label="Name"
                   [readonly]="group.value.scope === 'global'"
                   [ngClass]="{'disabled' : group.value.scope === 'global'}"
-                  (blur)="onBlur($event)">
+                  (ngModelChange)="onChange($event)">
               </td>
               <td>
                 <input
@@ -31,10 +32,10 @@
                   formControlName="value"
                   [placeholder]="'config.value' | translate"
                   aria-label="Value"
-                  (blur)="onBlur($event)">
+                  (ngModelChange)="onChange($event)">
               </td>
-              <td style="width: 33%;">
-                <p>{{group.value.default}}</p>
+              <td class="align-middle" style="width: 33%;">
+                <p class="my-0">{{group.value.default}}</p>
               </td>
               <td style="width: 16px;">
                 <button (click)="remove(i)"

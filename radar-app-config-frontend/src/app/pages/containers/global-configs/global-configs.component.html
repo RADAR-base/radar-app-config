@@ -30,7 +30,7 @@
       <div *ngIf="!loading" class="row my-3">
         <app-configs-table class="w-100"
                            *ngIf="!loading"
-                           [global]="true"
+                           [globalConfig]="true"
                            [configObject]="configs"
                            (save)="onSave($event)"></app-configs-table>
       </div>

@@ -10,13 +10,13 @@ import {ModalDismissReasons, NgbModal} from "@ng-bootstrap/ng-bootstrap";
 })
 export class ConfigsTableComponent implements OnInit {
 
-  @Input() global;
+  @Input() globalConfig;
   @Input() configObject;
   @Output() save = new EventEmitter();
   configForm: FormGroup;
   updateEnabled: boolean = false;
   modalHeader: any = "Modal Header";
-  modalDescription: any = "Modal Description";
+  modalDescription: Modal;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -24,6 +24,7 @@ export class ConfigsTableComponent implements OnInit {
               private _modalService: NgbModal) {}
 
   ngOnInit() {
+    console.log(this.configObject);
     this.initialize();
   }
 
@@ -61,6 +62,7 @@ export class ConfigsTableComponent implements OnInit {
   remove(index: number) {
     const control = this.configForm.get('config') as FormArray;
     control.removeAt(index);
+    this.checkUpdateEnabled();
   }
 
   // onPublish() {
@@ -155,7 +157,9 @@ export class ConfigsTableComponent implements OnInit {
   
   // if change occurred save and reset activate
   // if change focus from input happens, check the change
-  onBlur(event){
+  // onBlur(event){
+  //   this.checkUpdateEnabled();
+/*
     const configValue = this.getConfigFormValue().config;
     // console.log(configValue);
     // if (this.updateEnabled === true) {return;}
@@ -177,12 +181,32 @@ export class ConfigsTableComponent implements OnInit {
         // console.log('updateEnabled');
       }
     }
+    this.updateEnabled = false;*/
+  // }
+
+  onChange(event){
+    this.checkUpdateEnabled();
+  }
+
+  checkUpdateEnabled(){
+    const configValue = this.getConfigFormValue().config;
+    for (let i=0;i<configValue.length;i++){
+      if(!this.configObject[i]) {this.updateEnabled = true; return;}
+      if(this.configObject[i].name != configValue[i].name) {
+        this.updateEnabled = true;
+        return;
+      }
+      if(this.configObject[i].value != configValue[i].value) {
+        this.updateEnabled = true;
+        return;
+      }
+    }
+    if(configValue.length!==this.configObject.length){ this.updateEnabled = true; return;}
     this.updateEnabled = false;
   }
 
 
   getConfigFormValue() {
-    // console.log(this.configForm.value.config);
     let newConfigFormValue = [];
     for(let i=0;i<this.configForm.value.config.length;i++){
       if(this.configForm.value.config[i].name !== "" && this.configForm.value.config[i].value !== "" ){
@@ -212,4 +236,12 @@ export class ConfigsTableComponent implements OnInit {
       return  `with: ${reason}`;
     }
   }
+
+
+}
+
+interface Modal {
+  firstLine: string;
+  secondLine: string;
+  thirdLine: string;
 }

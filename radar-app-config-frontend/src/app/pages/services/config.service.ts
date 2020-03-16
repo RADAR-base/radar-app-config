@@ -43,6 +43,7 @@ export class ConfigService {
 
 
   private getConfigByProjectIdClientIdObservable(projectId, clientId): Observable<Config> {
+    console.log(1);
     return this.http.get<Config>(`/api/projects/${projectId}/config/${clientId}`);
   }
 
@@ -59,24 +60,35 @@ export class ConfigService {
   }
   */
   async getConfigByProjectIdClientId(projectId, clientId) {
+    console.log(2);
     return await this.getConfigByProjectIdClientIdObservable(projectId, clientId).toPromise()
       .then((data: any) => {
+        console.log(data);
         const result = [];
         const {config, defaults} = data;
-        defaults.forEach(d => {
-          result.push(d);
-        });
-        config.forEach(c => {
-          const matchedItem = result.filter(d => c.name === d.name);
-          if(matchedItem.length>0){
-            const index = result.indexOf(matchedItem[0]);
-            result[index].default = result[index].value;
-            result[index].value = c.value;
-          }else{
-            result.push(c);
-          }
-        });
+        if(defaults) {
+          defaults.forEach(d => {
+            d.default = d.value;
+            result.push(d);
+          });
+        }
+        if(config) {
+          config.forEach(c => {
+            console.log(c);
+            const matchedItem = result.filter(d => c.name === d.name);
+            console.log(matchedItem);
+            if (matchedItem.length > 0) {
 
+              const index = result.indexOf(matchedItem[0]);
+              console.log(index);
+              result[index].default = result[index].value;
+              result[index].value = c.value;
+            } else {
+              result.push(c);
+            }
+          });
+        }
+        console.log(result);
         this.toastService.showSuccess(`Configurations of Project: ${projectId} - Application: ${clientId} loaded.`);
         return result;
       })
@@ -93,6 +105,7 @@ export class ConfigService {
 
 
   postGlobalConfigByClientId(clientId, payload) {
+    console.log('payload', payload);
     return this.http.post(`/api/global/config/${clientId}`, payload, {
       headers: {
         'Content-Type': 'application/json'
