@@ -1,5 +1,6 @@
 {
   "login": {
+    "login": "Login",
     "loginButton": "Login with Management Portal",
     "loginPageHeader": "Login",
     "logout": "Logout"
@@ -7,7 +8,7 @@
   "config": {
     "globalConfigurations": "Global Configurations",
     "configurations": "Configurations",
-    "addANameValueConfiguration": "Add a Name/value Configuration",
+    "addANameValueConfiguration": "Add a Name/Value Configuration",
     "publish": "Publish",
     "reset": "Reset",
     "cancel": "Cancel",
