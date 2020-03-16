@@ -43,8 +43,7 @@ export class ConfigService {
 
 
   private getConfigByProjectIdClientIdObservable(projectId, clientId): Observable<Config> {
-    console.log(1);
-    return this.http.get<Config>(`/api/projects/${projectId}/config/${clientId}`);
+    return this.http.get<Config>(`${environment.backendUrl}/projects/${projectId}/config/${clientId}`);
   }
 
   /*
@@ -60,10 +59,8 @@ export class ConfigService {
   }
   */
   async getConfigByProjectIdClientId(projectId, clientId) {
-    console.log(2);
     return await this.getConfigByProjectIdClientIdObservable(projectId, clientId).toPromise()
       .then((data: any) => {
-        console.log(data);
         const result = [];
         const {config, defaults} = data;
         if(defaults) {
@@ -74,13 +71,9 @@ export class ConfigService {
         }
         if(config) {
           config.forEach(c => {
-            console.log(c);
             const matchedItem = result.filter(d => c.name === d.name);
-            console.log(matchedItem);
             if (matchedItem.length > 0) {
-
               const index = result.indexOf(matchedItem[0]);
-              console.log(index);
               result[index].default = result[index].value;
               result[index].value = c.value;
             } else {
@@ -88,13 +81,11 @@ export class ConfigService {
             }
           });
         }
-        console.log(result);
         this.toastService.showSuccess(`Configurations of Project: ${projectId} - Application: ${clientId} loaded.`);
         return result;
       })
       .catch(e => {
         this.toastService.showError(e);
-        console.log(e);
       })
       .finally();
   }
@@ -106,7 +97,7 @@ export class ConfigService {
 
   postGlobalConfigByClientId(clientId, payload) {
     console.log('payload', payload);
-    return this.http.post(`/api/global/config/${clientId}`, payload, {
+    return this.http.post(`${environment.backendUrl}/global/config/${clientId}`, payload, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -124,7 +115,7 @@ export class ConfigService {
   */
   postConfigByProjectIdAndClientId(projectId, clientId, payload) {
     console.log('payload', payload);
-    return this.http.post(`/api/projects/${projectId}/config/${clientId}`, payload, {
+    return this.http.post(`${environment.backendUrl}/projects/${projectId}/config/${clientId}`, payload, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -132,7 +123,7 @@ export class ConfigService {
   }
 
   postConfigByProjectIdAndClientIdAndUserId(projectId, clientId, userId, payload) {
-    return this.http.post(`/api/projects/${projectId}/users/${userId}/config/${clientId}`, payload, {
+    return this.http.post(`${environment.backendUrl}/projects/${projectId}/users/${userId}/config/${clientId}`, payload, {
       headers: {
         'Content-Type': 'application/json'
       }
