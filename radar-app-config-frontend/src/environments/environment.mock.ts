@@ -1,10 +1,10 @@
 export const environment = {
   envName: 'mock',
   production: false,
-  baseURL: 'http://localhost:4200/appconfig',
-  authAPI: 'http://localhost:4200/appconfig/managementportal/oauth',
+  baseURL: 'http://localhost:4200/',
+  authAPI: 'http://localhost:4200/managementportal/oauth',
   clientId: 'appconfig_frontend',
-  authCallback: 'http://localhost:4200/appconfig/login',
+  authCallback: 'http://localhost:4200/login',
   backendUrl: '/api',
   fakeCode: {code: 84936},
   fakeJwtToken: {
