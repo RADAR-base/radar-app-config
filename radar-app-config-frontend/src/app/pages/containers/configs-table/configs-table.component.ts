@@ -143,7 +143,7 @@ export class ConfigsTableComponent implements OnInit {
       delete tempObject.client;
       // TODO clients or global clients or users or groups?
       // console.log(this.global);
-      if (this.global) {
+      if (this.globalConfig) {
         this.router.navigate(['/global-clients'], {queryParams: tempObject});
       } else {
         this.router.navigate(['/clients'], {queryParams: tempObject});
