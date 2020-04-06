@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port=4200 --base-href=/appconfig/",
+    "start": "ng serve --port=4200 --base-href=/",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "mock": "ng serve -c=mock --port=4200 --base-href=/appconfig/",
-    "mock-researcher": "ng serve -c=mock-researcher --port=4200 --base-href=/appconfig/"
+    "mock": "ng serve -c=mock --port=4200 --base-href=/",
+    "mock-researcher": "ng serve -c=mock-researcher --port=4200 --base-href=/"
   },
   "private": true,
   "dependencies": {
