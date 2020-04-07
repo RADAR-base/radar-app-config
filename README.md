@@ -209,7 +209,6 @@ and once you're finished, stop it with
 docker-compose down
 ```
 
-
 Then you can test requests with Postman at root URL `http://localhost:8080/appconfig/api/`. Start a Postman query. Add OAuth2 authorization and press the _Get new access token_ button. Use
 ```
 Callback URL: http://localhost:8080/appconfig/login

@@ -8,17 +8,16 @@ application {
 }
 
 project.extra.apply {
-    set("okhttpVersion", "4.3.1")
-    set("radarAuthVersion", "0.2.3-SNAPSHOT")
-    set("radarSchemasVersion", "0.5.5")
-    set("jacksonVersion", "2.10.2")
-    set("slf4jVersion", "1.7.27")
+    set("okhttpVersion", "4.5.0")
+    set("radarAuthVersion", "0.2.3")
+    set("radarSchemasVersion", "0.5.7")
+    set("jacksonVersion", "2.10.3")
+    set("slf4jVersion", "1.7.30")
     set("logbackVersion", "1.2.3")
-    set("hibernateVersion", "5.4.4.Final")
+    set("hibernateVersion", "5.4.13.Final")
     set("h2Version", "1.4.200")
-    set("postgresqlVersion", "42.2.9")
-    set("liquibaseVersion", "3.8.5")
-    set("c3p0Version", "0.9.5.5")
+    set("postgresqlVersion", "42.2.12")
+    set("liquibaseVersion", "3.8.8")
 }
 
 repositories {
@@ -50,10 +49,10 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic:${project.extra["logbackVersion"]}")
     runtimeOnly("org.hibernate:hibernate-c3p0:${project.extra["hibernateVersion"]}")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.4.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.4.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.6.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.1")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
 
 tasks.withType<Test> {
