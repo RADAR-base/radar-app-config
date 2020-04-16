@@ -5,7 +5,7 @@ import {CoreModule} from '@app/core/core.module';
 import {RouterModule} from '@angular/router';
 import {SharedModule} from '@app/shared/shared.module';
 // import { GlobalClientsComponent } from '../containers/global-clients/global-clients.component';
-import {NgbDropdownModule} from "@ng-bootstrap/ng-bootstrap";
+import {NgbDropdownModule, NgbTooltipModule} from "@ng-bootstrap/ng-bootstrap";
 import {GlobalClientsComponent} from "@app/pages/containers/global-clients/global-clients.component";
 import {ClientsComponent} from "@app/pages/containers/clients/clients.component";
 import {ConfigsComponent} from "@app/pages/containers/configs/configs.component";
@@ -47,7 +47,8 @@ import {TranslateModule} from "@ngx-translate/core";
 		// SharedModule,
 		// NgbDropdownModule
 		PagesRoutingModule,
-		TranslateModule
+		TranslateModule,
+		NgbTooltipModule
 
 	]
 })

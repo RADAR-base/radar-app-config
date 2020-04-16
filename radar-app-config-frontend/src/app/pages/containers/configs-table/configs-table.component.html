@@ -21,7 +21,7 @@
                   formControlName="name"
                   [placeholder]="'config.name' | translate"
                   aria-label="Name"
-                  [readonly]="group.value.scope === 'global'"
+                  [readonly]="group.value.scope"
                   [ngClass]="{'disabled' : group.value.scope === 'global'}"
                   (ngModelChange)="onChange($event)">
               </td>
@@ -38,11 +38,18 @@
                 <p class="my-0">{{group.value.default}}</p>
               </td>
               <td style="width: 16px;">
-                <button (click)="remove(i)"
-                        class="btn btn-primary"
-                        [ngClass]="{'disabled' : group.value.scope === 'global'}"
-                        [disabled]="group.value.scope === 'global'">
+                <button *ngIf="!group.value.scope" (click)="remove(i)"
+                        class="btn btn-primary" ngbTooltip="Delete">
+<!--                        [ngClass]="{'disabled' : group.value.scope === 'global'}"-->
+<!--                        [disabled]="group.value.scope === 'global'">-->
                   <mat-icon style="font-size: 16px;width: 16px; height:16px">delete</mat-icon>
+                </button>
+                <button *ngIf="group.value.scope" (click)="backToDefault(i)"
+                        class="btn btn-primary"
+                        [ngClass]="{'disabled' : group.value.value === group.value.default}"
+                        [disabled]="group.value.value === group.value.default"
+                        ngbTooltip="Reset to default">
+                  <mat-icon style="font-size: 16px;width: 16px; height:16px">replay</mat-icon>
                 </button>
               </td>
             </tr>

@@ -90,9 +90,53 @@ export class ConfigService {
       .finally();
   }
 
-  // private getConfigByProjectIdClientIdUserIdObservable(projectId, clientId, userId) {}
-  // getConfigByProjectIdClientIdUserId(projectId, clientId, userId) {}
+  private getConfigByProjectIdUserIDClientIdObservable(projectId, userId, clientId): Observable<Config> {
+    return this.http.get<Config>(`${environment.backendUrl}/projects/${projectId}/users/${userId}/config/${clientId}`);
+  }
 
+  /*
+  {
+    "clientId": "appconfig",
+    "scope": "user.34826646-c49d-4a3e-b873-42d19ac1d5df",
+    "config": [
+        {"name": "plugins", "value": "A B"}
+    ],
+    "defaults": [
+        {"name": "plugins", "value", "A", "scope": "project.radar-base-1"
+    ]
+  }
+  */
+  async getConfigByProjectIdUserIdClientId(projectId, userId, clientId) {
+    return await this.getConfigByProjectIdUserIDClientIdObservable(projectId, userId, clientId).toPromise()
+      .then((data: any) => {
+        const result = [];
+        const {config, defaults} = data;
+        if(defaults) {
+          defaults.forEach(d => {
+            d.default = d.value;
+            result.push(d);
+          });
+        }
+        if(config) {
+          config.forEach(c => {
+            const matchedItem = result.filter(d => c.name === d.name);
+            if (matchedItem.length > 0) {
+              const index = result.indexOf(matchedItem[0]);
+              result[index].default = result[index].value;
+              result[index].value = c.value;
+            } else {
+              result.push(c);
+            }
+          });
+        }
+        this.toastService.showSuccess(`Configurations of Project: ${projectId} - Application: ${clientId} loaded.`);
+        return result;
+      })
+      .catch(e => {
+        this.toastService.showError(e);
+      })
+      .finally();
+  }
 
 
   postGlobalConfigByClientId(clientId, payload) {
@@ -114,7 +158,6 @@ export class ConfigService {
   }
   */
   postConfigByProjectIdAndClientId(projectId, clientId, payload) {
-    console.log('payload', payload);
     return this.http.post(`${environment.backendUrl}/projects/${projectId}/config/${clientId}`, payload, {
       headers: {
         'Content-Type': 'application/json'

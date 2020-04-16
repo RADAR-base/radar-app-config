@@ -35,7 +35,7 @@ export class ConfigsComponent implements OnInit {
     private configService: ConfigService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private toastService: ToastService) {console.log('cons');}
+    private toastService: ToastService) {}
 
   async ngOnInit() {
     this.activatedRoute.queryParams.subscribe(() => {
@@ -99,13 +99,17 @@ export class ConfigsComponent implements OnInit {
 
   async updateConfigs() {
     this.loading = true;
-    this.configs = await this.configService.getConfigByProjectIdClientId(this.projectId, this.clientId);
-    console.log(this.configs);
+    if (this.projectId && this.clientId && this.userId){
+      this.configs = await this.configService.getConfigByProjectIdUserIdClientId(this.projectId, this.userId, this.clientId);
+    } else if (this.projectId && this.clientId && !this.userId) {
+      this.configs = await this.configService.getConfigByProjectIdClientId(this.projectId, this.clientId);
+
+    }
     this.loading = false;
   }
 
   onSave(event) {
-    const newConfigArray = event.config.map(c => ({name: c.name, value: c.value}));
+    const newConfigArray = event.config.filter(c => c.value !== c.default).map(c => ({name: c.name, value: c.value}));
     if (this.projectId && this.clientId && this.userId) {
       this.configService.postConfigByProjectIdAndClientIdAndUserId(this.projectId, this.clientId, this.userId, {config: newConfigArray})
         .subscribe(() => {
@@ -113,7 +117,7 @@ export class ConfigsComponent implements OnInit {
           this.toastService.showSuccess(`Configurations of Project: ${this.projectId} - Application: ${this.clientId} - User: ${this.userId} changed.`);
         });
     } else if (this.projectId && this.clientId && !this.userId) {
-      this.configService.postConfigByProjectIdAndClientId(this.projectId, this.clientId, {config: newConfigArray})
+        this.configService.postConfigByProjectIdAndClientId(this.projectId, this.clientId, {config: newConfigArray})
         .subscribe(() => {
           this.toastService.showSuccess(`Configurations of Project: ${this.projectId} - Application: ${this.clientId} changed.`);
         });

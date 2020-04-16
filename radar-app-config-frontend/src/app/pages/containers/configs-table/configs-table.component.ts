@@ -24,7 +24,7 @@ export class ConfigsTableComponent implements OnInit {
               private _modalService: NgbModal) {}
 
   ngOnInit() {
-    console.log(this.configObject);
+    // console.log(this.configObject);
     this.initialize();
   }
 
@@ -62,6 +62,12 @@ export class ConfigsTableComponent implements OnInit {
   remove(index: number) {
     const control = this.configForm.get('config') as FormArray;
     control.removeAt(index);
+    this.checkUpdateEnabled();
+  }
+
+  backToDefault(index: number){
+    const control = this.configForm.get('config') as FormArray;
+    control.at(index).patchValue({"value": control.at(index).value.default});
     this.checkUpdateEnabled();
   }
 

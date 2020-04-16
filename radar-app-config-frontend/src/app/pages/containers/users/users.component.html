@@ -2,13 +2,13 @@
     <div class="row">
         <div class="col-md-2">
             <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
-            <div class="btn-group-vertical w-100 mb-3 mb-md-0"
-                 role="group" aria-label="Button group with nested dropdown">
-                <a class="btn btn-secondary btn-block tab-button"
-                   [routerLink]="['/global-clients']">{{'config.globalConfigurations' | translate}}</a>
-                <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/projects']">
-                    {{'project.projects' | translate}}</a>
-            </div>
+<!--            <div class="btn-group-vertical w-100 mb-3 mb-md-0"-->
+<!--                 role="group" aria-label="Button group with nested dropdown">-->
+<!--                <a class="btn btn-secondary btn-block tab-button"-->
+<!--                   [routerLink]="['/global-clients']">{{'config.globalConfigurations' | translate}}</a>-->
+<!--                <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/projects']">-->
+<!--                    {{'project.projects' | translate}}</a>-->
+<!--            </div>-->
             <div class="btn-group-vertical w-100 mb-3 mb-md-0"
                  role="group"
                  aria-label="Button group with nested dropdown">
@@ -27,6 +27,12 @@
             </div>
         </div>
         <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">{{'project.project' | translate}}: <a href="#">{{projectId}}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{'client.application' | translate}}: {{clientId}}</li>
+                </ol>
+            </nav>
             <div class="row mb-3">
                 <app-dropdown class="col-md-6"
                               [data]="projects"
