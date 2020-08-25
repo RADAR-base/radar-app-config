@@ -109,7 +109,7 @@ class MPClient(
             header("Authorization", "Bearer ${ensureToken()}")
         }.build()
 
-        return clientListReader.readValue<List<OAuthClient>>(execute(request))
+        return clientListReader.readValue(execute(request))
     }
 
     companion object {
