@@ -1,0 +1,225 @@
+{
+  "projects": [
+    {
+      "data": {
+        "id": 1352,
+        "projectName": "radar-test",
+        "humanReadableProjectName": null,
+        "location": "Utrecht",
+        "organization": "The Hyve",
+        "description": "Testing"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 3101,
+        "projectName": "altoida-test",
+        "humanReadableProjectName": null,
+        "location": "Utrecht",
+        "organization": "The Hyve",
+        "description": "Test project for altoida"
+      },
+      "clients": ["appconfig","appconfig_frontend","grafana_import","radar_redcap_integrator","radar_upload_backend"],
+      "participants": [8007, 8008, 8008, 8009, 8010, 8011],
+      "groups": [7002, 7005]
+    },
+    {
+      "data": {
+        "id": 1353,
+        "projectName": "radar-analysis-test",
+        "humanReadableProjectName": null,
+        "location": "Utrecht",
+        "organization": null,
+        "description": "Testing"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 1351,
+        "projectName": "radar-demo",
+        "humanReadableProjectName": null,
+        "location": "Utrecht",
+        "organization": null,
+        "description": "Demo"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 2501,
+        "projectName": "singelloop2018",
+        "humanReadableProjectName": "Singelloop 2018",
+        "location": "Utrecht",
+        "organization": "The Hyve",
+        "description": "A fun pilot study to remote assess the participants of Singelloop 2018 by The Hyve"
+      },
+      "clients": ["Mezurio", "THINC-IT", "altoida-test-client", "certh-banking-app", "mp_to_grafana"],
+      "participants": [8001, 8003, 8005, 8010, 8011, 8012],
+      "groups": [7001, 7002]
+    },
+    {
+      "data": {
+        "id": 12301,
+        "projectName": "STAGING_PROJECT",
+        "humanReadableProjectName": null,
+        "location": "Utrecht",
+        "organization": null,
+        "description": "Demo project to try out aRMT app with app questionnaires"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 1354,
+        "projectName": "radar-admin-test",
+        "humanReadableProjectName": null,
+        "location": "Utrecht",
+        "organization": null,
+        "description": "Testing admin"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 11951,
+        "projectName": "radarbase-for-UoNewCastle",
+        "humanReadableProjectName": null,
+        "location": "New Castle",
+        "organization": null,
+        "description": "Demo project for University of New Castle"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 4251,
+        "projectName": "radarbase-for-sage",
+        "humanReadableProjectName": null,
+        "location": "Utrecht",
+        "organization": null,
+        "description": "Demo project for SAGE therapeutics"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 11351,
+        "projectName": "radarbase-for-university-of-pavia",
+        "humanReadableProjectName": "RADAR-base-for-University-of-Pavia",
+        "location": "Pavia, Italy",
+        "organization": "University of Pavia",
+        "description": "Demo project to evaluate RADAR-base project"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 14201,
+        "projectName": "radarbase-thehyve-pilot",
+        "humanReadableProjectName": null,
+        "location": "Utrecht",
+        "organization": null,
+        "description": "Pilot at the hyve"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 10201,
+        "projectName": "radarbase-for-nottingham",
+        "humanReadableProjectName": null,
+        "location": "Nottingham",
+        "organization": null,
+        "description": "Demo project of radar-base "
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 10801,
+        "projectName": "radarbase-for-google",
+        "humanReadableProjectName": null,
+        "location": "Utrecht",
+        "organization": null,
+        "description": "Google Play console test project"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 1901,
+        "projectName": "radar-base-demo",
+        "humanReadableProjectName": "RADAR-base demo",
+        "location": "Utrecht",
+        "organization": "RADAR-base",
+        "description": "This is sample project created to demonstrate RADAR-base features"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 25101,
+        "projectName": "certh-banking-app-test",
+        "humanReadableProjectName": null,
+        "location": "CERTH",
+        "organization": null,
+        "description": "test project to integrate certh banking app"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 24351,
+        "projectName": "mezurio-test",
+        "humanReadableProjectName": null,
+        "location": "Oxford",
+        "organization": null,
+        "description": "Testing the mezurio app integration"
+      },
+      "clients": ["ManagementPortalapp","pRMT","radar_dashboard","radar_restapi","aRMT"],
+      "participants": [8001,8002,8003,8004,8005,8006],
+      "groups": [7001,7003]
+    },
+    {
+      "data": {
+        "id": 25551,
+        "projectName": "radar-base-uploader-demo",
+        "humanReadableProjectName": null,
+        "location": "Utrecht",
+        "organization": "The Hyve",
+        "description": "A project to demonstrate usage of RADAR-base Data Uploader"
+      },
+      "clients": ["ManagementPortalapp", "pRMT", "radar_dashboard", "radar_restapi", "aRMT"],
+      "participants": [8001, 8002, 8003, 8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012],
+      "groups": [7004]
+    }
+  ]
+}

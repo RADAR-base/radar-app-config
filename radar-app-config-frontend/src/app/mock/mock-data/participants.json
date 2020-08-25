@@ -1,0 +1,52 @@
+{
+  "participants": [
+    {
+      "id": 8001,
+      "name": "Katy"
+    },
+    {
+      "id": 8002,
+      "name": "Rose"
+    },
+    {
+      "id": 8003,
+      "name": "Jane"
+    },
+    {
+      "id": 8004,
+      "name": "Gloria"
+    },
+    {
+      "id": 8005,
+      "name": "John"
+    },
+    {
+      "id": 8006,
+      "name": "Paul"
+    },
+    {
+      "id": 8007,
+      "name": "Bob"
+    },
+    {
+      "id": 8008,
+      "name": "Alex"
+    },
+    {
+      "id": 8009,
+      "name": "Bill"
+    },
+    {
+      "id": 8010,
+      "name": "Ben"
+    },
+    {
+      "id": 8011,
+      "name": "Jack"
+    },
+    {
+      "id": 8012,
+      "name": "Mary"
+    }
+  ]
+}

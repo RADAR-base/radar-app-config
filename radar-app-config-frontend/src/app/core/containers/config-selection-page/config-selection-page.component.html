@@ -1,0 +1,30 @@
+<div class="container-flex">
+  <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
+  <div class="container-main full-width">
+    <div aria-label="breadcrumb" class="breadcrumb">
+      <div class="breadcrumb-item">
+        <div class="breadcrumb-item-label">{{'project.project' | translate}}:</div>
+        <app-dropdown *ngIf="projects" [data]="projects" [selected]="projectId" (change)="onProjectChange($event)"></app-dropdown>
+      </div>
+      <div class="breadcrumb-item">
+        <div class="breadcrumb-item-label">{{'client.application' | translate}}:</div>
+        <app-dropdown *ngIf="clients" [data]="clients" [selected]="clientId" (change)="onClientChange($event)"></app-dropdown>
+      </div>
+    </div>
+    <div class="container-content center">
+      <h2>{{'config.configurations' | translate}}</h2>
+      <div>
+        <h1>Edit Application Configuration for</h1>
+        <div>
+          <a class="btn btn-primary fixed-width" [routerLink]="['/configs']" [queryParams]="makeQueryParams()" [state]="makeState()">All Groups and Users</a>
+        </div>
+        <div>
+          <a class="btn btn-primary fixed-width" [routerLink]="['/groups']" [queryParams]="makeQueryParams()" [state]="makeState()">Selected Groups</a>
+        </div>
+        <div>
+          <a class="btn btn-primary fixed-width" [routerLink]="['/users']" [queryParams]="makeQueryParams()" [state]="makeState()">Selected Users</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

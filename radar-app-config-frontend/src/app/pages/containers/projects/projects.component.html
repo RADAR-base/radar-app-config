@@ -1,0 +1,40 @@
+<div class="my-3 my-md-5">
+  <div class="row">
+    <div class="col-md-2">
+      <app-left-sidebar></app-left-sidebar>
+<!--      <div class="btn-group-vertical w-100 mb-3 mb-md-0" role="group" aria-label="Button group">-->
+<!--        <a class="btn btn-secondary btn-block tab-button"-->
+<!--           [routerLink]="['/global-clients']">-->
+<!--          {{'config.globalConfigurations' | translate}}-->
+<!--        </a>-->
+<!--        <a class="btn btn-secondary btn-block tab-button active"-->
+<!--           [routerLink]="['/projects']">{{'project.projects' | translate}}</a>-->
+<!--      </div>-->
+    </div>
+    <div class="col-md-8">
+      <h2>{{'project.selectAProject' | translate}}</h2>
+      <div class="row my-5" *ngIf="loading"><h2>{{'common.loading' | translate }}</h2></div>
+      <div *ngIf="!loading" class="row my-3">
+        <div *ngFor="let project of projects" class="col-lg-4 mb-3">
+          <div class="card">
+            <a [routerLink]="['/clients']" [queryParams]="makeQueryParams(project.name)" [state]="makeState()">
+              <div class="card-body">
+                <h5 class="card-title">{{project.projectName}}</h5>
+                <p class="card-text">{{ project.description }}</p>
+                <p *ngIf="project.organization"
+                   class="card-text">
+                  <small class="text-muted">{{'project.organization' | translate}}: {{ project.organization }}</small>
+                </p>
+                <p *ngIf="project.location"
+                   class="card-text">
+                  <small class="text-muted">{{'project.location' | translate}}: {{ project.location }}</small>
+                </p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+</div>

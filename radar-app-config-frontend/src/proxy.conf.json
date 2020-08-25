@@ -1,0 +1,13 @@
+{
+  "/api/*": {
+    "target": "http://localhost:8095/appconfig/api",
+    "secure": false,
+    "pathRewrite": {"^/api" : ""},
+    "changeOrigin":true,
+    "logLevel": "debug"
+  }
+}
+
+
+
+

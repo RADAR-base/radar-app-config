@@ -1,0 +1,29 @@
+{
+  "groups": [
+    {
+      "id": 7001,
+      "name": "Group A",
+      "participants": [8001,8003,8005]
+    },
+    {
+      "id": 7002,
+      "name": "Group B",
+      "participants": [80010,8011,8012]
+    },
+    {
+      "id": 7003,
+      "name": "Group C",
+      "participants": [8002,8004,8006]
+    },
+    {
+      "id": 7004,
+      "name": "Group D",
+      "participants": [8001,8002,8003,8004,8005,8006,8007,8008,8009,8010,8011,8012]
+    },
+    {
+      "id": 7005,
+      "name": "Group D",
+      "participants": [8007,8008,8009,8010,8011,8012]
+    }
+  ]
+}

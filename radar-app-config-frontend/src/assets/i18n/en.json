@@ -1,0 +1,57 @@
+{
+  "login": {
+    "login": "Login",
+    "loginButton": "Login with Management Portal",
+    "loginPageHeader": "Login",
+    "logout": "Logout"
+  },
+  "config": {
+    "globalConfigurations": "Global Configurations",
+    "configurations": "Configurations",
+    "addANameValueConfiguration": "Add a Name/Value Configuration",
+    "publish": "Publish",
+    "reset": "Reset",
+    "cancel": "Cancel",
+    "name": "Name",
+    "value": "Value",
+    "defaultValue": "Default Value"
+  },
+  "project": {
+    "project": "Project",
+    "projects": "Projects",
+    "allProjects":"All Projects",
+    "selectAProject": "Select a Project",
+    "organization": "Organization",
+    "location": "Location"
+  },
+  "client": {
+    "application": "Application",
+    "applications": "Applications",
+    "selectAnApplication": "Select an Application",
+    "globalApplications": "Global Applications",
+    "allGroupsAndUsers": "All Groups and Participants"
+  },
+  "footer": {
+    "footer": "Place footer content here."
+  },
+  "common": {
+    "loading": "Loading...",
+    "backTo": "Back To ",
+    "pageNotFound": "Page Not Found",
+    "hello": "Hello"
+  },
+  "user": {
+    "user": "Participant",
+    "users": "Participants",
+    "selectAUser": "Select a Participant"
+  },
+  "group": {
+    "group": "Group",
+    "groups": "Groups"
+  },
+  "general": {
+    "appConfig": "App Config",
+    "radarBase": "RADAR-base",
+    "helpUrl": "https://github.com/RADAR-base/radar-app-config"
+  }
+}

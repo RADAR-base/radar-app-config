@@ -1,0 +1,44 @@
+$theme-colors: (
+        "primary": #4F7D91,
+        "secondary": #CCCCCC,
+        "success": #004400,
+        // "info": $cyan,
+        // "warning": $yellow,
+        "danger": #cc0000,
+        // "light": $gray-100,
+        "dark":   #4F7D91
+);
+
+$font-family-sans-serif: 'Montserrat', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$font-family-serif:      Georgia, "Times New Roman", Times, serif !default;
+$font-family-monospace:  Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+$font-family-base:       $font-family-sans-serif !default;
+
+$font-size-base: 0.8rem;
+$h1-font-size: $font-size-base * 2;
+$h2-font-size: $font-size-base * 1.75;
+$h3-font-size: $font-size-base * 1.5;
+$h4-font-size: $font-size-base * 1.25;
+$h5-font-size: $font-size-base * 1;
+$h6-font-size: $font-size-base;
+
+
+@import "node_modules/bootstrap/scss/bootstrap";
+
+a {
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.table th, .table td {
+  padding: 5px;
+}
+
+.ngb-toasts{
+  position: fixed;
+  bottom: 1em;
+  top: auto !important;
+  right: 0 !important;
+}
+
