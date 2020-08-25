@@ -14,15 +14,15 @@
                  aria-label="Button group with nested dropdown">
                 <a class="btn btn-secondary btn-block tab-button"
                    [routerLink]="['/configs']"
-                   [queryParams]="makeQueryParams()"
+                   [queryParams]="makeQueryParams(null)"
                    [state]="makeState()">{{'client.allGroupsAndUsers' | translate}}</a>
                 <a class="btn btn-secondary btn-block tab-button"
                    [routerLink]="['/groups']"
-                   [queryParams]="makeQueryParams()"
+                   [queryParams]="makeQueryParams(null)"
                    [state]="makeState()">{{'group.groups' | translate}}</a>
                 <a class="btn btn-secondary btn-block tab-button active"
                    [routerLink]="['/users']"
-                   [queryParams]="makeQueryParams()"
+                   [queryParams]="makeQueryParams(null)"
                    [state]="makeState()">{{'user.users' | translate}}</a>
             </div>
         </div>

@@ -18,14 +18,15 @@ sourceSets {
 }
 
 project.extra.apply {
-    set("jacksonVersion", "2.10.3")
+    set("jacksonVersion", "2.11.2")
+    set("antlrVersion", "4.8-1")
 }
 
 
 dependencies {
-    antlr("org.antlr:antlr4:4.5.1")
+    antlr("org.antlr:antlr4:${project.extra["antlrVersion"]}")
 
-    implementation("org.antlr:antlr4-runtime:4.8-1")
+    implementation("org.antlr:antlr4-runtime:${project.extra["antlrVersion"]}")
     implementation("me.xdrop:fuzzywuzzy:1.2.0")
 
     // Use the Kotlin JDK 8 standard library.

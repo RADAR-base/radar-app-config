@@ -78,8 +78,8 @@ class HibernateVariableResolver(
     override fun list(scopes: List<Scope>, prefix: QualifiedId?): Stream<QualifiedId> = em.run {
         val query = listConfig(scopes, prefix)
 
-        transact {
-            query.resultStream
+        transact<Stream<QualifiedId>> {
+            (query.resultStream as Stream<*>)
                     .map { rawResult ->
                         val result = rawResult as Array<*>
                         QualifiedId(result[0] as String, result[1] as String)

@@ -5,7 +5,7 @@ import nl.thehyve.lang.expression.antlr.ComparisonLexer
 import nl.thehyve.lang.expression.antlr.ComparisonParser
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import nl.thehyve.lang.expression.ExpressionParserException.Companion.toException
-import org.antlr.v4.runtime.ANTLRInputStream
+import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import java.io.ByteArrayInputStream
@@ -22,7 +22,7 @@ class ExpressionParser(functions: List<Function>) {
     fun parse(value: String) = parse(ByteArrayInputStream(value.toByteArray()))
 
     fun parse(input: InputStream): Expression {
-        val lexer = ComparisonLexer(ANTLRInputStream(input))
+        val lexer = ComparisonLexer(CharStreams.fromStream(input))
         val context = ParserContext(ComparisonParser(CommonTokenStream(lexer)))
         return context.parse()
     }

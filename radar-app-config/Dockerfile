@@ -1,24 +1,22 @@
-FROM openjdk:13 as builder
+FROM gradle:6.6-jdk11 as builder
 
 RUN mkdir /code
 WORKDIR /code
 
-ENV GRADLE_OPTS -Dorg.gradle.daemon=false
-COPY gradle/wrapper /code/gradle/wrapper
-COPY ./gradlew ./build.gradle.kts ./settings.gradle.kts /code/
+COPY ./build.gradle.kts ./settings.gradle.kts /code/
 COPY radar-app-config/build.gradle.kts  /code/radar-app-config/
 COPY radar-expression-lang/build.gradle.kts  /code/radar-expression-lang/
-RUN ./gradlew :radar-app-config:downloadDependencies
+RUN gradle :radar-app-config:downloadDependencies
 
 COPY radar-expression-lang/src /code/radar-expression-lang/src
 COPY radar-app-config/src /code/radar-app-config/src
 
-RUN ./gradlew -Dkotlin.compiler.execution.strategy="in-process" -Dorg.gradle.parallel=false -Pkotlin.incremental=false :radar-app-config:distTar \
+RUN gradle -Dkotlin.compiler.execution.strategy="in-process" -Dorg.gradle.parallel=false -Pkotlin.incremental=false :radar-app-config:distTar \
     && cd radar-app-config/build/distributions \
     && tar xf *.tar \
     && rm *.tar radar-app-config*/lib/radar-app-config*.jar
 
-FROM openjdk:13
+FROM openjdk:11-jre-slim
 
 MAINTAINER @nivemaham @blootsvoets
 

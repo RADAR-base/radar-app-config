@@ -12,7 +12,7 @@
 
 
 # Stage 1, "build-stage", based on Node.js, to build and compile Angular
-FROM node:latest as node
+FROM node:14 as node
 WORKDIR /app
 COPY package*.json /app/
 RUN npm install
@@ -21,7 +21,7 @@ ARG configuration=production
 RUN npm run build -- --output-path=./dist/out --configuration $configuration
 
 # Stage 2, based on Nginx, to have only the compiled app, ready for production with Nginx
-FROM nginx:1.17.3-alpine
+FROM nginx:1.19.2-alpine
 
 ## Remove default Nginx website
 #RUN rm -rf /usr/share/nginx/html/*
