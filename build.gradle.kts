@@ -8,6 +8,8 @@ plugins {
 }
 
 subprojects {
+    version = "0.1.0"
+
     repositories {
         // Use jcenter for resolving your dependencies.
         // You can declare any Maven/Ivy/file repository here.

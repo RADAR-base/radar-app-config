@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import nl.thehyve.lang.expression.antlr.ComparisonLexer
 import nl.thehyve.lang.expression.antlr.ComparisonParser
 import me.xdrop.fuzzywuzzy.FuzzySearch
-import nl.thehyve.lang.expression.ExpressionParserException.Companion.toException
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
@@ -102,8 +101,6 @@ class ExpressionParser(functions: List<Function>) {
     }
 }
 
-class ExpressionParserException(message: String, errorOffset: Int, val expression: String) : ParseException(message, errorOffset) {
-    companion object {
-        fun ParserRuleContext.toException(message: String) = ExpressionParserException(message, start.startIndex, text)
-    }
-}
+class ExpressionParserException(message: String, errorOffset: Int, val expression: String) : ParseException(message, errorOffset)
+
+private fun ParserRuleContext.toException(message: String) = ExpressionParserException(message, start.startIndex, text)

@@ -5,7 +5,7 @@ import org.jetbrains.gradle.ext.TaskTriggersConfig
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    id("org.jetbrains.kotlin.jvm")
+    kotlin("jvm")
     antlr
     idea
     id("org.jetbrains.gradle.plugin.idea-ext")
@@ -33,9 +33,9 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${project.extra["jacksonVersion"]}")
+    api("com.fasterxml.jackson.core:jackson-annotations:${project.extra["jacksonVersion"]}")
     implementation("com.fasterxml.jackson.core:jackson-databind:${project.extra["jacksonVersion"]}")
-
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${project.extra["jacksonVersion"]}")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
