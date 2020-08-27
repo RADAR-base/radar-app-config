@@ -8,7 +8,7 @@ class ProjectAuthService(
         @Context private val configProjectService: ConfigProjectService
 ): ProjectService {
     override fun ensureProject(projectId: String) {
-        if (configProjectService.listProjects().find { it.name == projectId } == null) {
+        if (projectId !in configProjectService) {
             throw HttpNotFoundException("project_not_found", "Project $projectId not found.")
         }
     }

@@ -9,7 +9,7 @@ application {
 
 project.extra.apply {
     set("okhttpVersion", "4.8.1")
-    set("radarAuthVersion", "0.2.3")
+    set("radarAuthVersion", "0.2.4")
     set("radarSchemasVersion", "0.5.13")
     set("jacksonVersion", "2.11.2")
     set("slf4jVersion", "1.7.30")

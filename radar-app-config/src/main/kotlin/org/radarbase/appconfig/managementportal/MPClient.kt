@@ -76,8 +76,7 @@ class MPClient(
             header("Authorization", "Bearer ${ensureToken()}")
         }.build()
 
-        return projectListReader.readValue<List<Project>>(execute(request))
-                .filter { auth.token.hasPermissionOnProject(Permission.PROJECT_READ, it.name) }
+        return projectListReader.readValue(execute(request))
     }
 
     fun readUsers(projectId: String): List<User> {

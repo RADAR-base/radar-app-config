@@ -4,6 +4,7 @@ import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.Project
 
 interface ConfigProjectService {
+    operator fun contains(name: String): Boolean
     fun listProjects(): Set<Project>
     fun projectConfig(clientId: String, projectId: String): ClientConfig
     fun putProjectConfig(clientId: String, projectId: String, clientConfig: ClientConfig)
