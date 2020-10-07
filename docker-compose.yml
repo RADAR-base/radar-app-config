@@ -6,7 +6,7 @@ services:
   # Management Portal                                                         #
   #---------------------------------------------------------------------------#
   managementportal:
-    image: radarbase/management-portal:0.5.6
+    image: radarbase/management-portal:0.6.0
     depends_on:
       - mp-postgresql
     ports:
@@ -41,19 +41,19 @@ services:
   #---------------------------------------------------------------------------#
   # RADAR Upload Source connector                                             #
   #---------------------------------------------------------------------------#
-#  app-config:
-#    build:
-#      context: .
-#      dockerfile: radar-app-config/Dockerfile
-#    image: radarbase/radar-app-config
-#    restart: on-failure
-#    volumes:
-#      - ./etc/appconfig.yml:/etc/radar-app-config/appconfig.yml
-#    depends_on:
-#      - managementportal
-#    labels:
-#      - "traefik.http.routers.appconfig.rule=PathPrefix(`/appconfig/api`)"
-#      - "traefik.http.services.appconfig.loadbalancer.server.port=8090"
+  app-config:
+    build:
+      context: .
+      dockerfile: radar-app-config/Dockerfile
+    image: radarbase/radar-app-config
+    restart: on-failure
+    volumes:
+      - ./etc/appconfig.yml:/etc/radar-app-config/appconfig.yml
+    depends_on:
+      - managementportal
+    labels:
+      - "traefik.http.routers.appconfig.rule=PathPrefix(`/appconfig/api`)"
+      - "traefik.http.services.appconfig.loadbalancer.server.port=8090"
 
   traefik:
     image: traefik:2.1
@@ -63,14 +63,14 @@ services:
     ports:
       - "8080:80"
 
-  smtp:
-    image: namshi/smtp
-    container_name: smtp
-    restart: always
-    ports:
-      - "25:25"
-    env_file:
-      - etc/smtp.env
+#  smtp:
+#    image: namshi/smtp
+#    container_name: smtp
+#    restart: always
+#    ports:
+#      - "25:25"
+#    env_file:
+#      - etc/smtp.env
 #    environment:
 #      - GMAIL_USER=
 #      - GMAIL_PASSWORD=

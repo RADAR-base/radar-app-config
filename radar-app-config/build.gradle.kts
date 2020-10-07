@@ -7,19 +7,6 @@ application {
     mainClassName = "org.radarbase.appconfig.MainKt"
 }
 
-project.extra.apply {
-    set("okhttpVersion", "4.8.1")
-    set("radarAuthVersion", "0.2.4")
-    set("radarSchemasVersion", "0.5.13")
-    set("jacksonVersion", "2.11.2")
-    set("slf4jVersion", "1.7.30")
-    set("logbackVersion", "1.2.3")
-    set("hibernateVersion", "5.4.20.Final")
-    set("h2Version", "1.4.200")
-    set("postgresqlVersion", "42.2.16")
-    set("liquibaseVersion", "3.10.2")
-}
-
 repositories {
     jcenter()
     maven(url = "https://dl.bintray.com/radar-base/org.radarbase")
@@ -31,23 +18,13 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    implementation("com.squareup.okhttp3:okhttp:${project.extra["okhttpVersion"]}")
     implementation(project(":radar-expression-lang"))
 
-    implementation("org.radarbase:radar-jersey:${project.extra["radarAuthVersion"]}")
+    val radarJerseyVersion: String by project
+    implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
+    implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
 
-    implementation("com.fasterxml.jackson.core:jackson-databind:${project.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${project.extra["jacksonVersion"]}")
-
-    implementation("org.slf4j:slf4j-api:${project.extra["slf4jVersion"]}")
-
-    implementation("org.hibernate:hibernate-core:${project.extra["hibernateVersion"]}")
-    implementation("org.liquibase:liquibase-core:${project.extra["liquibaseVersion"]}")
-
-    runtimeOnly("com.h2database:h2:${project.extra["h2Version"]}")
-    runtimeOnly("org.postgresql:postgresql:${project.extra["postgresqlVersion"]}")
-    runtimeOnly("ch.qos.logback:logback-classic:${project.extra["logbackVersion"]}")
-    runtimeOnly("org.hibernate:hibernate-c3p0:${project.extra["hibernateVersion"]}")
+    runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")

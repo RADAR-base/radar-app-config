@@ -4,18 +4,31 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import nl.thehyve.lang.expression.Expression
 import nl.thehyve.lang.expression.ResolvedVariable
 import nl.thehyve.lang.expression.Scope
+import org.radarbase.jersey.service.managementportal.MPOAuthClient
+import org.radarbase.jersey.service.managementportal.MPProject
+import org.radarbase.jersey.service.managementportal.MPUser
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
 data class ProjectList(val projects: Collection<Project>)
 
-data class Project(val id: Long, @JsonProperty("projectName") val name: String, @JsonProperty("humanReadableProjectName") val humanReadableName: String? = null, val location: String? = null, val organization: String? = null, val description: String? = null)
+data class Project(@JsonProperty("projectName") val name: String, @JsonProperty("humanReadableProjectName") val humanReadableName: String? = null, val location: String? = null, val organization: String? = null, val description: String? = null)
+fun MPProject.toProject(): Project = Project(
+        name = id,
+        humanReadableName = name,
+        location = location,
+        organization = organization,
+        description = description
+)
 
 data class UserList(val users: Collection<User>)
 data class User(val id: String, val externalUserId: String? = null, val hasConfig: Boolean? = null)
-data class MPUser(val login: String, val externalUserId: String? = null)
+
+fun MPUser.toUser(): User = User(id = id, externalUserId = externalId)
 
 data class OAuthClient(@JsonProperty("clientId") val id: String)
+
+fun MPOAuthClient.toOAuthClient() = OAuthClient(id = id)
 
 data class OAuthClientList(val clients: List<OAuthClient>)
 

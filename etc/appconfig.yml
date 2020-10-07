@@ -1,17 +1,19 @@
-baseUri: http://0.0.0.0:8095/appconfig/api
+baseUri: http://0.0.0.0:8090/appconfig/api
 isJmxEnabled: false
 
 inject:
   enhancerFactory: org.radarbase.appconfig.inject.ManagementPortalEnhancerFactory
 
-authentication:
-  url: http://localhost:8080/managementportal/
-  clientId: appconfig
-  clientSecret: test
-  resourceName: res_appconfig
+auth:
+  managementPortal:
+    url: http://managementportal:8080/managementportal/
+    clientId: appconfig
+    clientSecret: test
+  jwtResourceName: res_appconfig
 
-jdbc:
+database:
   driver: "org.h2.Driver"
   url: "jdbc:h2:./data/h2"
   user:
   password:
+  dialect: org.hibernate.dialect.H2Dialect
