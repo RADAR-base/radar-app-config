@@ -1,20 +1,14 @@
 package org.radarbase.appconfig.service
 
-import com.nhaarman.mockitokotlin2.mock
 import nl.thehyve.lang.expression.register
 import nl.thehyve.lang.expression.toVariable
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.radarbase.appconfig.config.ApplicationConfig
-import org.radarbase.appconfig.config.AuthenticationConfig
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.SingleVariable
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.inject.InMemoryResourceEnhancer
-import org.radarbase.appconfig.managementportal.MPClient
-import org.radarbase.jersey.auth.Auth
-import java.net.URL
 
 internal class ProjectServiceTest {
     private lateinit var projectService: ConfigProjectService
@@ -23,14 +17,7 @@ internal class ProjectServiceTest {
     @BeforeEach
     fun setUp() {
         resolver = InMemoryResourceEnhancer.InMemoryClientVariableResolver()
-        val config = ApplicationConfig(
-                authentication = AuthenticationConfig(
-                        url = URL("https://radar-test.thehyve.net/managementportal/"),
-                        clientSecret = "peyman"))
-
-        val auth = mock<Auth> {}
-        val mpClient = MPClient(config, auth)
-        projectService = MPProjectService(mpClient, resolver)
+        projectService = MPProjectService(resolver)
     }
 
     @Test

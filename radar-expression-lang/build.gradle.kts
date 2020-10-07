@@ -17,25 +17,21 @@ sourceSets {
     }
 }
 
-project.extra.apply {
-    set("jacksonVersion", "2.11.2")
-    set("antlrVersion", "4.8-1")
-}
-
-
 dependencies {
-    antlr("org.antlr:antlr4:${project.extra["antlrVersion"]}")
+    val antlrVersion: String by project
+    antlr("org.antlr:antlr4:$antlrVersion")
 
-    implementation("org.antlr:antlr4-runtime:${project.extra["antlrVersion"]}")
+    implementation("org.antlr:antlr4-runtime:$antlrVersion")
     implementation("me.xdrop:fuzzywuzzy:1.2.0")
 
     // Use the Kotlin JDK 8 standard library.
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    api("com.fasterxml.jackson.core:jackson-annotations:${project.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.core:jackson-databind:${project.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${project.extra["jacksonVersion"]}")
+    val jacksonVersion: String by project
+    api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")

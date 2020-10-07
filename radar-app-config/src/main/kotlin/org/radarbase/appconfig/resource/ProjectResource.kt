@@ -3,6 +3,7 @@ package org.radarbase.appconfig.resource
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.Project
 import org.radarbase.appconfig.domain.ProjectList
+import org.radarbase.appconfig.domain.toProject
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigProjectService
 import org.radarbase.appconfig.service.ConfigService
@@ -10,6 +11,8 @@ import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.exception.HttpNotFoundException
+import org.radarbase.jersey.service.managementportal.MPProject
+import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarcns.auth.authorization.Permission
 import org.radarcns.auth.authorization.Permission.Entity
 import org.radarcns.auth.authorization.Permission.Operation
@@ -25,21 +28,21 @@ import javax.ws.rs.core.Response
 @Singleton
 @Authenticated
 class ProjectResource(
+        @Context private val radarProjectService: RadarProjectService,
         @Context private val projectService: ConfigProjectService,
         @Context private val configService: ConfigService,
         @Context private val clientService: ClientService
 ) {
     @GET
     @NeedsPermission(Entity.PROJECT, Operation.READ)
-    fun listProjects(@Context auth: Auth) = ProjectList(projectService.listProjects()
-            .filter { auth.token.hasPermissionOnProject(Permission.PROJECT_READ, it.name) })
+    fun listProjects(@Context auth: Auth) = ProjectList(radarProjectService.userProjects(auth)
+            .map(MPProject::toProject))
 
     @GET
     @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
     @Path("{projectId}")
     fun get(@PathParam("projectId") projectId: String): Project =
-        projectService.find(projectId)
-                ?: throw HttpNotFoundException("project_missing", "Project $projectId not found")
+        radarProjectService.project(projectId).toProject()
 
     @Path("{projectId}/config/{clientId}")
     @GET

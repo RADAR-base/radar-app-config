@@ -3,26 +3,24 @@ package org.radarbase.appconfig.persistence
 import nl.thehyve.lang.expression.*
 import org.hibernate.criterion.MatchMode
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
+import org.radarbase.jersey.hibernate.HibernateRepository
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import javax.inject.Provider
 import javax.persistence.EntityManager
 import javax.persistence.Query
 import javax.persistence.TypedQuery
 
 class HibernateVariableResolver(
-        private val em: EntityManager,
+        em: Provider<EntityManager>,
         private val clientId: String
-): VariableResolver {
-    override fun replace(scope: Scope, prefix: QualifiedId?, variables: Stream<Pair<QualifiedId, Variable>>) = em.run {
-        val query = deleteConfig(scope, prefix)
+): VariableResolver, HibernateRepository(em) {
+    override fun replace(scope: Scope, prefix: QualifiedId?, variables: Stream<Pair<QualifiedId, Variable>>) = transact {
+        deleteConfig(scope, prefix).executeUpdate()
 
-        transact {
-            query.executeUpdate()
-
-            variables
-                    .filter { (id, _) -> !id.isEmpty() }
-                    .forEach { (id, variable) -> save(scope, id, variable) }
-        }
+        variables
+                .filter { (id, _) -> !id.isEmpty() }
+                .forEach { (id, variable) -> save(scope, id, variable) }
     }
 
     private fun EntityManager.save(scope: Scope, id: QualifiedId, variable: Variable) {
@@ -39,7 +37,7 @@ class HibernateVariableResolver(
         persist(configEntity)
     }
 
-    override fun register(scope: Scope, id: QualifiedId, variable: Variable) = em.transact {
+    override fun register(scope: Scope, id: QualifiedId, variable: Variable) = transact {
         save(scope, id, variable)
     }
 
@@ -47,46 +45,35 @@ class HibernateVariableResolver(
         if (id.isEmpty()) {
             throw IllegalArgumentException("Cannot get variable without variable name")
         }
-
-        return em.run {
-            val query = selectConfigName(scopes, id)
-
-            transact {
-                query.resultStream
-                        .map { it.toResolvedVariable() }
-                        .reduce(higherScopedVariable(scopes))
-                        .orElseThrow { NoSuchFieldError("Unknown variable $id in scopes $scopes.") }
-            }
-        }
-    }
-
-    override fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Stream<ResolvedVariable> = em.run {
-        val query = selectConfig(scopes, prefix)
-
-        transact {
-            query.resultStream
+        return transact {
+            selectConfigName(scopes, id)
+                    .resultStream
                     .map { it.toResolvedVariable() }
-                    .collect(Collectors.toMap<ResolvedVariable, VariableKey, ResolvedVariable>({
-                        if (it.scope == scopes[0]) ActualVariableKey(it.id)
-                        else DefaultsVariableKey(it.id)
-                    }, { it }, higherScopedVariable(scopes)))
-                    .values
-                    .stream()
+                    .reduce(higherScopedVariable(scopes))
+                    .orElseThrow { NoSuchFieldError("Unknown variable $id in scopes $scopes.") }
         }
     }
 
-    override fun list(scopes: List<Scope>, prefix: QualifiedId?): Stream<QualifiedId> = em.run {
-        val query = listConfig(scopes, prefix)
+    override fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Stream<ResolvedVariable> = transact {
+        selectConfig(scopes, prefix)
+                .resultStream
+                .map { it.toResolvedVariable() }
+                .collect(Collectors.toMap<ResolvedVariable, VariableKey, ResolvedVariable>({
+                    if (it.scope == scopes[0]) ActualVariableKey(it.id)
+                    else DefaultsVariableKey(it.id)
+                }, { it }, higherScopedVariable(scopes)))
+                .values
+                .stream()
+    }
 
-        transact<Stream<QualifiedId>> {
-            (query.resultStream as Stream<*>)
-                    .map { rawResult ->
-                        val result = rawResult as Array<*>
-                        QualifiedId(result[0] as String, result[1] as String)
-                    }
-                    .collect(Collectors.toList())
-                    .stream()
-        }
+    override fun list(scopes: List<Scope>, prefix: QualifiedId?): Stream<QualifiedId> = transact {
+        (listConfig(scopes, prefix).resultStream as Stream<*>)
+                .map { rawResult ->
+                    val result = rawResult as Array<*>
+                    QualifiedId(result[0] as String, result[1] as String)
+                }
+                .collect(Collectors.toList())
+                .stream()
     }
 
     private fun EntityManager.deleteConfig(scope: Scope, prefix: QualifiedId?): Query {

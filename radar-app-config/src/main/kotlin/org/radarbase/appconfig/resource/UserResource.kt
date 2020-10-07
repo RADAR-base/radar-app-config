@@ -3,14 +3,16 @@ package org.radarbase.appconfig.resource
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.User
 import org.radarbase.appconfig.domain.UserList
+import org.radarbase.appconfig.domain.toUser
 import org.radarbase.appconfig.service.ClientService
-import org.radarbase.appconfig.service.ProjectAuthService
 import org.radarbase.appconfig.service.UserService
-import org.radarbase.jersey.auth.Auth
+import org.radarbase.appconfig.service.ensureUser
+import org.radarbase.appconfig.service.find
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
-import org.radarbase.jersey.auth.ProjectService
 import org.radarbase.jersey.exception.HttpNotFoundException
+import org.radarbase.jersey.service.managementportal.MPUser
+import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarcns.auth.authorization.Permission
 import javax.inject.Singleton
 import javax.ws.rs.*
@@ -25,17 +27,16 @@ import javax.ws.rs.core.MediaType
 @Singleton
 class UserResource(
         @Context private val userService: UserService,
-        @Context private val projectService: ProjectService,
-        @Context private val clientService: ClientService
+        @Context private val clientService: ClientService,
+        @Context private val radarProjectService: RadarProjectService
 ) {
     @GET
     @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ, "projectId")
     fun userClientConfig(
-            @PathParam("projectId") projectId: String,
-            @Context auth: Auth
+            @PathParam("projectId") projectId: String
     ): UserList {
-        return UserList(userService.list(projectId)
-                .filter { auth.token.hasPermissionOnSubject(Permission.SUBJECT_READ, projectId, it.id) })
+        return UserList(radarProjectService.projectUsers(projectId)
+                .map(MPUser::toUser))
     }
 
     @Path("/{userId}")
@@ -45,7 +46,7 @@ class UserResource(
             @PathParam("projectId") projectId: String,
             @PathParam("userId") userId: String
     ): User {
-        return userService.find(projectId, userId)
+        return radarProjectService.find(projectId, userId)
                 ?: throw HttpNotFoundException("user_missing", "User not found")
     }
 
@@ -58,7 +59,7 @@ class UserResource(
             @PathParam("clientId") clientId: String
     ): ClientConfig {
         clientService.ensureClient(clientId)
-        userService.ensureUser(projectId, userId)
+        radarProjectService.ensureUser(projectId, userId)
         return userService.userConfig(clientId, projectId, userId)
     }
 
@@ -72,7 +73,7 @@ class UserResource(
             clientConfig: ClientConfig
     ): ClientConfig {
         clientService.ensureClient(clientId)
-        userService.ensureUser(projectId, userId)
+        radarProjectService.ensureUser(projectId, userId)
         userService.putUserConfig(clientId, userId, clientConfig)
         return userService.userConfig(clientId, projectId, userId)
     }

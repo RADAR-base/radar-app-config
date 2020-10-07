@@ -1,9 +1,11 @@
 package org.radarbase.appconfig.resource
 
 import org.radarbase.appconfig.domain.OAuthClientList
+import org.radarbase.appconfig.domain.toOAuthClient
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
+import org.radarbase.jersey.service.managementportal.MPOAuthClient
 import org.radarcns.auth.authorization.Permission
 import javax.inject.Singleton
 import javax.ws.rs.Consumes
@@ -25,9 +27,8 @@ class RootResource(
     @Path("clients")
     @GET
     @NeedsPermission(Permission.Entity.OAUTHCLIENTS, Permission.Operation.READ)
-    fun clients(): OAuthClientList {
-        return OAuthClientList(clientService.readClients().toList())
-    }
+    fun clients() = OAuthClientList(clientService.readClients()
+                .map(MPOAuthClient::toOAuthClient))
 }
 
 /**
