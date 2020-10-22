@@ -6,8 +6,6 @@ import org.radarbase.appconfig.domain.UserList
 import org.radarbase.appconfig.domain.toUser
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.UserService
-import org.radarbase.appconfig.service.ensureUser
-import org.radarbase.appconfig.service.find
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.exception.HttpNotFoundException
@@ -46,7 +44,7 @@ class UserResource(
             @PathParam("projectId") projectId: String,
             @PathParam("userId") userId: String
     ): User {
-        return radarProjectService.find(projectId, userId)
+        return radarProjectService.getUser(projectId, userId)?.toUser()
                 ?: throw HttpNotFoundException("user_missing", "User not found")
     }
 
