@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './containers/navbar/navbar.component';
-import {MatIconModule} from '@angular/material';
+import {MatIconModule} from '@angular/material/icon';
 import { FooterComponent } from './containers/footer/footer.component';
 import { PageNotFoundComponent } from './containers/page-not-found/page-not-found.component';
 import { AdminSelectionPageComponent } from './containers/admin-selection-page/admin-selection-page.component';
