@@ -10,29 +10,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 # Stage 1, "build-stage", based on Node.js, to build and compile Angular
-FROM node:14 as node
-WORKDIR /app
-COPY package*.json /app/
-RUN npm install
-COPY . /app/
+FROM node:14 as builder
+
+WORKDIR /code
+
+COPY package*.json /code/
+
+RUN echo "==> Installing dependencies" \
+    && npm i --silent
+
+COPY .browserslistrc angular.json karma.conf.js ts* /code/
+COPY src /code/src
+
 ARG configuration=production
-RUN npm run build -- --output-path=./dist/out --configuration $configuration
+
+RUN npm run build -- --output-path=./dist/out --configuration ${configuration}
+>>>>>>> Stashed changes
+
+WORKDIR /code/dist/out
+
+RUN find . -type f "(" \
+    -name "*.html" \
+    -o -name "*.js" \
+    -o -name "*.css" \
+    -o -name "*.xml" \
+    -o -name "*.svg" \
+    -o -name "*.json" \
+    ")" -print0 \
+    | xargs -0 -n 1 gzip -k
 
 # Stage 2, based on Nginx, to have only the compiled app, ready for production with Nginx
-FROM nginx:1.19.2-alpine
+FROM nginxinc/nginx-unprivileged:1.19-alpine
 
 ## Remove default Nginx website
 #RUN rm -rf /usr/share/nginx/html/*
 
-COPY ./docker/nginx.conf /etc/nginx/nginx.conf
-COPY --from=node /app/dist/out/ /usr/share/nginx/html
+ENV RACF_BASE_URL=/appconfig/
 
-COPY ./docker/entrypoint.sh /entrypoint.sh
+# add init script
+COPY docker/optimization.conf /etc/nginx/conf.d/
+COPY --chown=101 docker/default.conf /etc/nginx/conf.d/
+COPY docker/30-env-subst.sh /docker-entrypoint.d/
 
-# expose internal port:80 and run init.sh
-EXPOSE 80
+COPY --from=builder /code/dist/out/ /usr/share/nginx/html
+COPY --from=builder --chown=101 /code/dist/out/main-* /code/dist/out/index.html* /usr/share/nginx/html/
 
-ENTRYPOINT ["sh", "/entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]
