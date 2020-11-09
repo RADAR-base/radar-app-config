@@ -2,6 +2,7 @@ package nl.thehyve.lang.expression
 
 import java.math.BigDecimal
 import java.util.stream.Stream
+import kotlin.contracts.contract
 
 
 interface Expression

@@ -37,7 +37,15 @@ LABEL description="RADAR-base radar app config container"
 
 # Override JAVA_OPTS to set heap parameters, for example
 ENV JAVA_OPTS="" \
-    RADAR_APP_CONFIG_OPTS="-Djava.security.egd=/dev/./urandom"
+    RADAR_APP_CONFIG_OPTS="\
+        -Djava.security.egd=/dev/./urandom \
+        --add-modules java.se \
+        --add-exports java.base/jdk.internal.ref=ALL-UNNAMED \
+        --add-opens java.base/java.lang=ALL-UNNAMED \
+        --add-opens java.base/java.nio=ALL-UNNAMED \
+        --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
+        --add-opens java.management/sun.management=ALL-UNNAMED \
+        --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
 
 RUN mkdir -p /var/lib/radar-app-config/data
 WORKDIR /var/lib/radar-app-config

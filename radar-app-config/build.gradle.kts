@@ -24,6 +24,9 @@ dependencies {
     implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
     implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
 
+    implementation("com.hazelcast:hazelcast-hibernate53:${project.property("hazelcastHibernateVersion")}")
+    implementation("com.hazelcast:hazelcast:${project.property("hazelcastVersion")}")
+
     runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")

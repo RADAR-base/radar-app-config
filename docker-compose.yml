@@ -6,11 +6,9 @@ services:
   # Management Portal                                                         #
   #---------------------------------------------------------------------------#
   managementportal:
-    image: radarbase/management-portal:0.6.0
+    image: radarbase/management-portal:0.6.1
     depends_on:
       - mp-postgresql
-    ports:
-      - "8090:8080"
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://mp-postgresql:5432/managementportal
@@ -30,11 +28,22 @@ services:
       - "traefik.http.services.managementportal.loadbalancer.server.port=8080"
 
   mp-postgresql:
-    image: bitnami/postgresql:latest
+    image: bitnami/postgresql:12
     environment:
       - POSTGRESQL_USERNAME=radarcns
       - POSTGRESQL_PASSWORD=radarcns
       - POSTGRESQL_DATABASE=managementportal
+    labels:
+      - "traefik.enable=false"
+
+  app-postgresql:
+    image: bitnami/postgresql:12
+    environment:
+      - POSTGRESQL_USERNAME=radarcns
+      - POSTGRESQL_PASSWORD=radarcns
+      - POSTGRESQL_DATABASE=appconfig
+    ports:
+      - "5432:5432"
     labels:
       - "traefik.enable=false"
 
@@ -45,7 +54,7 @@ services:
     build:
       context: .
       dockerfile: radar-app-config/Dockerfile
-    image: radarbase/radar-app-config
+    image: radarbase/radar-app-config:dev
     restart: on-failure
     volumes:
       - ./etc/appconfig.yml:/etc/radar-app-config/appconfig.yml
@@ -55,6 +64,16 @@ services:
       - "traefik.http.routers.appconfig.rule=PathPrefix(`/appconfig/api`)"
       - "traefik.http.services.appconfig.loadbalancer.server.port=8090"
 
+  app-config-frontend:
+    build:
+      context: radar-app-config-frontend
+    image: radarbase/radar-app-config-frontend:dev
+    depends_on:
+      - app-config
+    labels:
+      - "traefik.http.routers.appconfigfrontend.rule=PathPrefix(`/appconfig`)"
+      - "traefik.http.services.appconfigfrontend.loadbalancer.server.port=8080"
+
   traefik:
     image: traefik:2.1
     volumes:
@@ -62,23 +81,3 @@ services:
     command: --api.insecure=true --providers.docker
     ports:
       - "8080:80"
-
-#  smtp:
-#    image: namshi/smtp
-#    container_name: smtp
-#    restart: always
-#    ports:
-#      - "25:25"
-#    env_file:
-#      - etc/smtp.env
-#    environment:
-#      - GMAIL_USER=
-#      - GMAIL_PASSWORD=
-
-networks:
-  api:
-    internal: true
-  mp:
-    internal: true
-  mail:
-    internal: true

@@ -1,9 +1,13 @@
 package org.radarbase.appconfig.persistence.entity
 
+import org.hibernate.annotations.Cache
+import org.hibernate.annotations.CacheConcurrencyStrategy
 import javax.persistence.*
 
 @Entity(name = "Config")
 @Table(name = "config")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class ConfigEntity {
     @Id
     @GeneratedValue(generator = "config_id_sequence")

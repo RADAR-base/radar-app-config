@@ -45,7 +45,10 @@ FROM nginxinc/nginx-unprivileged:1.19-alpine
 ## Remove default Nginx website
 #RUN rm -rf /usr/share/nginx/html/*
 
-ENV RACF_BASE_URL=/appconfig/
+ENV BASE_HREF=/appconfig/
+ENV AUTH_URL=http://localhost:8080/managementportal/oauth
+ENV AUTH_CALLBACK_URL=http://localhost:8080/appconfig/login
+ENV APP_CONFIG_URL=/appconfig/api
 
 # add init script
 COPY docker/optimization.conf /etc/nginx/conf.d/

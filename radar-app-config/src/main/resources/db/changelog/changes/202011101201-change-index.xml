@@ -19,11 +19,23 @@
   -->
 
 <databaseChangeLog
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle,mssql"/>
 
-    <include file="db/changelog/changes/202010071457-create-database.xml"/>
-    <include file="db/changelog/changes/202011101201-change-index.xml"/>
+    <changeSet id="2" author="joris" dbms="h2,postgresql">
+        <createIndex tableName="config" indexName="idx_config_client_name">
+            <column name="client_id"/>
+            <column name="name"/>
+        </createIndex>
+
+        <createIndex tableName="config" indexName="idx_config_client_scope">
+            <column name="client_id"/>
+            <column name="scope"/>
+        </createIndex>
+
+        <dropIndex tableName="config" indexName="idx_config_scoped_client"/>
+    </changeSet>
 </databaseChangeLog>

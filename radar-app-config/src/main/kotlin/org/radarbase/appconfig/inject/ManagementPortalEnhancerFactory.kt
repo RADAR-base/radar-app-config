@@ -16,7 +16,12 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
         val resolverEnhancer = if (config.database != null) {
             listOf(
                     HibernateResourceEnhancer(config.database.copy(
-                            managedClasses = listOf(ConfigEntity::class.qualifiedName!!)
+                        managedClasses = listOf(ConfigEntity::class.qualifiedName!!),
+                        properties = mapOf(
+                            "hibernate.cache.use_second_level_cache" to "true",
+                            "hibernate.cache.region.factory_class" to "com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory",
+                            "hibernate.cache.hazelcast.configuration_file_path" to "hazelcast.xml",
+                        ) + config.database.properties,
                     )),
                     HibernatePersistenceResourceEnhancer())
         } else {
