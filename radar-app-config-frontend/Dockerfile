@@ -26,7 +26,6 @@ COPY src /code/src
 ARG configuration=production
 
 RUN npm run build -- --output-path=./dist/out --configuration ${configuration}
->>>>>>> Stashed changes
 
 WORKDIR /code/dist/out
 
