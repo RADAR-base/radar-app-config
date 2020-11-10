@@ -33,14 +33,15 @@ class HibernatePersistenceResourceEnhancer(private val hazelcastConfig: Hazelcas
             .`in`(Singleton::class.java)
 
         bind(HibernateClientVariableResolver::class.java)
-                .to(ClientVariableResolver::class.java)
-                .`in`(Singleton::class.java)
+            .to(ClientVariableResolver::class.java)
+            .`in`(Singleton::class.java)
     }
 
     class HibernateClientVariableResolver(
         @Context private val em: javax.inject.Provider<EntityManager>,
         @Context private val hazelcastInstance: HazelcastInstance,
-    ): ClientVariableResolver {
-        override fun get(clientId: String): VariableResolver = HibernateVariableResolver(em, clientId, hazelcastInstance.getMap(clientId))
+    ) : ClientVariableResolver {
+        override fun get(clientId: String): VariableResolver =
+            HibernateVariableResolver(em, clientId, hazelcastInstance.getMap(clientId))
     }
 }

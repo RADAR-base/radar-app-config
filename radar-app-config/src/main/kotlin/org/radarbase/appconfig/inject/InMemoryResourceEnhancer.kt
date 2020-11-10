@@ -11,8 +11,8 @@ class InMemoryResourceEnhancer : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {
         // Bind factories.
         bind(InMemoryClientVariableResolver::class.java)
-                .to(ClientVariableResolver::class.java)
-                .`in`(Singleton::class.java)
+            .to(ClientVariableResolver::class.java)
+            .`in`(Singleton::class.java)
     }
 
     class InMemoryClientVariableResolver() : ClientVariableResolver {

@@ -14,10 +14,10 @@ import javax.persistence.Query
 import javax.persistence.TypedQuery
 
 class HibernateVariableResolver(
-        em: Provider<EntityManager>,
-        private val clientId: String,
-        private val cache: IMap<String, LongArray>
-): VariableResolver, HibernateRepository(em) {
+    em: Provider<EntityManager>,
+    private val clientId: String,
+    private val cache: IMap<String, LongArray>,
+) : VariableResolver, HibernateRepository(em) {
     override fun replace(
         scope: Scope,
         prefix: QualifiedId?,
@@ -116,10 +116,11 @@ class HibernateVariableResolver(
     private fun EntityManager.deleteConfig(
         scope: Scope,
         prefix: String,
-    ): Query = createQuery("DELETE FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix")
-        .setParameter("scope", scope.asString())
-        .setParameter("clientId", clientId)
-        .setParameter("prefix", MatchMode.START.toMatchString(prefix))
+    ): Query =
+        createQuery("DELETE FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix")
+            .setParameter("scope", scope.asString())
+            .setParameter("clientId", clientId)
+            .setParameter("prefix", MatchMode.START.toMatchString(prefix))
 
     private fun EntityManager.selectConfig(
         scope: Scope,
@@ -139,14 +140,20 @@ class HibernateVariableResolver(
 
     private fun EntityManager.selectConfig(
         scope: Scope,
-    ): TypedQuery<java.lang.Long> = createQuery("SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId", java.lang.Long::class.java)
+    ): TypedQuery<java.lang.Long> = createQuery(
+        "SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId",
+        java.lang.Long::class.java
+    )
         .setParameter("scope", scope.asString())
         .setParameter("clientId", clientId)
 
     private fun EntityManager.selectConfigPrefix(
         scope: Scope,
         prefix: String,
-    ): TypedQuery<java.lang.Long> = createQuery("SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix", java.lang.Long::class.java)
+    ): TypedQuery<java.lang.Long> = createQuery(
+        "SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix",
+        java.lang.Long::class.java
+    )
         .setParameter("scope", scope.asString())
         .setParameter("clientId", clientId)
         .setParameter("prefix", MatchMode.START.toMatchString(prefix))
@@ -154,7 +161,10 @@ class HibernateVariableResolver(
     private fun EntityManager.selectConfigName(
         scopes: List<Scope>,
         name: QualifiedId,
-    ): TypedQuery<ConfigEntity> = createQuery("SELECT c FROM Config c WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name = :name", ConfigEntity::class.java)
+    ): TypedQuery<ConfigEntity> = createQuery(
+        "SELECT c FROM Config c WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name = :name",
+        ConfigEntity::class.java
+    )
         .setParameter("scopes", scopes.map { it.asString() })
         .setParameter("clientId", clientId)
         .setParameter("name", name.asString())
@@ -170,14 +180,20 @@ class HibernateVariableResolver(
 
     private fun EntityManager.listConfig(
         scopes: List<Scope>,
-    ): TypedQuery<ConfigEntity> = createQuery("SELECT DISTINCT c.clientId, c.name FROM Config c WHERE c.scope IN (:scopes) AND c.clientId = :clientId", ConfigEntity::class.java)
+    ): TypedQuery<ConfigEntity> = createQuery(
+        "SELECT DISTINCT c.clientId, c.name FROM Config c WHERE c.scope IN (:scopes) AND c.clientId = :clientId",
+        ConfigEntity::class.java
+    )
         .setParameter("scopes", scopes.map { it.asString() })
         .setParameter("clientId", clientId)
 
     private fun EntityManager.listConfigPrefix(
         scopes: List<Scope>,
         prefix: String,
-    ): TypedQuery<ConfigEntity> = createQuery("SELECT DISTINCT c.clientId, c.name FROM Config c WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name LIKE :prefix", ConfigEntity::class.java)
+    ): TypedQuery<ConfigEntity> = createQuery(
+        "SELECT DISTINCT c.clientId, c.name FROM Config c WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name LIKE :prefix",
+        ConfigEntity::class.java
+    )
         .setParameter("scopes", scopes.map { it.asString() })
         .setParameter("clientId", clientId)
         .setParameter("prefix", MatchMode.START.toMatchString(prefix))
@@ -189,9 +205,10 @@ class HibernateVariableResolver(
             value?.toVariable() ?: NullLiteral(),
         )
 
-        private fun higherScopedVariable(scopes: List<Scope>): (ResolvedVariable, ResolvedVariable) -> ResolvedVariable = { v1, v2 ->
-            if (scopes.indexOf(v1.scope) < scopes.indexOf(v2.scope)) v1 else v2
-        }
+        private fun higherScopedVariable(scopes: List<Scope>): (ResolvedVariable, ResolvedVariable) -> ResolvedVariable =
+            { v1, v2 ->
+                if (scopes.indexOf(v1.scope) < scopes.indexOf(v2.scope)) v1 else v2
+            }
     }
 }
 
@@ -199,5 +216,5 @@ sealed class VariableKey {
     abstract val id: QualifiedId
 }
 
-data class DefaultsVariableKey(override val id: QualifiedId): VariableKey()
-data class ActualVariableKey(override val id: QualifiedId): VariableKey()
+data class DefaultsVariableKey(override val id: QualifiedId) : VariableKey()
+data class ActualVariableKey(override val id: QualifiedId) : VariableKey()

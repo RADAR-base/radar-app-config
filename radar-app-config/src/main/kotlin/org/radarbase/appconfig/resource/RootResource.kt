@@ -22,13 +22,15 @@ import javax.ws.rs.core.MediaType
 @Authenticated
 @Singleton
 class RootResource(
-        @Context private val clientService: ClientService
+    @Context private val clientService: ClientService,
 ) {
     @Path("clients")
     @GET
     @NeedsPermission(Permission.Entity.OAUTHCLIENTS, Permission.Operation.READ)
-    fun clients() = OAuthClientList(clientService.readClients()
-                .map(MPOAuthClient::toOAuthClient))
+    fun clients() = OAuthClientList(
+        clientService.readClients()
+            .map(MPOAuthClient::toOAuthClient)
+    )
 }
 
 /**

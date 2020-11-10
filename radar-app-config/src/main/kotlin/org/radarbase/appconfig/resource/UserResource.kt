@@ -24,37 +24,39 @@ import javax.ws.rs.core.MediaType
 @Authenticated
 @Singleton
 class UserResource(
-        @Context private val userService: UserService,
-        @Context private val clientService: ClientService,
-        @Context private val radarProjectService: RadarProjectService
+    @Context private val userService: UserService,
+    @Context private val clientService: ClientService,
+    @Context private val radarProjectService: RadarProjectService,
 ) {
     @GET
     @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ, "projectId")
     fun userClientConfig(
-            @PathParam("projectId") projectId: String
+        @PathParam("projectId") projectId: String,
     ): UserList {
-        return UserList(radarProjectService.projectUsers(projectId)
-                .map(MPUser::toUser))
+        return UserList(
+            radarProjectService.projectUsers(projectId)
+                .map(MPUser::toUser)
+        )
     }
 
     @Path("/{userId}")
     @GET
     @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ, "projectId", "userId")
     fun userClientConfig(
-            @PathParam("projectId") projectId: String,
-            @PathParam("userId") userId: String
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
     ): User {
         return radarProjectService.getUser(projectId, userId)?.toUser()
-                ?: throw HttpNotFoundException("user_missing", "User not found")
+            ?: throw HttpNotFoundException("user_missing", "User not found")
     }
 
     @Path("/{userId}/config/{clientId}")
     @GET
     @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ, "projectId", "userId")
     fun userClientConfig(
-            @PathParam("projectId") projectId: String,
-            @PathParam("userId") userId: String,
-            @PathParam("clientId") clientId: String
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
+        @PathParam("clientId") clientId: String,
     ): ClientConfig {
         clientService.ensureClient(clientId)
         radarProjectService.ensureUser(projectId, userId)
@@ -65,10 +67,10 @@ class UserResource(
     @POST
     @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ, "projectId", "userId")
     fun putUserClientConfig(
-            @PathParam("projectId") projectId: String,
-            @PathParam("userId") userId: String,
-            @PathParam("clientId") clientId: String,
-            clientConfig: ClientConfig
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
+        @PathParam("clientId") clientId: String,
+        clientConfig: ClientConfig,
     ): ClientConfig {
         clientService.ensureClient(clientId)
         radarProjectService.ensureUser(projectId, userId)

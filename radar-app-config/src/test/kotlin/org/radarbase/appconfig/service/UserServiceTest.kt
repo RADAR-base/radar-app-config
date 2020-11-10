@@ -27,31 +27,58 @@ internal class UserServiceTest {
     fun putUserConfig() {
         val configEmpty = userService.userConfig("aRMT", "radar-test", "a")
         assertEquals(ClientConfig("aRMT", "user.a", listOf()), configEmpty)
-        userService.putUserConfig("aRMT", "a", ClientConfig(null, null, listOf(
-                SingleVariable("c", "b"),
-                SingleVariable("d", "5"))
-        ))
+        userService.putUserConfig(
+            "aRMT", "a", ClientConfig(
+                null, null, listOf(
+                    SingleVariable("c", "b"),
+                    SingleVariable("d", "5")
+                )
+            )
+        )
 
         val config = userService.userConfig("aRMT", "radar-test", "a")
-        assertEquals(ClientConfig("aRMT", "user.a", listOf(
-                SingleVariable("c", "b"),
-                SingleVariable("d", "5"))), config)
+        assertEquals(
+            ClientConfig(
+                "aRMT", "user.a", listOf(
+                    SingleVariable("c", "b"),
+                    SingleVariable("d", "5")
+                )
+            ), config
+        )
 
-        userService.putUserConfig("aRMT", "a", ClientConfig(null, null, listOf(
-                SingleVariable("c", "b")
-        )))
+        userService.putUserConfig(
+            "aRMT", "a", ClientConfig(
+                null, null, listOf(
+                    SingleVariable("c", "b")
+                )
+            )
+        )
         val configNew = userService.userConfig("aRMT", "radar-test", "a")
-        assertEquals(ClientConfig("aRMT", "user.a", listOf(
-                SingleVariable("c", "b")
-        )), configNew)
+        assertEquals(
+            ClientConfig(
+                "aRMT", "user.a", listOf(
+                    SingleVariable("c", "b")
+                )
+            ), configNew
+        )
 
-        projectService.putProjectConfig("aRMT", "radar-test", ClientConfig(null, null, listOf(
-                SingleVariable("d", "else")
-        )))
+        projectService.putProjectConfig(
+            "aRMT", "radar-test", ClientConfig(
+                null, null, listOf(
+                    SingleVariable("d", "else")
+                )
+            )
+        )
         val configNull = userService.userConfig("aRMT", "radar-test", "a")
-        assertEquals(ClientConfig("aRMT", "user.a", listOf(
-                SingleVariable("c", "b")),
-                listOf(SingleVariable("d", "else", "project.radar-test")
-        )), configNull)
+        assertEquals(
+            ClientConfig(
+                "aRMT", "user.a", listOf(
+                    SingleVariable("c", "b")
+                ),
+                listOf(
+                    SingleVariable("d", "else", "project.radar-test")
+                )
+            ), configNull
+        )
     }
 }

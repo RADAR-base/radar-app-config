@@ -43,20 +43,21 @@ dependencies {
 tasks.generateGrammarSource {
     outputDirectory = file("$buildDir/generated-src/antlr/main/nl/thehyve/lang/expression/antlr")
     arguments = arguments + listOf(
-            "-package", "nl.thehyve.lang.expression.antlr")
+        "-package", "nl.thehyve.lang.expression.antlr"
+    )
 }
 
 tasks["compileKotlin"].dependsOn(tasks.generateGrammarSource)
 
 
 fun Project.idea(block: IdeaModel.() -> Unit) =
-        (this as ExtensionAware).extensions.configure("idea", block)
+    (this as ExtensionAware).extensions.configure("idea", block)
 
 fun IdeaProject.settings(block: ProjectSettings.() -> Unit) =
-        (this@settings as ExtensionAware).extensions.configure(block)
+    (this@settings as ExtensionAware).extensions.configure(block)
 
 fun ProjectSettings.taskTriggers(block: TaskTriggersConfig.() -> Unit) =
-        (this@taskTriggers as ExtensionAware).extensions.configure("taskTriggers", block)
+    (this@taskTriggers as ExtensionAware).extensions.configure("taskTriggers", block)
 
 
 idea {

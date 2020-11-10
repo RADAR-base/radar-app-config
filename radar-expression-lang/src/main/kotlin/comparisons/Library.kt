@@ -5,14 +5,13 @@ package comparisons
 
 import nl.thehyve.lang.expression.*
 import nl.thehyve.lang.expression.Function
-import java.math.BigDecimal
 import kotlin.system.exitProcess
 
 fun main() {
     val functions = listOf<Function>(
-            SumFunction(),
-            ListVariablesFunction(),
-            CountFunction()
+        SumFunction(),
+        ListVariablesFunction(),
+        CountFunction()
     )
     val parser = ExpressionParser(functions)
 

@@ -23,8 +23,9 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
                 ) + config.database.properties,
             )
             listOf(
-                    HibernateResourceEnhancer(databaseConfig),
-                    HibernatePersistenceResourceEnhancer(config.hazelcast))
+                HibernateResourceEnhancer(databaseConfig),
+                HibernatePersistenceResourceEnhancer(config.hazelcast)
+            )
         } else {
             listOf(InMemoryResourceEnhancer())
         }
@@ -32,9 +33,9 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
         val radarEnhancer = ConfigLoader.Enhancers.radar(config.auth)
         radarEnhancer.mapper.registerModule(SimpleModule().apply {
             val allowedFunctions = listOf<Function>(
-                    SumFunction(),
-                    ListVariablesFunction(),
-                    CountFunction()
+                SumFunction(),
+                ListVariablesFunction(),
+                CountFunction()
             )
             val deserializer = ExpressionDeserializer(ExpressionParser(allowedFunctions))
 
@@ -42,11 +43,12 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
         })
 
         return listOf(
-                AppConfigResourceEnhancer(config),
-                radarEnhancer,
-                ConfigLoader.Enhancers.managementPortal(config.auth),
-                ConfigLoader.Enhancers.health,
-                ConfigLoader.Enhancers.generalException,
-                ConfigLoader.Enhancers.httpException) + resolverEnhancer
+            AppConfigResourceEnhancer(config),
+            radarEnhancer,
+            ConfigLoader.Enhancers.managementPortal(config.auth),
+            ConfigLoader.Enhancers.health,
+            ConfigLoader.Enhancers.generalException,
+            ConfigLoader.Enhancers.httpException
+        ) + resolverEnhancer
     }
 }
