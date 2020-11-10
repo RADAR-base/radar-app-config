@@ -1,20 +1,33 @@
 package org.radarbase.appconfig.inject
 
+import com.hazelcast.config.Config
 import com.hazelcast.core.Hazelcast
 import com.hazelcast.core.HazelcastInstance
 import nl.thehyve.lang.expression.VariableResolver
 import org.glassfish.jersey.internal.inject.AbstractBinder
+import org.radarbase.appconfig.config.HazelcastConfig
 import org.radarbase.appconfig.persistence.HibernateVariableResolver
 import org.radarbase.jersey.config.JerseyResourceEnhancer
-import java.util.function.Supplier
 import javax.inject.Singleton
 import javax.persistence.EntityManager
 import javax.ws.rs.core.Context
 
-
-class HibernatePersistenceResourceEnhancer : JerseyResourceEnhancer {
+class HibernatePersistenceResourceEnhancer(private val hazelcastConfig: HazelcastConfig) : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {
-        bindFactory(HazelcastInstanceFactory::class.java)
+        val hzConfig = if (hazelcastConfig.configPath != null) {
+            com.hazelcast.internal.config.ConfigLoader.load(hazelcastConfig.configPath)
+        } else {
+            Config().apply {
+                networkConfig = hazelcastConfig.network
+            }
+        }.apply {
+            clusterName = hazelcastConfig.clusterName
+            instanceName = hazelcastConfig.instanceName
+        }
+
+        val hazelcastInstance = Hazelcast.newHazelcastInstance(hzConfig)
+
+        bind(hazelcastInstance)
             .to(HazelcastInstance::class.java)
             .`in`(Singleton::class.java)
 
@@ -28,10 +41,5 @@ class HibernatePersistenceResourceEnhancer : JerseyResourceEnhancer {
         @Context private val hazelcastInstance: HazelcastInstance,
     ): ClientVariableResolver {
         override fun get(clientId: String): VariableResolver = HibernateVariableResolver(em, clientId, hazelcastInstance.getMap(clientId))
-    }
-
-    class HazelcastInstanceFactory: Supplier<HazelcastInstance> {
-        override fun get(): HazelcastInstance = Hazelcast.getAllHazelcastInstances()
-            .first { it.config.clusterName == "appconfig" }
     }
 }

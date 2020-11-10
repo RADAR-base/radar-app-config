@@ -14,16 +14,17 @@ import org.radarbase.jersey.hibernate.config.HibernateResourceEnhancer
 class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : EnhancerFactory {
     override fun createEnhancers(): List<JerseyResourceEnhancer> {
         val resolverEnhancer = if (config.database != null) {
+            val databaseConfig = config.database.copy(
+                managedClasses = listOf(ConfigEntity::class.qualifiedName!!),
+                properties = mapOf(
+                    "hibernate.cache.use_second_level_cache" to "true",
+                    "hibernate.cache.region.factory_class" to "com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory",
+                    "hibernate.cache.hazelcast.instance_name" to config.hazelcast.instanceName,
+                ) + config.database.properties,
+            )
             listOf(
-                    HibernateResourceEnhancer(config.database.copy(
-                        managedClasses = listOf(ConfigEntity::class.qualifiedName!!),
-                        properties = mapOf(
-                            "hibernate.cache.use_second_level_cache" to "true",
-                            "hibernate.cache.region.factory_class" to "com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory",
-                            "hibernate.cache.hazelcast.configuration_file_path" to "hazelcast.xml",
-                        ) + config.database.properties,
-                    )),
-                    HibernatePersistenceResourceEnhancer())
+                    HibernateResourceEnhancer(databaseConfig),
+                    HibernatePersistenceResourceEnhancer(config.hazelcast))
         } else {
             listOf(InMemoryResourceEnhancer())
         }
