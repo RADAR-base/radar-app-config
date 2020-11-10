@@ -38,7 +38,7 @@ LABEL description="RADAR-base radar app config container"
 # Override JAVA_OPTS to set heap parameters, for example
 ENV JAVA_OPTS="" \
     RADAR_APP_CONFIG_OPTS="\
-        -Djava.security.egd=/dev/./urandom \
+        -Djava.security.egd=file:/dev/./urandom \
         --add-modules java.se \
         --add-exports java.base/jdk.internal.ref=ALL-UNNAMED \
         --add-opens java.base/java.lang=ALL-UNNAMED \

@@ -14,6 +14,7 @@ import javax.ws.rs.core.Context
 
 class HibernatePersistenceResourceEnhancer(private val hazelcastConfig: HazelcastConfig) : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {
+        System.setProperty("hazelcast.logging.type", "slf4j");
         val hzConfig = if (hazelcastConfig.configPath != null) {
             com.hazelcast.internal.config.ConfigLoader.load(hazelcastConfig.configPath)
         } else {
