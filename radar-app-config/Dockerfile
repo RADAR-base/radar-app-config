@@ -26,8 +26,8 @@ COPY radar-app-config/src /code/radar-app-config/src
 
 RUN gradle :radar-app-config:distTar \
     && cd radar-app-config/build/distributions \
-    && tar xf *.tar \
-    && rm *.tar radar-app-config*/lib/radar-app-config*.jar
+    && tar zxf *.tar.gz \
+    && rm *.tar.gz radar-app-config*/lib/radar-app-config*.jar
 
 FROM openjdk:11-jre-slim
 

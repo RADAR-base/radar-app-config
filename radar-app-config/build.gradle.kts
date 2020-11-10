@@ -54,6 +54,11 @@ tasks.withType<Test> {
     }
 }
 
+tasks.withType<Tar> {
+    compression = Compression.GZIP
+    archiveExtension.set("tar.gz")
+}
+
 tasks.register("downloadDependencies") {
     doLast {
         configurations["runtimeClasspath"].files

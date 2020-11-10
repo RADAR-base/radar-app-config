@@ -1,0 +1,27 @@
+name: Snyk scheduled test
+on:
+  schedule:
+    - cron: '0 2 * * 1'
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    env:
+      KOTLIN_REPORT_FILE: test-kotlin.json
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for Node vulnerabilities
+        uses: snyk/actions/node@master
+        working-directory: ./radar-app-config-frontend
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          args: --json-file-output=${{ env.REPORT_FILE }}
+      - name: Report new vulnerabilities
+        uses: thehyve/report-vulnerability@master
+        working-directory: ./radar-app-config-frontend
+        with:
+          report-file: ${{ env.REPORT_FILE }}
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ failure() }}
