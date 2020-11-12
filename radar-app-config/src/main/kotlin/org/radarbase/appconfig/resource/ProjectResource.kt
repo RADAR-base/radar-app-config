@@ -10,17 +10,14 @@ import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
-import org.radarbase.jersey.exception.HttpNotFoundException
 import org.radarbase.jersey.service.managementportal.MPProject
 import org.radarbase.jersey.service.managementportal.RadarProjectService
-import org.radarcns.auth.authorization.Permission
 import org.radarcns.auth.authorization.Permission.Entity
 import org.radarcns.auth.authorization.Permission.Operation
 import javax.inject.Singleton
 import javax.ws.rs.*
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 
 @Path("projects")
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,15 +25,17 @@ import javax.ws.rs.core.Response
 @Singleton
 @Authenticated
 class ProjectResource(
-        @Context private val radarProjectService: RadarProjectService,
-        @Context private val projectService: ConfigProjectService,
-        @Context private val configService: ConfigService,
-        @Context private val clientService: ClientService
+    @Context private val radarProjectService: RadarProjectService,
+    @Context private val projectService: ConfigProjectService,
+    @Context private val configService: ConfigService,
+    @Context private val clientService: ClientService,
 ) {
     @GET
     @NeedsPermission(Entity.PROJECT, Operation.READ)
-    fun listProjects(@Context auth: Auth) = ProjectList(radarProjectService.userProjects(auth)
-            .map(MPProject::toProject))
+    fun listProjects(@Context auth: Auth) = ProjectList(
+        radarProjectService.userProjects(auth)
+            .map(MPProject::toProject)
+    )
 
     @GET
     @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
@@ -48,8 +47,8 @@ class ProjectResource(
     @GET
     @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
     fun projectConfig(
-            @PathParam("projectId") projectId: String,
-            @PathParam("clientId") clientId: String
+        @PathParam("projectId") projectId: String,
+        @PathParam("clientId") clientId: String,
     ): ClientConfig {
         clientService.ensureClient(clientId)
         return projectService.projectConfig(clientId, projectId)
@@ -59,9 +58,9 @@ class ProjectResource(
     @POST
     @NeedsPermission(Entity.PROJECT, Operation.UPDATE, "projectId")
     fun putProjectConfig(
-            @PathParam("projectId") projectId: String,
-            @PathParam("clientId") clientId: String,
-            clientConfig: ClientConfig
+        @PathParam("projectId") projectId: String,
+        @PathParam("clientId") clientId: String,
+        clientConfig: ClientConfig,
     ): ClientConfig {
         clientService.ensureClient(clientId)
         projectService.putProjectConfig(clientId, projectId, clientConfig)

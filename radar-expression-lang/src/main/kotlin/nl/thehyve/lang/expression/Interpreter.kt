@@ -1,7 +1,5 @@
 package nl.thehyve.lang.expression
 
-import java.lang.RuntimeException
-
 class InterpreterException(val expression: Expression, cause: Throwable) : RuntimeException(cause.message, cause)
 
 class Interpreter(val variables: VariableResolver) {
@@ -11,8 +9,12 @@ class Interpreter(val variables: VariableResolver) {
         try {
             return when (this) {
                 is OrExpression -> BooleanLiteral(left.evaluate(scope).asBoolean() || right.evaluate(scope).asBoolean())
-                is AndExpression -> BooleanLiteral(left.evaluate(scope).asBoolean() && right.evaluate(scope).asBoolean())
-                is XorExpression -> BooleanLiteral(left.evaluate(scope).asBoolean() != right.evaluate(scope).asBoolean())
+                is AndExpression -> BooleanLiteral(
+                    left.evaluate(scope).asBoolean() && right.evaluate(scope).asBoolean()
+                )
+                is XorExpression -> BooleanLiteral(
+                    left.evaluate(scope).asBoolean() != right.evaluate(scope).asBoolean()
+                )
                 is EqualExpression -> BooleanLiteral(left.evaluate(scope).compareTo(right.evaluate(scope)) == 0)
                 is NotEqualExpression -> BooleanLiteral(left.evaluate(scope).compareTo(right.evaluate(scope)) != 0)
                 is GreaterThanOrEqualExpression -> BooleanLiteral(left.evaluate(scope) >= right.evaluate(scope))
@@ -42,9 +44,9 @@ data class SimpleScope(override val id: QualifiedId) : Scope {
     constructor(string: String) : this(QualifiedId(string))
 
     override fun splitHead(): Pair<String?, Scope?> = id.splitHead()
-            .let { (name, tailId) ->
-                Pair(name, tailId?.let { SimpleScope(it) })
-            }
+        .let { (name, tailId) ->
+            Pair(name, tailId?.let { SimpleScope(it) })
+        }
 
     override fun toString() = id.toString()
 

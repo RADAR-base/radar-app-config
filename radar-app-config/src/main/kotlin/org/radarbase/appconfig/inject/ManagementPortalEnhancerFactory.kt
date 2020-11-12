@@ -14,11 +14,18 @@ import org.radarbase.jersey.hibernate.config.HibernateResourceEnhancer
 class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : EnhancerFactory {
     override fun createEnhancers(): List<JerseyResourceEnhancer> {
         val resolverEnhancer = if (config.database != null) {
+            val databaseConfig = config.database.copy(
+                managedClasses = listOf(ConfigEntity::class.qualifiedName!!),
+                properties = mapOf(
+                    "hibernate.cache.use_second_level_cache" to "true",
+                    "hibernate.cache.region.factory_class" to "com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory",
+                    "hibernate.cache.hazelcast.instance_name" to config.hazelcast.instanceName,
+                ) + config.database.properties,
+            )
             listOf(
-                    HibernateResourceEnhancer(config.database.copy(
-                            managedClasses = listOf(ConfigEntity::class.qualifiedName!!)
-                    )),
-                    HibernatePersistenceResourceEnhancer())
+                HibernateResourceEnhancer(databaseConfig),
+                HibernatePersistenceResourceEnhancer(config.hazelcast)
+            )
         } else {
             listOf(InMemoryResourceEnhancer())
         }
@@ -26,9 +33,9 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
         val radarEnhancer = ConfigLoader.Enhancers.radar(config.auth)
         radarEnhancer.mapper.registerModule(SimpleModule().apply {
             val allowedFunctions = listOf<Function>(
-                    SumFunction(),
-                    ListVariablesFunction(),
-                    CountFunction()
+                SumFunction(),
+                ListVariablesFunction(),
+                CountFunction()
             )
             val deserializer = ExpressionDeserializer(ExpressionParser(allowedFunctions))
 
@@ -36,11 +43,12 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
         })
 
         return listOf(
-                AppConfigResourceEnhancer(config),
-                radarEnhancer,
-                ConfigLoader.Enhancers.managementPortal(config.auth),
-                ConfigLoader.Enhancers.health,
-                ConfigLoader.Enhancers.generalException,
-                ConfigLoader.Enhancers.httpException) + resolverEnhancer
+            AppConfigResourceEnhancer(config),
+            radarEnhancer,
+            ConfigLoader.Enhancers.managementPortal(config.auth),
+            ConfigLoader.Enhancers.health,
+            ConfigLoader.Enhancers.generalException,
+            ConfigLoader.Enhancers.httpException
+        ) + resolverEnhancer
     }
 }

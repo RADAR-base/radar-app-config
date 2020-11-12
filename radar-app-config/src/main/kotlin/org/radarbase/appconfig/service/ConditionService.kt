@@ -12,8 +12,8 @@ import javax.ws.rs.core.Context
 
 
 class ConditionService(
-        @Context private val resolver: ClientVariableResolver,
-        @Context private val interpreter: ClientInterpreter
+    @Context private val resolver: ClientVariableResolver,
+    @Context private val interpreter: ClientInterpreter,
 ) {
     fun matchingConditions(clientId: String, projectId: String, userId: String?): List<Condition> {
         val allConditions = listOf<Condition>()
@@ -28,7 +28,7 @@ class ConditionService(
         conditionScopes += globalScope
 
         return allConditions
-                .filter { interpreter[clientId].interpret(conditionScopes, it.expression).asBoolean() }
+            .filter { interpreter[clientId].interpret(conditionScopes, it.expression).asBoolean() }
     }
 
     fun create(projectId: String, condition: Condition): Condition {

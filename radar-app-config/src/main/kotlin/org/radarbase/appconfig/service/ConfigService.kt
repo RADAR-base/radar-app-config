@@ -6,21 +6,23 @@ import org.radarbase.appconfig.inject.ClientVariableResolver
 import javax.ws.rs.core.Context
 
 class ConfigService(
-        @Context private val resolver: ClientVariableResolver,
-        @Context private val conditionService: ConditionService,
-        @Context private val clientService: ClientService
+    @Context private val resolver: ClientVariableResolver,
+    @Context private val conditionService: ConditionService,
+    @Context private val clientService: ClientService,
 ) {
     fun globalConfig(clientId: String): ClientConfig {
-        return ClientConfig.fromStream(clientId, globalScope,
-                resolver[clientId].resolveAll(listOf(globalScope), null))
+        return ClientConfig.fromStream(
+            clientId, globalScope,
+            resolver[clientId].resolveAll(listOf(globalScope), null)
+        )
     }
 
     fun putGlobalConfig(config: ClientConfig, clientId: String) {
         resolver[clientId].replace(globalScope, null, config.config.stream()
-                .map { (innerId, variable, _) ->
-                    QualifiedId(innerId) to
-                            (variable?.toVariable() ?: NullLiteral())
-                })
+            .map { (innerId, variable, _) ->
+                QualifiedId(innerId) to
+                        (variable?.toVariable() ?: NullLiteral())
+            })
     }
 
     companion object {

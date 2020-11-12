@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MockService } from './mock.service';
+import { MockInterceptor } from './mock.service';
 
-describe('MockService', () => {
+describe('MockInterceptor', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: MockService = TestBed.get(MockService);
+    const service: MockInterceptor = TestBed.inject(MockInterceptor);
     expect(service).toBeTruthy();
   });
 });

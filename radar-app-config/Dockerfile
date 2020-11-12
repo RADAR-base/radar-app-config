@@ -26,8 +26,8 @@ COPY radar-app-config/src /code/radar-app-config/src
 
 RUN gradle :radar-app-config:distTar \
     && cd radar-app-config/build/distributions \
-    && tar xf *.tar \
-    && rm *.tar radar-app-config*/lib/radar-app-config*.jar
+    && tar zxf *.tar.gz \
+    && rm *.tar.gz radar-app-config*/lib/radar-app-config*.jar
 
 FROM openjdk:11-jre-slim
 
@@ -37,7 +37,7 @@ LABEL description="RADAR-base radar app config container"
 
 # Override JAVA_OPTS to set heap parameters, for example
 ENV JAVA_OPTS="" \
-    RADAR_APP_CONFIG_OPTS="-Djava.security.egd=/dev/./urandom"
+    RADAR_APP_CONFIG_OPTS=""
 
 RUN mkdir -p /var/lib/radar-app-config/data
 WORKDIR /var/lib/radar-app-config

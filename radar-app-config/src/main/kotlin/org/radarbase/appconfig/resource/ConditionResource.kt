@@ -23,23 +23,23 @@ import javax.ws.rs.core.UriInfo
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class ConditionResource(
-        @Context private val conditionService: ConditionService,
-        @Context private val projectService: ConfigProjectService,
-        @Context private val uriInfo: UriInfo
+    @Context private val conditionService: ConditionService,
+    @Context private val projectService: ConfigProjectService,
+    @Context private val uriInfo: UriInfo,
 ) {
     @POST
     @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
     fun createCondition(
-            @PathParam("projectId") projectId: String,
-            condition: Condition
+        @PathParam("projectId") projectId: String,
+        condition: Condition,
     ): Response {
         if (condition.id != null) {
             throw HttpBadRequestException("bad_request", "Cannot set condition ID in request.")
         }
         val newCondition = conditionService.create(projectId, condition)
         return Response.created(URI.create("${uriInfo.path}/${newCondition.id}"))
-                .entity(newCondition)
-                .build()
+            .entity(newCondition)
+            .build()
     }
 
     @GET
@@ -59,9 +59,9 @@ class ConditionResource(
     @Path("{conditionId}")
     @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
     fun updateCondition(
-            @PathParam("projectId") projectId: String,
-            @PathParam("conditionId") conditionId: Long,
-            condition: Condition
+        @PathParam("projectId") projectId: String,
+        @PathParam("conditionId") conditionId: Long,
+        condition: Condition,
     ): Condition {
         return conditionService.update(projectId, condition.copy(id = conditionId))
     }
@@ -70,8 +70,9 @@ class ConditionResource(
     @Path("{conditionId}")
     @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.READ, "projectId")
     fun condition(
-            @PathParam("projectId") projectId: String,
-            @PathParam("conditionId") conditionId: Long): Condition {
+        @PathParam("projectId") projectId: String,
+        @PathParam("conditionId") conditionId: Long,
+    ): Condition {
         return conditionService.get(projectId, conditionId)
     }
 
@@ -79,8 +80,9 @@ class ConditionResource(
     @Path("{conditionId}")
     @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
     fun deleteCondition(
-            @PathParam("projectId") projectId: String,
-            @PathParam("conditionId") conditionId: Long): Response {
+        @PathParam("projectId") projectId: String,
+        @PathParam("conditionId") conditionId: Long,
+    ): Response {
         conditionService.delete(projectId, conditionId)
         return Response.noContent().build()
     }

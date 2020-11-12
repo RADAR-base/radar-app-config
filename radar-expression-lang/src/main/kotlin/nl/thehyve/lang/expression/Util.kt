@@ -11,7 +11,7 @@ internal fun <A, B> Stream<A>.zipOrNull(other: Stream<out B>): Stream<Pair<A?, B
 
     // Zipping looses SORTED characteristic
     val characteristics = splitA.characteristics() and splitB.characteristics() and
-            Spliterator.SORTED.inv()
+        Spliterator.SORTED.inv()
 
     val zipSize = kotlin.math.min(splitA.exactSizeIfKnown, splitB.exactSizeIfKnown)
 

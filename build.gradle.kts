@@ -7,7 +7,7 @@ plugins {
 }
 
 subprojects {
-    version = "0.2.1.1"
+    version = "0.3.0"
 
     repositories {
         // Use jcenter for resolving your dependencies.
@@ -25,5 +25,5 @@ subprojects {
 }
 
 tasks.wrapper {
-    gradleVersion = "6.6.1"
+    gradleVersion = "6.7"
 }

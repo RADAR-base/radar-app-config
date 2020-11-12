@@ -17,15 +17,16 @@ import javax.ws.rs.core.MediaType
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class GlobalResource(
-        @Context private val configService: ConfigService,
-        @Context private val clientService: ClientService
+    @Context private val configService: ConfigService,
+    @Context private val clientService: ClientService,
 ) {
     @POST
     @Path("config/{clientId}")
     @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.CREATE)
     fun updateConfig(
-            @PathParam("clientId") clientId: String,
-            config: ClientConfig): ClientConfig {
+        @PathParam("clientId") clientId: String,
+        config: ClientConfig,
+    ): ClientConfig {
         clientService.ensureClient(clientId)
         configService.putGlobalConfig(config, clientId)
         return configService.globalConfig(clientId)
@@ -34,7 +35,7 @@ class GlobalResource(
     @Path("config/{clientId}")
     @GET
     fun globalConfig(
-            @PathParam("clientId") clientId: String
+        @PathParam("clientId") clientId: String,
     ): ClientConfig {
         clientService.ensureClient(clientId)
         return configService.globalConfig(clientId)

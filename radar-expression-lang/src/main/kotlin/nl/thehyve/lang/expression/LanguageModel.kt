@@ -12,7 +12,7 @@ interface BinaryExpression : Expression {
     val right: Expression
 }
 
-abstract class AbstractBinaryExpression(override val operator: String): BinaryExpression {
+abstract class AbstractBinaryExpression(override val operator: String) : BinaryExpression {
     final override fun toString() = "${left.parenString()} $operator ${right.parenString()}"
 }
 
@@ -21,7 +21,7 @@ interface UnaryExpression : Expression {
     val value: Expression
 }
 
-abstract class AbstractUnaryExpression(override val operator: String): UnaryExpression {
+abstract class AbstractUnaryExpression(override val operator: String) : UnaryExpression {
     final override fun toString() = "$operator${value.parenString()}"
 }
 
@@ -33,7 +33,7 @@ interface Variable : Comparable<Variable>, Expression {
     fun asStream(): Stream<Variable>
 }
 
-abstract class AbstractVariable: Variable {
+abstract class AbstractVariable : Variable {
     override fun asNumber(): BigDecimal = throw UnsupportedOperationException("Cannot convert $this to number")
     override fun asString(): String = throw UnsupportedOperationException("Cannot convert $this to string")
     override fun asOptString(): String? = asString()
@@ -43,17 +43,23 @@ abstract class AbstractVariable: Variable {
 
 fun Expression.parenString(): String = if (this is BinaryExpression) "($this)" else toString()
 
-data class EqualExpression(override val left: Expression, override val right: Expression) : AbstractBinaryExpression("==")
+data class EqualExpression(override val left: Expression, override val right: Expression) :
+    AbstractBinaryExpression("==")
 
-data class LessThanExpression(override val left: Expression, override val right: Expression) : AbstractBinaryExpression("<")
+data class LessThanExpression(override val left: Expression, override val right: Expression) :
+    AbstractBinaryExpression("<")
 
-data class GreaterThanExpression(override val left: Expression, override val right: Expression) : AbstractBinaryExpression(">")
+data class GreaterThanExpression(override val left: Expression, override val right: Expression) :
+    AbstractBinaryExpression(">")
 
-data class GreaterThanOrEqualExpression(override val left: Expression, override val right: Expression) : AbstractBinaryExpression(">=")
+data class GreaterThanOrEqualExpression(override val left: Expression, override val right: Expression) :
+    AbstractBinaryExpression(">=")
 
-data class LessThanOrEqualExpression(override val left: Expression, override val right: Expression) : AbstractBinaryExpression("<=")
+data class LessThanOrEqualExpression(override val left: Expression, override val right: Expression) :
+    AbstractBinaryExpression("<=")
 
-data class NotEqualExpression(override val left: Expression, override val right: Expression) : AbstractBinaryExpression("!=")
+data class NotEqualExpression(override val left: Expression, override val right: Expression) :
+    AbstractBinaryExpression("!=")
 
 data class AndExpression(override val left: Expression, override val right: Expression) : AbstractBinaryExpression("&&")
 
@@ -63,7 +69,7 @@ data class XorExpression(override val left: Expression, override val right: Expr
 
 data class InvertExpression(override val value: Expression) : AbstractUnaryExpression("!")
 
-data class NegateExpression(override val value: Expression): AbstractUnaryExpression("-")
+data class NegateExpression(override val value: Expression) : AbstractUnaryExpression("-")
 
 data class QualifiedId(val names: List<String>) : Expression {
     constructor(vararg value: String) : this(value.toList().flatMap { it.split('.') })
@@ -119,7 +125,8 @@ data class NumberLiteral(val value: BigDecimal) : AbstractVariable() {
 }
 
 class NullLiteral : AbstractVariable() {
-    override fun compareTo(other: Variable): Int = if (other is NullLiteral) 0 else throw UnsupportedOperationException("Cannot compare null to other value")
+    override fun compareTo(other: Variable): Int =
+        if (other is NullLiteral) 0 else throw UnsupportedOperationException("Cannot compare null to other value")
 
     override fun asOptString(): String? = null
 
@@ -149,7 +156,7 @@ data class BooleanLiteral(val value: Boolean) : AbstractVariable() {
     }
 }
 
-fun String.toBooleanLiteral(): BooleanLiteral?  = when {
+fun String.toBooleanLiteral(): BooleanLiteral? = when {
     equals("true", ignoreCase = true) -> BooleanLiteral.TRUE
     equals("false", ignoreCase = true) -> BooleanLiteral.FALSE
     else -> null
@@ -159,18 +166,20 @@ data class StringLiteral(val value: String) : AbstractVariable() {
     override fun asString() = value
 
     override fun asBoolean() = value.toBooleanLiteral()?.asBoolean()
-            ?: throw UnsupportedOperationException("Cannot convert $this to boolean.")
+        ?: throw UnsupportedOperationException("Cannot convert $this to boolean.")
 
     override fun asNumber(): BigDecimal = BigDecimal(value)
 
     override fun asStream(): Stream<Variable> = value.split(" ")
-            .stream()
-            .filter { it.isNotEmpty() }
-            .map { it.toVariable() }
+        .stream()
+        .filter { it.isNotEmpty() }
+        .map { it.toVariable() }
 
-    override fun toString() = "'${value
+    override fun toString() = "'${
+        value
             .replace("\\", "\\\\")
-            .replace("'", "\\'")}'"
+            .replace("'", "\\'")
+    }'"
 
     override fun compareTo(other: Variable): Int = when (other) {
         is BooleanLiteral -> -other.compareTo(this)
@@ -183,13 +192,15 @@ data class StringLiteral(val value: String) : AbstractVariable() {
 
 fun String.toUnescapedStringLiteral(): StringLiteral {
     val quoteSymbol = if (this[0] == '\'') "'" else "\""
-    return StringLiteral(substring(1, count() - 1)
+    return StringLiteral(
+        substring(1, count() - 1)
             .replace("\\\\", "\\\\/")
             .replace("\\$quoteSymbol", quoteSymbol)
-            .replace("\\\\/", "\\"))
+            .replace("\\\\/", "\\")
+    )
 }
 
-data class CollectionLiteral(val values: Collection<Variable>): Variable {
+data class CollectionLiteral(val values: Collection<Variable>) : Variable {
     override fun asOptString(): String? = asString()
 
     override fun asNumber(): BigDecimal = throw UnsupportedOperationException("Cannot convert $this to a number.")
@@ -205,21 +216,21 @@ data class CollectionLiteral(val values: Collection<Variable>): Variable {
     override fun compareTo(other: Variable): Int {
         val comparisonStream = if (other is CollectionLiteral) {
             asStream().zipOrNull(other.asStream())
-                    .map { (a, b) ->
-                        when {
-                            a == null -> -1
-                            b == null -> 1
-                            else -> a.compareTo(b)
-                        }
+                .map { (a, b) ->
+                    when {
+                        a == null -> -1
+                        b == null -> 1
+                        else -> a.compareTo(b)
                     }
+                }
         } else {
             asStream().map { it.compareTo(other) }
         }
 
         return comparisonStream
-                .filter { it != 0 }
-                .findFirst()
-                .orElse(0)
+            .filter { it != 0 }
+            .findFirst()
+            .orElse(0)
 
     }
 }

@@ -4,7 +4,17 @@ plugins {
 }
 
 application {
-    mainClassName = "org.radarbase.appconfig.MainKt"
+    mainClass.set("org.radarbase.appconfig.MainKt")
+    applicationDefaultJvmArgs = listOf(
+        "-Djava.security.egd=file:/dev/./urandom",
+        "--add-modules", "java.se",
+        "--add-exports", "java.base/jdk.internal.ref=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.nio=ALL-UNNAMED",
+        "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
+        "--add-opens", "java.management/sun.management=ALL-UNNAMED",
+        "--add-opens", "jdk.management/com.sun.management.internal=ALL-UNNAMED"
+    )
 }
 
 repositories {
@@ -24,6 +34,9 @@ dependencies {
     implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
     implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
 
+    implementation("com.hazelcast:hazelcast-hibernate53:${project.property("hazelcastHibernateVersion")}")
+    implementation("com.hazelcast:hazelcast:${project.property("hazelcastVersion")}")
+
     runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
@@ -39,6 +52,11 @@ tasks.withType<Test> {
         setExceptionFormat("full")
         showStandardStreams = true
     }
+}
+
+tasks.withType<Tar> {
+    compression = Compression.GZIP
+    archiveExtension.set("tar.gz")
 }
 
 tasks.register("downloadDependencies") {

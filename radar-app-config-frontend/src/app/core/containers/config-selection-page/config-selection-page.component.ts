@@ -6,7 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ToastService} from '@app/shared/services/toast.service';
 import {ProjectService} from '@app/pages/services/project.service';
 import {ClientService} from '@app/pages/services/client.service';
-import {TranslateService} from "@app/shared/services/translate.service";
+import {TranslateService} from '@app/shared/services/translate.service';
 // import strings from '@i18n/strings.json';
 
 @Component({
@@ -23,7 +23,7 @@ export class ConfigSelectionPageComponent implements OnInit {
   clients: [Client];
 
   constructor(
-    public translate:TranslateService,
+    public translate: TranslateService,
     private configService: ConfigService,
     private activatedRoute: ActivatedRoute,
     private router: Router,

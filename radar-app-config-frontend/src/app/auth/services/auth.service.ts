@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {map} from 'rxjs/operators';
-import * as jwt_decode from 'jwt-decode';
+import jwt_decode from 'jwt-decode';
 import {AuthResponse} from '@app/auth/models/auth';
 import {Roles} from '@app/auth/enums/roles.enum';
 import {User} from '@app/auth/models/user';

@@ -9,9 +9,12 @@ import java.time.Duration
 import javax.ws.rs.core.Context
 
 class ClientService(@Context private val mpClient: MPClient) {
-    private val clients = CachedMap(CacheConfig(
+    private val clients = CachedMap(
+        CacheConfig(
             refreshDuration = Duration.ofHours(1),
-            retryDuration = Duration.ofMinutes(5))) {
+            retryDuration = Duration.ofMinutes(5)
+        )
+    ) {
         mpClient.readClients().map { it.id to it }.toMap(HashMap())
     }
 

@@ -11,31 +11,33 @@ import org.radarbase.appconfig.service.MPProjectService.Companion.projectScope
 import javax.ws.rs.core.Context
 
 class UserService(
-        @Context private val conditionService: ConditionService,
-        @Context private val resolver: ClientVariableResolver
+    @Context private val conditionService: ConditionService,
+    @Context private val resolver: ClientVariableResolver,
 ) {
     fun putUserConfig(clientId: String, userId: String, clientConfig: ClientConfig) {
         resolver[clientId].replace(
-                userScope(userId),
-                null,
-                clientConfig.config.stream()
-                        .map { (innerId, value, _) ->
-                            Pair(QualifiedId(innerId), value?.toVariable() ?: NullLiteral())
-                        })
+            userScope(userId),
+            null,
+            clientConfig.config.stream()
+                .map { (innerId, value, _) ->
+                    Pair(QualifiedId(innerId), value?.toVariable() ?: NullLiteral())
+                })
     }
 
     fun userConfig(clientId: String, projectId: String, userId: String): ClientConfig {
         val scopes = userScopes(clientId, projectId, userId)
-        return ClientConfig.fromStream(clientId, scopes[0],
-                resolver[clientId].resolveAll(scopes, null))
+        return ClientConfig.fromStream(
+            clientId, scopes[0],
+            resolver[clientId].resolveAll(scopes, null)
+        )
     }
 
     private fun userScopes(clientId: String, projectId: String, userId: String): List<Scope> {
         val conditions = conditionService.matchingConditions(clientId, projectId, userId)
-                .map { ConditionService.conditionScope(it) }
+            .map { ConditionService.conditionScope(it) }
 
         return (listOf(userScope(userId))
-                + conditions
-                + listOf(projectScope(projectId), ConfigService.globalScope))
+            + conditions
+            + listOf(projectScope(projectId), ConfigService.globalScope))
     }
 }
