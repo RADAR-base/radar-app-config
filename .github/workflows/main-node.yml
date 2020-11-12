@@ -33,4 +33,3 @@ jobs:
             - name: Build code
               working-directory: ./radar-app-config-frontend
               run: npm run build
-\

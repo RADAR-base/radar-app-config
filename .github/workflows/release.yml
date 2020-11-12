@@ -18,6 +18,11 @@ jobs:
               with:
                   java-version: 11
 
+            - name: Use Node.js 12
+              uses: actions/setup-node@v1
+              with:
+                node-version: 12
+
             - name: Cache
               uses: actions/cache@v2.0.0
               with:
@@ -34,9 +39,24 @@ jobs:
             # Compile code
             - name: Compile code
               run: ./gradlew assemble
-            # Upload it to GitHub
+
+            # Compile the code
+            - name: Install dependencies
+              working-directory: ./radar-app-config-frontend
+              run: npm install
+
+            # Compile the code
+            - name: Build code
+              working-directory: ./radar-app-config-frontend
+              run: npm run build
+
+            - name: Compress node code
+              working-directory: ./radar-app-config-frontend/dist
+              run: zip -r radar-app-config-frontend.zip *
+
+          # Upload it to GitHub
             - name: Upload to GitHub
               uses: AButler/upload-release-assets@v2.0
               with:
-                  files: '*/build/libs/*;radar-app-config/build/distributions/*'
+                  files: '*/build/libs/*;radar-app-config/build/distributions/*;radar-app-config-frontend/dist/radar-app-config-frontend.zip'
                   repo-token: ${{ secrets.GITHUB_TOKEN }}
