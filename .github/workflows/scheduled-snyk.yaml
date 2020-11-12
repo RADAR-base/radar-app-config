@@ -16,7 +16,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: test
-          args: --json-file-output=${{ env.KOTLIN_REPORT_FILE }}
+          args: --json-file-output=${{ env.KOTLIN_REPORT_FILE }} --all-sub-projects
       - name: Report new Kotlin vulnerabilities
         uses: thehyve/report-vulnerability@master
         with:
