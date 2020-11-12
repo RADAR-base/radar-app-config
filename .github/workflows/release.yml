@@ -35,6 +35,12 @@ jobs:
                       ~/.gradle/wrapper
                   # An explicit key for restoring and saving the cache
                   key: ${{ runner.os }}-gradle
+            - uses: actions/cache@v2
+              with:
+                path: ~/.npm
+                key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                restore-keys: |
+                  ${{ runner.os }}-node-
 
             # Compile code
             - name: Compile code
