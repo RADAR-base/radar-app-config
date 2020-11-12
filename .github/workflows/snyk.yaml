@@ -16,8 +16,7 @@ jobs:
         args: --severity-threshold=high --all-sub-projects --fail-on=upgradable
     - name: Run Snyk to check for Node vulnerabilities
       uses: snyk/actions/node@master
-      working-directory: ./radar-app-config-frontend
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --severity-threshold=high --fail-on=upgradable
+        args: radar-app-config-frontend --severity-threshold=high --fail-on=upgradable

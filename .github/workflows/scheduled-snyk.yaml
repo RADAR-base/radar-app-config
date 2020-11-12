@@ -26,15 +26,13 @@ jobs:
         if: ${{ failure() }}
       - name: Run Snyk to check for Node vulnerabilities
         uses: snyk/actions/node@master
-        working-directory: ./radar-app-config-frontend
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: test
-          args: --json-file-output=${{ env.NODE_REPORT_FILE }}
+          args: radar-app-config-frontend --json-file-output=${{ env.NODE_REPORT_FILE }}
       - name: Report new Node vulnerabilities
         uses: thehyve/report-vulnerability@master
-        working-directory: ./radar-app-config-frontend
         with:
           report-file: ${{ env.NODE_REPORT_FILE }}
         env:
