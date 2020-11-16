@@ -37,6 +37,7 @@ dependencies {
     implementation("com.hazelcast:hazelcast-hibernate53:${project.property("hazelcastHibernateVersion")}")
     implementation("com.hazelcast:hazelcast:${project.property("hazelcastVersion")}")
 
+    implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
     runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
