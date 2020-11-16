@@ -87,23 +87,30 @@ GET /global/config/{clientId}
 HTTP 200 OK
 {
   "clientId": "{clientId}"
+  "scope": "global",
   "config": [
-    {"name": "plugins", "value": "A B", "scope": "global"}
+    {"name": "plugins", "value": "A", "scope": "global"}
   ]
 }
 ```
 
 Replace the default config (global scope) for a client. Sys admin only.
 ```
-PUT /global/config/{clientId}
+POST /global/config/{clientId}
 {
-  "clientId": "{clientId}"
   "config": [
-    {"name": "plugins", "value": "A B"}
+    {"name": "plugins", "value": "A"}
   ]
 }
 ---
-HTTP 204 No Content
+HTTP 200 OK
+{
+  "clientId": "{clientId}"
+  "scope": "global",
+  "config": [
+    {"name": "plugins", "value": "A"}
+  ]
+}
 ```
 
 Get the per-project config.
@@ -113,47 +120,102 @@ GET /projects/{projectId}/config/{clientId}
 HTTP 200 OK
 {
   "clientId": "{clientId}",
+  "scope": "project.projectA",
   "config": [
-    {"name": "plugins", "value": "A B", "scope": "project.projectA"}
+    {"name": "plugins", "value": "A B"}
+  ],
+  "defaults": [
+    {"name": "plugins", "value", "A", "scope": "global"
   ]
 }
 ```
 
 Update the per-project config.
 ```
-PUT /projects/{projectId}/config/{clientId}
+POST /projects/{projectId}/config/{clientId}
 {
-  "clientId": "{clientId}",
   "config": [
+    {"name": "rate", "value": "1"}
     {"name": "plugins", "value": "A B"}
   ]
 }
 ---
-HTTP 204 No Content
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "scope": "project.projectA",
+  "config": [
+    {"name": "plugins", "value": "A B"},
+    {"name": "rate", "value": "1"}
+  ],
+  "defaults": [
+    {"name": "plugins", "value", "A", "scope": "global"
+  ]
+}
 ```
 
 Get the per-user config. This is the call that end-user clients should make.
 ```
-GET /projects/{projectId}/users/{userId}/{clientId}
+GET /projects/{projectId}/users/{userId}/config/{clientId}
 ---
 HTTP 200 OK
 {
   "clientId": "{clientId}",
+  "scope": "user.userA",
   "config": [
-    {"name": "plugins", "value": "A B", "scope": "user.userA"}
+    {"name": "plugins", "value": "A B"}
+  ],
+  "defaults": [
+    {"name": "plugins", "value": "A B", "scope": "project.projectA"},
+    {"name": "rate", "value": "1", "scope": "project.projectA"}
   ]
 }
 ```
 
 Update the per-user config.
 ```
-PUT /projects/{projectId}/users/{userId}/{clientId}
+POST /projects/{projectId}/users/{userId}/config/{clientId}
 {
-  "clientId": "{clientId}",
   "config": [
-    {"name": "plugins", "value": "A B"}
+    {"name": "rate", "value": "1"}
   ]
 }
 ---
-HTTP 204 No Content
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "scope": "user.userA",
+  "config": [
+    {"name": "rate", "value": "1"}
+  ],
+  "defaults": [
+    {"name": "plugins", "value": "A B", "scope": "project.projectA"},
+    {"name": "rate", "value": "1", "scope": "project.projectA"}
+  ]
+}
 ```
+
+## Docker usage
+
+Start the stack with
+
+```
+docker-compose up -d
+```
+
+and once you're finished, stop it with
+
+```
+docker-compose down
+```
+
+Then you can test requests with Postman at root URL `http://localhost:8080/appconfig/api/`. Start a Postman query. Add OAuth2 authorization and press the _Get new access token_ button. Use
+```
+Callback URL: http://localhost:8080/appconfig/login
+Auth URL: http://localhost:8080/managementportal/oauth/authorize
+Access Token URL: http://localhost:8080/managementportal/oauth/token
+Client ID: appconfig_frontend
+```
+Leave `Client Secret`, `Scope` and `State` empty. Log in with user `admin`, password `admin` and accept the request. Once this is accepted, scroll down to indicate _Use token_. Now you can make any requests to the radar-app-config API.
+
+To have any projects or subjects, these should be created by going to <http://localhost:8080/managementportal/> and logging in again with `admin`, `admin`.

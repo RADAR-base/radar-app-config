@@ -1,64 +1,36 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.domain.GlobalConfig
 import org.radarbase.appconfig.domain.OAuthClientList
+import org.radarbase.appconfig.domain.toOAuthClient
 import org.radarbase.appconfig.service.ClientService
-import org.radarbase.appconfig.service.ConfigService
-import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
-import org.radarbase.jersey.auth.ProjectService
-import org.radarbase.jersey.exception.HttpBadRequestException
+import org.radarbase.jersey.service.managementportal.MPOAuthClient
 import org.radarcns.auth.authorization.Permission
-import org.radarcns.auth.authorization.Permission.SUBJECT_READ
-import javax.ws.rs.*
+import javax.inject.Singleton
+import javax.ws.rs.Consumes
+import javax.ws.rs.GET
+import javax.ws.rs.Path
+import javax.ws.rs.Produces
 import javax.ws.rs.core.Context
-import javax.ws.rs.core.Response
+import javax.ws.rs.core.MediaType
 
 /** Root path, just forward requests without authentication. */
 @Path("/")
-@Produces("application/json; charset=utf-8")
-@Consumes("application/json")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 @Authenticated
+@Singleton
 class RootResource(
-        @Context private val configService: ConfigService,
-        @Context private val projectAuthService: ProjectService,
-        @Context private val clientService: ClientService
+    @Context private val clientService: ClientService,
 ) {
-    @Path("config")
-    @GET
-    @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ)
-    fun config(@Context auth: Auth): GlobalConfig {
-        val (projectId, userId) = ensureUser(auth)
-        return configService.globalConfig(projectId, userId)
-    }
-
-    @Path("config/clients/{clientId}")
-    @GET
-    @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ)
-    fun clientConfig(
-            @PathParam("clientId") clientId: String,
-            @Context auth: Auth
-    ): ClientConfig {
-        val (projectId, userId) = ensureUser(auth)
-        return configService.clientConfig(clientId, projectId, userId)
-    }
-
-    private fun ensureUser(auth: Auth): Pair<String, String> {
-        val projectId = auth.defaultProject ?: throw HttpBadRequestException("project_missing", "Cannot request config without a project ID")
-        val userId = auth.userId ?: throw HttpBadRequestException("user_missing", "Cannot request config without a user ID")
-        projectAuthService.ensureProject(projectId)
-        auth.checkPermissionOnSubject(SUBJECT_READ, projectId, userId)
-        return projectId to userId
-    }
-
     @Path("clients")
     @GET
     @NeedsPermission(Permission.Entity.OAUTHCLIENTS, Permission.Operation.READ)
-    fun clients(): OAuthClientList {
-        return OAuthClientList(clientService.readClients().toList())
-    }
+    fun clients() = OAuthClientList(
+        clientService.readClients()
+            .map(MPOAuthClient::toOAuthClient)
+    )
 }
 
 /**

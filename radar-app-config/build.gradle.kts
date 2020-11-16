@@ -4,17 +4,17 @@ plugins {
 }
 
 application {
-    mainClassName = "org.radarbase.appconfig.MainKt"
-}
-
-project.extra.apply {
-    set("okhttpVersion", "4.3.1")
-    set("radarAuthVersion", "0.2.3-SNAPSHOT")
-    set("radarSchemasVersion", "0.5.5")
-    set("jacksonVersion", "2.10.2")
-    set("slf4jVersion", "1.7.27")
-    set("logbackVersion", "1.2.3")
-    set("hibernateVersion", "5.4.4.Final")
+    mainClass.set("org.radarbase.appconfig.MainKt")
+    applicationDefaultJvmArgs = listOf(
+        "-Djava.security.egd=file:/dev/./urandom",
+        "--add-modules", "java.se",
+        "--add-exports", "java.base/jdk.internal.ref=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.nio=ALL-UNNAMED",
+        "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
+        "--add-opens", "java.management/sun.management=ALL-UNNAMED",
+        "--add-opens", "jdk.management/com.sun.management.internal=ALL-UNNAMED"
+    )
 }
 
 repositories {
@@ -28,26 +28,22 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    implementation("com.squareup.okhttp3:okhttp:${project.extra["okhttpVersion"]}")
     implementation(project(":radar-expression-lang"))
 
-    implementation("org.radarbase:radar-jersey:${project.extra["radarAuthVersion"]}")
+    val radarJerseyVersion: String by project
+    implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
+    implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
 
-    implementation("com.fasterxml.jackson.core:jackson-databind:${project.extra["jacksonVersion"]}")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${project.extra["jacksonVersion"]}")
+    implementation("com.hazelcast:hazelcast-hibernate53:${project.property("hazelcastHibernateVersion")}")
+    implementation("com.hazelcast:hazelcast:${project.property("hazelcastVersion")}")
 
-    implementation("org.slf4j:slf4j-api:${project.extra["slf4jVersion"]}")
+    implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
+    runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
-    implementation("org.hibernate:hibernate-core:${project.extra["hibernateVersion"]}")
-    implementation("org.liquibase:liquibase-core:3.5.3")
-
-    runtimeOnly("com.h2database:h2:1.4.199")
-    runtimeOnly("org.postgresql:postgresql:42.2.5")
-    runtimeOnly("ch.qos.logback:logback-classic:${project.extra["logbackVersion"]}")
-
-    testImplementation("org.junit.jupiter:junit-jupiter:5.4.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
 
 tasks.withType<Test> {
@@ -59,11 +55,15 @@ tasks.withType<Test> {
     }
 }
 
-tasks.register("downloadDependencies") {
-    configurations["runtimeClasspath"].files
-    configurations["compileClasspath"].files
+tasks.withType<Tar> {
+    compression = Compression.GZIP
+    archiveExtension.set("tar.gz")
+}
 
+tasks.register("downloadDependencies") {
     doLast {
+        configurations["runtimeClasspath"].files
+        configurations["compileClasspath"].files
         println("Downloaded all dependencies")
     }
 }

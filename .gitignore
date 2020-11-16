@@ -6,3 +6,7 @@ build/
 out/
 
 .idea/
+
+h2.*.db
+
+etc/smtp.env

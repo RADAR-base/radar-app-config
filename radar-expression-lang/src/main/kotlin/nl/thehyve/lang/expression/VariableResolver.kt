@@ -17,8 +17,16 @@ interface VariableResolver {
 
 fun VariableResolver.register(functions: List<Function>) {
     functions.forEach {
-        register(SimpleScope.root, QualifiedId("functions.${it.name}.numberOfArguments.min"), it.numberOfArguments.first.toVariable())
-        register(SimpleScope.root, QualifiedId("functions.${it.name}.numberOfArguments.max"), it.numberOfArguments.last.toVariable())
+        register(
+            SimpleScope.root,
+            QualifiedId("functions.${it.name}.numberOfArguments.min"),
+            it.numberOfArguments.first.toVariable()
+        )
+        register(
+            SimpleScope.root,
+            QualifiedId("functions.${it.name}.numberOfArguments.max"),
+            it.numberOfArguments.last.toVariable()
+        )
     }
     register(SimpleScope.root, QualifiedId("functions"), CollectionLiteral(functions.map { it.name.toVariable() }))
 }
@@ -36,16 +44,20 @@ fun Collection<Variable>.toVariable(): CollectionLiteral = CollectionLiteral(thi
 fun Boolean.toVariable(): BooleanLiteral = BooleanLiteral(this)
 
 class DirectVariableResolver : VariableResolver {
+    private val variables = mutableMapOf<Scope, MutableMap<QualifiedId, Variable>>()
+
     override fun list(scopes: List<Scope>, prefix: QualifiedId?): Stream<QualifiedId> {
         var refStream = scopes.stream()
-                .flatMap { variables[it]?.keys?.stream() ?: Stream.empty() }
-                .distinct()
+            .flatMap { variables[it]?.keys?.stream() ?: Stream.empty() }
+            .distinct()
 
         val usePrefix = prefix?.names ?: listOf()
         if (usePrefix.isNotEmpty()) {
             refStream = refStream
-                    .filter { it.names.count() >= usePrefix.count()
-                            && it.names.subList(0, usePrefix.count()) == usePrefix }
+                .filter {
+                    it.names.count() >= usePrefix.count()
+                        && it.names.subList(0, usePrefix.count()) == usePrefix
+                }
         }
 
         return refStream
@@ -54,56 +66,84 @@ class DirectVariableResolver : VariableResolver {
     override fun replace(scope: Scope, prefix: QualifiedId?, variables: Stream<Pair<QualifiedId, Variable>>) {
         if (prefix == null) {
             this.variables[scope] = variables
-                    .collect(Collectors.toMap<Pair<QualifiedId, Variable>, QualifiedId, Variable>({ it.first }, { it.second }))
-                    .toMutableMap()
+                .collect(
+                    Collectors.toMap<Pair<QualifiedId, Variable>, QualifiedId, Variable>(
+                        { it.first },
+                        { it.second })
+                )
+                .toMutableMap()
         } else {
             val variableMap = this.variables[scope]
-            val newVariableMap = variableMap?.filterKeys { k -> k.isPrefixedBy(prefix) }?.toMutableMap() ?: mutableMapOf()
+            val newVariableMap =
+                variableMap?.filterKeys { k -> k.isPrefixedBy(prefix) }?.toMutableMap() ?: mutableMapOf()
             newVariableMap += variables
-                    .collect(Collectors.toMap<Pair<QualifiedId, Variable>, QualifiedId, Variable>({ it.first }, { it.second }))
+                .collect(
+                    Collectors.toMap<Pair<QualifiedId, Variable>, QualifiedId, Variable>(
+                        { it.first },
+                        { it.second })
+                )
             this.variables[scope] = newVariableMap
         }
     }
 
-    private val variables = mutableMapOf<Scope, MutableMap<QualifiedId, Variable>>()
-
     override fun register(scope: Scope, id: QualifiedId, variable: Variable) {
-        val root = variables[scope]
-                ?: mutableMapOf<QualifiedId, Variable>().also { variables[scope] = it }
-
+        var root = variables[scope]
+        if (root == null) {
+            root = mutableMapOf()
+            variables[scope] = root
+        }
         root[id] = variable
     }
 
     override fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Stream<ResolvedVariable> {
-        return list(scopes, prefix)
-                .map { resolve(scopes, it) }
+        val usePrefix = QualifiedId(prefix?.names ?: listOf())
+
+        return scopes.stream()
+            .flatMap { scope ->
+                var variableStream = variables[scope]?.entries?.stream()
+
+                if (!usePrefix.isEmpty()) {
+                    variableStream = variableStream
+                        ?.filter { it.key.isPrefixedBy(usePrefix) }
+                }
+
+                variableStream
+                    ?.map { ResolvedVariable(scope, it.key, it.value) }
+                    ?: Stream.empty()
+            }
     }
 
     override fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable {
         val result = scopes.stream()
-                .map { Pair(it, variables[it]?.get(id)) }
-                .filter { it.second != null }
-                .map { ResolvedVariable(it.first, id, it.second!!) }
-                .findFirst()
-                .orElse(null)
+            .map { Pair(it, variables[it]?.get(id)) }
+            .filter { it.second != null }
+            .map { ResolvedVariable(it.first, id, it.second!!) }
+            .findFirst()
+            .orElse(null)
 
         if (result == null) {
             val variables = list(scopes, null)
-                    .collect(Collectors.toList())
+                .collect(Collectors.toList())
 
             val query = id.asString().replace('.', ' ')
 
             val alternatives = FuzzySearch.extractSorted(query, variables, { it.names.joinToString(" ") }, 75)
-                    .take(5)
+                .take(5)
 
             if (alternatives.isEmpty()) {
                 throw UnsupportedOperationException("Unknown variable $id in scopes $scopes.")
             } else {
-                throw UnsupportedOperationException("Unknown variable $id in scopes $scopes." +
-                        " Did you mean any of the following variables?\n - ${alternatives.joinToString(separator="\n - ") { it.referent.asString() }}")
+                throw UnsupportedOperationException(
+                    "Unknown variable $id in scopes $scopes." +
+                        " Did you mean any of the following variables?\n - ${alternatives.joinToString(separator = "\n - ") { it.referent.asString() }}"
+                )
             }
         } else {
             return result
         }
+    }
+
+    override fun toString(): String {
+        return "DirectVariableResolver(variables=$variables)"
     }
 }

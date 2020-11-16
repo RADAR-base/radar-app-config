@@ -1,11 +1,10 @@
 package nl.thehyve.lang.expression
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import me.xdrop.fuzzywuzzy.FuzzySearch
 import nl.thehyve.lang.expression.antlr.ComparisonLexer
 import nl.thehyve.lang.expression.antlr.ComparisonParser
-import me.xdrop.fuzzywuzzy.FuzzySearch
-import nl.thehyve.lang.expression.ExpressionParserException.Companion.toException
-import org.antlr.v4.runtime.ANTLRInputStream
+import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import java.io.ByteArrayInputStream
@@ -16,13 +15,13 @@ import java.text.ParseException
 @JsonDeserialize(using = ExpressionDeserializer::class)
 class ExpressionParser(functions: List<Function>) {
     private val indexedFunctions: Map<String, Function> = functions
-            .map { it.name to it }
-            .toMap()
+        .map { it.name to it }
+        .toMap()
 
     fun parse(value: String) = parse(ByteArrayInputStream(value.toByteArray()))
 
     fun parse(input: InputStream): Expression {
-        val lexer = ComparisonLexer(ANTLRInputStream(input))
+        val lexer = ComparisonLexer(CharStreams.fromStream(input))
         val context = ParserContext(ComparisonParser(CommonTokenStream(lexer)))
         return context.parse()
     }
@@ -31,13 +30,14 @@ class ExpressionParser(functions: List<Function>) {
         fun parse(): Expression = parser.expression().toModel()
 
 
-        private fun ComparisonParser.ExpressionContext.toModel() : Expression = when (this) {
+        private fun ComparisonParser.ExpressionContext.toModel(): Expression = when (this) {
             is ComparisonParser.BinaryOperationContext -> toModel()
             is ComparisonParser.CombinationOperationContext -> toModel()
             is ComparisonParser.UnaryOperationContext -> toModel()
             is ComparisonParser.ParenExpressionContext -> expression().toModel()
             is ComparisonParser.NullLiteralContext -> NullLiteral()
-            is ComparisonParser.BooleanLiteralContext -> text.toBooleanLiteral() ?: throw toException("Cannot map string to boolean literal.")
+            is ComparisonParser.BooleanLiteralContext -> text.toBooleanLiteral()
+                ?: throw toException("Cannot map string to boolean literal.")
             is ComparisonParser.StringLiteralContext -> text.toUnescapedStringLiteral()
             is ComparisonParser.DecimalLiteralContext,
             is ComparisonParser.IntegerLiteralContext -> BigDecimal(text).toVariable()
@@ -46,7 +46,7 @@ class ExpressionParser(functions: List<Function>) {
             else -> throw toException("Cannot map expression $javaClass at ${toInfoString(parser)}")
         }
 
-        private fun ComparisonParser.UnaryOperationContext.toModel(): UnaryExpression =when (operation.type) {
+        private fun ComparisonParser.UnaryOperationContext.toModel(): UnaryExpression = when (operation.type) {
             ComparisonLexer.MINUS -> NegateExpression(expression().toModel())
             ComparisonLexer.NOT -> InvertExpression(expression().toModel())
             else -> throw toException("Cannot map unknown unary operator ${operation.text}")
@@ -83,12 +83,14 @@ class ExpressionParser(functions: List<Function>) {
 
             if (function == null) {
                 val alternatives = FuzzySearch.extractSorted(functionName, indexedFunctions.keys, 60)
-                        .take(5)
+                    .take(5)
                 if (alternatives.isEmpty()) {
                     throw toException("Unknown function ${ID().text}.")
                 } else {
-                    throw toException("Unknown function ${ID().text}. Did you mean any of the following functions:" +
-                            "\n - ${alternatives.joinToString(separator = "\n - ") { it.string }}")
+                    throw toException(
+                        "Unknown function ${ID().text}. Did you mean any of the following functions:" +
+                            "\n - ${alternatives.joinToString(separator = "\n - ") { it.string }}"
+                    )
                 }
             }
             val expressions = expression()
@@ -97,13 +99,12 @@ class ExpressionParser(functions: List<Function>) {
                 throw toException("Number of parameters to function $functionName is ${expressions.count()} but should be ${function.numberOfArguments}.")
             }
 
-            return FunctionReference(function = function, parameters=expressions.map { it.toModel() })
+            return FunctionReference(function = function, parameters = expressions.map { it.toModel() })
         }
     }
 }
 
-class ExpressionParserException(message: String, errorOffset: Int, val expression: String) : ParseException(message, errorOffset) {
-    companion object {
-        fun ParserRuleContext.toException(message: String) = ExpressionParserException(message, start.startIndex, text)
-    }
-}
+class ExpressionParserException(message: String, errorOffset: Int, val expression: String) :
+    ParseException(message, errorOffset)
+
+private fun ParserRuleContext.toException(message: String) = ExpressionParserException(message, start.startIndex, text)

@@ -1,22 +1,30 @@
 package org.radarbase.appconfig.service
 
-import org.radarbase.appconfig.domain.OAuthClient
-import org.radarbase.appconfig.managementportal.MPClient
-import org.radarbase.appconfig.util.CachedSet
 import org.radarbase.jersey.exception.HttpNotFoundException
+import org.radarbase.jersey.service.managementportal.MPClient
+import org.radarbase.jersey.service.managementportal.MPOAuthClient
+import org.radarbase.jersey.util.CacheConfig
+import org.radarbase.jersey.util.CachedMap
 import java.time.Duration
 import javax.ws.rs.core.Context
 
 class ClientService(@Context private val mpClient: MPClient) {
-    private val clients = CachedSet(Duration.ofHours(1), Duration.ofMinutes(5), mpClient::readClients)
+    private val clients = CachedMap(
+        CacheConfig(
+            refreshDuration = Duration.ofHours(1),
+            retryDuration = Duration.ofMinutes(5)
+        )
+    ) {
+        mpClient.readClients().map { it.id to it }.toMap(HashMap())
+    }
 
-    fun readClients(): Set<OAuthClient> = clients.get()
+    fun readClients(): Collection<MPOAuthClient> = clients.get().values
 
     fun ensureClient(name: String) {
-        if (!contains(name)) {
+        if (name !in clients) {
             throw HttpNotFoundException("client_not_found", "OAuth client $name not found.")
         }
     }
 
-    fun contains(clientId: String) = clients.contains(OAuthClient(clientId))
+    operator fun contains(clientId: String) = clientId in clients
 }

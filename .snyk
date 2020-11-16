@@ -1,0 +1,13 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.13.5
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-JAVA-COMH2DATABASE-31685:
+    - '*':
+        reason: Not using web access
+        expires: 2030-12-16T09:55:25.983Z
+  SNYK-JAVA-JUNIT-1017047:
+    - '*':
+        reason: Not using Junit 4
+        expires: 2030-12-16T10:02:16.775Z
+patch: {}

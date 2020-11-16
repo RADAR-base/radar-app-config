@@ -1,0 +1,83 @@
+---
+version: '3.2'
+
+services:
+  #---------------------------------------------------------------------------#
+  # Management Portal                                                         #
+  #---------------------------------------------------------------------------#
+  managementportal:
+    image: radarbase/management-portal:0.6.1
+    depends_on:
+      - mp-postgresql
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://mp-postgresql:5432/managementportal
+      SPRING_DATASOURCE_USERNAME: radarcns
+      SPRING_DATASOURCE_PASSWORD: radarcns
+      MANAGEMENTPORTAL_FRONTEND_CLIENT_SECRET: "testMe"
+      MANAGEMENTPORTAL_COMMON_BASE_URL: http://localhost:8080/managementportal
+      MANAGEMENTPORTAL_COMMON_MANAGEMENT_PORTAL_BASE_URL: http://localhost:8080/managementportal
+      MANAGEMENTPORTAL_OAUTH_CLIENTS_FILE: /mp-includes/config/oauth_client_details.csv
+      MANAGEMENTPORTAL_CATALOGUE_SERVER_ENABLE_AUTO_IMPORT: 'false'
+      MANAGEMENTPORTAL_OAUTH_SIGNING_KEY_ALIAS: 'radarbase-managementportal-ec'
+      JAVA_OPTS: -Xmx256m  # maximum heap size for the JVM running ManagementPortal, increase this as necessary
+    volumes:
+      - ./etc/mp-config/:/mp-includes/config
+    labels:
+      - "traefik.http.routers.managementportal.rule=PathPrefix(`/managementportal`)"
+      - "traefik.http.services.managementportal.loadbalancer.server.port=8080"
+
+  mp-postgresql:
+    image: bitnami/postgresql:12
+    environment:
+      - POSTGRESQL_USERNAME=radarcns
+      - POSTGRESQL_PASSWORD=radarcns
+      - POSTGRESQL_DATABASE=managementportal
+    labels:
+      - "traefik.enable=false"
+
+  app-postgresql:
+    image: bitnami/postgresql:12
+    environment:
+      - POSTGRESQL_USERNAME=radarcns
+      - POSTGRESQL_PASSWORD=radarcns
+      - POSTGRESQL_DATABASE=appconfig
+    ports:
+      - "5432:5432"
+    labels:
+      - "traefik.enable=false"
+
+  #---------------------------------------------------------------------------#
+  # RADAR Upload Source connector                                             #
+  #---------------------------------------------------------------------------#
+  app-config:
+    build:
+      context: .
+      dockerfile: radar-app-config/Dockerfile
+    image: radarbase/radar-app-config:dev
+    restart: on-failure
+    volumes:
+      - ./etc/appconfig.yml:/etc/radar-app-config/appconfig.yml
+    depends_on:
+      - managementportal
+    labels:
+      - "traefik.http.routers.appconfig.rule=PathPrefix(`/appconfig/api`)"
+      - "traefik.http.services.appconfig.loadbalancer.server.port=8090"
+
+  app-config-frontend:
+    build:
+      context: radar-app-config-frontend
+    image: radarbase/radar-app-config-frontend:dev
+    depends_on:
+      - app-config
+    labels:
+      - "traefik.http.routers.appconfigfrontend.rule=PathPrefix(`/appconfig`)"
+      - "traefik.http.services.appconfigfrontend.loadbalancer.server.port=8080"
+
+  traefik:
+    image: traefik:2.1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "8080:80"

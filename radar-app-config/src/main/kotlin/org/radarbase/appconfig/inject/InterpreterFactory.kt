@@ -6,7 +6,7 @@ import java.util.function.Supplier
 import javax.ws.rs.core.Context
 
 class InterpreterFactory(
-        @Context private val variableResolver: VariableResolver
-): Supplier<Interpreter> {
+    @Context private val variableResolver: VariableResolver,
+) : Supplier<Interpreter> {
     override fun get(): Interpreter = Interpreter(variableResolver)
 }

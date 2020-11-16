@@ -1,70 +1,69 @@
 package org.radarbase.appconfig.resource
 
 import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.domain.GlobalConfig
+import org.radarbase.appconfig.domain.Project
 import org.radarbase.appconfig.domain.ProjectList
-import org.radarbase.appconfig.managementportal.MPClient
+import org.radarbase.appconfig.domain.toProject
+import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigProjectService
 import org.radarbase.appconfig.service.ConfigService
+import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
+import org.radarbase.jersey.service.managementportal.MPProject
+import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarcns.auth.authorization.Permission.Entity
 import org.radarcns.auth.authorization.Permission.Operation
+import javax.inject.Singleton
 import javax.ws.rs.*
 import javax.ws.rs.core.Context
-import javax.ws.rs.core.Response
+import javax.ws.rs.core.MediaType
 
 @Path("projects")
-@Produces("application/json; charset=utf-8")
-@Consumes("application/json")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@Singleton
 @Authenticated
 class ProjectResource(
-        @Context private val client: MPClient,
-        @Context private val projectService: ConfigProjectService,
-        @Context private val configService: ConfigService
+    @Context private val radarProjectService: RadarProjectService,
+    @Context private val projectService: ConfigProjectService,
+    @Context private val configService: ConfigService,
+    @Context private val clientService: ClientService,
 ) {
     @GET
     @NeedsPermission(Entity.PROJECT, Operation.READ)
-    fun listProjects() = ProjectList(client.readProjects())
+    fun listProjects(@Context auth: Auth) = ProjectList(
+        radarProjectService.userProjects(auth)
+            .map(MPProject::toProject)
+    )
 
-    @Path("{projectId}/config")
     @GET
     @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
-    fun projectConfig(@PathParam("projectId") projectId: String): GlobalConfig {
-        return projectService.projectConfig(projectId)
+    @Path("{projectId}")
+    fun get(@PathParam("projectId") projectId: String): Project =
+        radarProjectService.project(projectId).toProject()
+
+    @Path("{projectId}/config/{clientId}")
+    @GET
+    @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
+    fun projectConfig(
+        @PathParam("projectId") projectId: String,
+        @PathParam("clientId") clientId: String,
+    ): ClientConfig {
+        clientService.ensureClient(clientId)
+        return projectService.projectConfig(clientId, projectId)
     }
 
-    @Path("{projectId}/config")
-    @PUT
+    @Path("{projectId}/config/{clientId}")
+    @POST
     @NeedsPermission(Entity.PROJECT, Operation.UPDATE, "projectId")
     fun putProjectConfig(
-            @PathParam("projectId") projectId: String,
-            globalConfig: GlobalConfig
-    ): Response {
-        projectService.putConfig(projectId, globalConfig)
-
-        return Response.noContent().build()
-    }
-
-    @Path("{projectId}/users/{userId}/config")
-    @GET
-    @NeedsPermission(Entity.SUBJECT, Operation.READ, "projectId", "userId")
-    fun userConfig(
-            @PathParam("projectId") projectId: String,
-            @PathParam("userId") userId: String
-    ): GlobalConfig {
-        return configService.globalConfig(projectId, userId)
-    }
-
-    @Path("{projectId}/users/{userId}/config/{clientId}")
-    @GET
-    @NeedsPermission(Entity.SUBJECT, Operation.READ, "projectId", "userId")
-    fun userClientConfig(
-            @PathParam("projectId") projectId: String,
-            @PathParam("userId") userId: String,
-            @PathParam("clientId") clientId: String
+        @PathParam("projectId") projectId: String,
+        @PathParam("clientId") clientId: String,
+        clientConfig: ClientConfig,
     ): ClientConfig {
-        return configService.clientConfig(clientId, projectId, userId)
+        clientService.ensureClient(clientId)
+        projectService.putProjectConfig(clientId, projectId, clientConfig)
+        return projectService.projectConfig(clientId, projectId)
     }
-
 }

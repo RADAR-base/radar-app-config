@@ -1,0 +1,76 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="#">
+    <div class="site-branding">
+      <div class="logo mr-2">
+        <img src="assets/radar-logo.png" alt="radar-base">
+    </div>
+      <div class="site-text-wrapper">
+        <div class="site-description">{{'general.radarBase' | translate}}</div>
+        <div class="site-title">{{'general.appConfig' | translate}}</div>
+      </div>
+    </div>
+  </a>
+  <button class="navbar-toggler active"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbar"
+          aria-controls="navbar"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          (click)="toggleNavbar()">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbar" [ngClass]="{ 'show': navbarOpen }">
+    <ul class="navbar-nav">
+      <li *ngIf="currentUser && isAdmin" class="nav-item"
+          [class.active]="router.isActive('/global-clients', false) ||
+                          router.isActive('/global-configs', false)"
+          (click)="closeNavbar()">
+        <a class="nav-link" [routerLink]="['/global-clients']">
+          {{'config.globalConfigurations' | translate}} <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li *ngIf="currentUser" class="nav-item"
+          [class.active]="!router.isActive('/global-clients', false) &&
+                          !router.isActive('/global-configs', false)"
+          (click)="closeNavbar()">
+        <a class="nav-link" [routerLink]="['/projects']">{{'project.projects' | translate }}</a>
+      </li>
+<!--      <li *ngIf="!currentUser" class="nav-item" (click)="closeNavbar()">-->
+<!--        <a class="nav-link" [routerLink]="['/login']">{{'login.login' | translate}}</a>-->
+<!--      </li>-->
+<!--      <li *ngIf="currentUser" class="nav-item">-->
+<!--        <span class="nav-link disabled">{{'common.hello' | translate}} {{currentUser.username}}!</span>-->
+<!--      </li>-->
+<!--      <li *ngIf="currentUser" class="nav-item">-->
+<!--        <a class="nav-link" style="cursor: pointer;" (click)="logout()">{{'login.logout' | translate}}</a>-->
+<!--      </li>-->
+<!--      <li class="nav-item" (click)="closeNavbar()">-->
+<!--        <a class="nav-link" href="{{'general.helpUrl' | translate}}" target="_blank"><mat-icon>help</mat-icon></a>-->
+<!--      </li>-->
+    </ul>
+    <ul class="navbar-nav ml-auto">
+      <!--      <li *ngIf="currentUser && isAdmin" class="nav-item" (click)="closeNavbar()">-->
+      <!--        <a class="nav-link" [routerLink]="['/global-clients']">-->
+      <!--          {{'config.globalConfigurations' | translate}} <span class="sr-only">(current)</span>-->
+      <!--        </a>-->
+      <!--      </li>-->
+      <!--      <li *ngIf="currentUser" class="nav-item" (click)="closeNavbar()">-->
+      <!--        <a class="nav-link" [routerLink]="['/projects']">{{'project.projects' | translate }}</a>-->
+      <!--      </li>-->
+      <li *ngIf="!currentUser" class="nav-item" (click)="closeNavbar()">
+        <a class="nav-link" [routerLink]="['/login']">{{'login.login' | translate}}</a>
+      </li>
+<!--      <li *ngIf="currentUser" class="nav-item">-->
+<!--        <span class="nav-link disabled">{{'common.hello' | translate}} {{currentUser.username}}!</span>-->
+<!--      </li>-->
+      <li *ngIf="currentUser" class="nav-item">
+        <a class="nav-link" style="cursor: pointer;" (click)="logout()">{{'login.logout' | translate}}</a>
+      </li>
+      <li class="nav-item" (click)="closeNavbar()">
+        <a class="nav-link" href="{{'general.helpUrl' | translate}}" target="_blank"><mat-icon>help</mat-icon></a>
+      </li>
+    </ul>
+  </div>
+</nav>
