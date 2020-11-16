@@ -15,8 +15,10 @@ class InMemoryResourceEnhancer : JerseyResourceEnhancer {
             .`in`(Singleton::class.java)
     }
 
-    class InMemoryClientVariableResolver() : ClientVariableResolver {
+    class InMemoryClientVariableResolver : ClientVariableResolver {
         private val resolvers = ConcurrentHashMap<String, VariableResolver>()
-        override fun get(clientId: String) = resolvers.computeIfAbsent(clientId) { DirectVariableResolver() }
+        override fun get(clientId: String) = resolvers.computeIfAbsent(clientId) {
+            DirectVariableResolver()
+        }
     }
 }
