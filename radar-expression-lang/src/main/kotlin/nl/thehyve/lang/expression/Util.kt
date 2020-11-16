@@ -4,6 +4,7 @@ import java.util.*
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
 import kotlin.NoSuchElementException
+import kotlin.math.min
 
 internal fun <A, B> Stream<A>.zipOrNull(other: Stream<out B>): Stream<Pair<A?, B?>> {
     val splitA = spliterator()
@@ -16,11 +17,12 @@ internal fun <A, B> Stream<A>.zipOrNull(other: Stream<out B>): Stream<Pair<A?, B
             and Spliterator.SORTED.inv()
         )
 
-    val zipSize = kotlin.math.min(splitA.exactSizeIfKnown, splitB.exactSizeIfKnown)
+    val zipSize = min(splitA.exactSizeIfKnown, splitB.exactSizeIfKnown)
 
-    val iterA = Spliterators.iterator(splitA)
-    val iterB = Spliterators.iterator(splitB)
     val iterPair = object : AbstractIterator<Pair<A?, B?>>() {
+        val iterA = Spliterators.iterator(splitA)
+        val iterB = Spliterators.iterator(splitB)
+
         override fun computeNext() {
             val a = if (iterA.hasNext()) iterA.next() else null
             val b = if (iterB.hasNext()) iterB.next() else null
