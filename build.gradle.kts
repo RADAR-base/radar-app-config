@@ -7,7 +7,7 @@ plugins {
 }
 
 subprojects {
-    version = "0.3.1-SNAPSHOT"
+    version = "0.3.0.1"
 
     repositories {
         // Use jcenter for resolving your dependencies.
