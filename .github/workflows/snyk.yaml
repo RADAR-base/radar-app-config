@@ -13,10 +13,11 @@ jobs:
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --severity-threshold=high --all-sub-projects --fail-on=upgradable
+        args: --severity-threshold=high --all-sub-projects --policy-path=.snyk
     - name: Run Snyk to check for Node vulnerabilities
       uses: snyk/actions/node@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: radar-app-config-frontend --severity-threshold=high --fail-on=upgradable
+        args: radar-app-config-frontend --severity-threshold=high --policy-path=.snyk
+      if: ${{ !cancelled() }}

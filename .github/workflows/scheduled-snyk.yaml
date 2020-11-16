@@ -5,9 +5,6 @@ on:
 jobs:
   security:
     runs-on: ubuntu-latest
-    env:
-      KOTLIN_REPORT_FILE: test-kotlin.json
-      NODE_REPORT_FILE: test-node.json
     steps:
       - uses: actions/checkout@master
       - name: Run Snyk to check for Kotlin vulnerabilities
@@ -16,11 +13,13 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: test
-          args: --json-file-output=${{ env.KOTLIN_REPORT_FILE }} --all-sub-projects
+          json: true
+          args: --all-sub-projects --policy-path=.snyk
+        if: ${{ !cancelled() }}
       - name: Report new Kotlin vulnerabilities
         uses: thehyve/report-vulnerability@master
         with:
-          report-file: ${{ env.KOTLIN_REPORT_FILE }}
+          report-file: snyk.json
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ failure() }}
@@ -30,11 +29,13 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: test
-          args: radar-app-config-frontend --json-file-output=${{ env.NODE_REPORT_FILE }}
+          args: radar-app-config-frontend --policy-path=.snyk
+          json: true
+        if: ${{ !cancelled() }}
       - name: Report new Node vulnerabilities
         uses: thehyve/report-vulnerability@master
         with:
-          report-file: ${{ env.NODE_REPORT_FILE }}
+          report-file: snyk.json
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ failure() }}
