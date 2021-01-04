@@ -13,3 +13,8 @@ export interface AuthData {
   token: string;
   user: User;
 }
+
+export interface MPJWT {
+  user_name: string;
+  authorities: string[];
+}
