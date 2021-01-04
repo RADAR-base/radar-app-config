@@ -3,7 +3,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import jwt_decode from 'jwt-decode';
-import {AuthResponse} from '@app/auth/models/auth';
+import {AuthResponse, MPJWT} from '@app/auth/models/auth';
 import {Roles} from '@app/auth/enums/roles.enum';
 import {User} from '@app/auth/models/user';
 import {environment} from '@environments/environment';
@@ -35,7 +35,7 @@ export class AuthService {
     const isLoggedIn = Boolean(currentUser && currentUser.access_token);
 
     if (isLoggedIn) {
-      const jwtDecoded = jwt_decode(currentUser.access_token);
+      const jwtDecoded = jwt_decode<MPJWT>(currentUser.access_token);
       return {username: jwtDecoded.user_name, role: jwtDecoded.authorities[0] };
     }
     return null;
