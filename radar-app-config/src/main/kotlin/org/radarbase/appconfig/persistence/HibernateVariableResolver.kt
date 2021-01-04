@@ -13,6 +13,7 @@ import javax.persistence.EntityManager
 import javax.persistence.Query
 import javax.persistence.TypedQuery
 
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 class HibernateVariableResolver(
     em: Provider<EntityManager>,
     private val clientId: String,
