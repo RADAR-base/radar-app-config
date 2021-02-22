@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") apply false
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    id("org.jetbrains.gradle.plugin.idea-ext") version "0.9"
+    id("org.jetbrains.gradle.plugin.idea-ext") version "1.0"
 }
 
 subprojects {
@@ -25,5 +25,5 @@ subprojects {
 }
 
 tasks.wrapper {
-    gradleVersion = "6.7"
+    gradleVersion = "6.8.2"
 }
