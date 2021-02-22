@@ -41,8 +41,8 @@ dependencies {
     implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
     runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.1")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
