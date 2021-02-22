@@ -1,7 +1,6 @@
 package nl.thehyve.lang.expression
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import nl.thehyve.lang.expression.antlr.ComparisonLexer
 import nl.thehyve.lang.expression.antlr.ComparisonParser
 import org.antlr.v4.runtime.CharStreams
@@ -80,19 +79,8 @@ class ExpressionParser(functions: List<Function>) {
         private fun ComparisonParser.FunctionContext.toModel(): FunctionReference {
             val functionName = ID().text
             val function = indexedFunctions[functionName]
+                ?: throw toException("Unknown function $functionName.")
 
-            if (function == null) {
-                val alternatives = FuzzySearch.extractSorted(functionName, indexedFunctions.keys, 60)
-                    .take(5)
-                if (alternatives.isEmpty()) {
-                    throw toException("Unknown function ${ID().text}.")
-                } else {
-                    throw toException(
-                        "Unknown function ${ID().text}. Did you mean any of the following functions:" +
-                            "\n - ${alternatives.joinToString(separator = "\n - ") { it.string }}"
-                    )
-                }
-            }
             val expressions = expression()
 
             if (!function.numberOfArguments.contains(expressions.count())) {
