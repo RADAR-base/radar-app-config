@@ -17,13 +17,6 @@ application {
     )
 }
 
-repositories {
-    jcenter()
-    maven(url = "https://dl.bintray.com/radar-base/org.radarbase")
-    maven(url = "https://dl.bintray.com/radar-cns/org.radarcns")
-    maven(url = "https://repo.thehyve.nl/content/repositories/snapshots")
-}
-
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))

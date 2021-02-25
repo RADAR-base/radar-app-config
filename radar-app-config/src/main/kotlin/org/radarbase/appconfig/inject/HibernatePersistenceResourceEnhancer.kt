@@ -8,9 +8,9 @@ import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.HazelcastConfig
 import org.radarbase.appconfig.persistence.HibernateVariableResolver
 import org.radarbase.jersey.config.JerseyResourceEnhancer
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 import javax.persistence.EntityManager
-import javax.ws.rs.core.Context
+import jakarta.ws.rs.core.Context
 
 class HibernatePersistenceResourceEnhancer(private val hazelcastConfig: HazelcastConfig) : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {
@@ -38,7 +38,7 @@ class HibernatePersistenceResourceEnhancer(private val hazelcastConfig: Hazelcas
     }
 
     class HibernateClientVariableResolver(
-        @Context private val em: javax.inject.Provider<EntityManager>,
+        @Context private val em: jakarta.inject.Provider<EntityManager>,
         @Context private val hazelcastInstance: HazelcastInstance,
     ) : ClientVariableResolver {
         override fun get(clientId: String): VariableResolver =

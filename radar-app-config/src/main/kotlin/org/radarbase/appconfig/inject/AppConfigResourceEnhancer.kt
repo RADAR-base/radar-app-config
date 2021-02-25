@@ -5,7 +5,7 @@ import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.service.*
 import org.radarbase.jersey.config.ConfigLoader
 import org.radarbase.jersey.config.JerseyResourceEnhancer
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyResourceEnhancer {
     override val classes: Array<Class<*>> = if (config.isCorsEnabled) arrayOf(

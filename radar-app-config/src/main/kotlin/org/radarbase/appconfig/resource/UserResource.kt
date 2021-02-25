@@ -9,13 +9,13 @@ import org.radarbase.appconfig.service.UserService
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.exception.HttpNotFoundException
-import org.radarbase.jersey.service.managementportal.MPUser
 import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarcns.auth.authorization.Permission
-import javax.inject.Singleton
-import javax.ws.rs.*
-import javax.ws.rs.core.Context
-import javax.ws.rs.core.MediaType
+import jakarta.inject.Singleton
+import jakarta.ws.rs.*
+import jakarta.ws.rs.core.Context
+import jakarta.ws.rs.core.MediaType
+import org.radarbase.management.client.MPSubject
 
 /** Root path, just forward requests without authentication. */
 @Path("/projects/{projectId}/users/")
@@ -35,7 +35,7 @@ class UserResource(
     ): UserList {
         return UserList(
             radarProjectService.projectUsers(projectId)
-                .map(MPUser::toUser)
+                .map(MPSubject::toUser)
         )
     }
 

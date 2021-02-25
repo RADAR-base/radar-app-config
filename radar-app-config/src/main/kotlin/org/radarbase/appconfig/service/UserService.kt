@@ -8,7 +8,7 @@ import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.service.ConfigService.Companion.userScope
 import org.radarbase.appconfig.service.MPProjectService.Companion.projectScope
-import javax.ws.rs.core.Context
+import jakarta.ws.rs.core.Context
 
 class UserService(
     @Context private val conditionService: ConditionService,

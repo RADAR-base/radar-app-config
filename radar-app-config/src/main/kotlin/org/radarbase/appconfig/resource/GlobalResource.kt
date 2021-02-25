@@ -6,10 +6,10 @@ import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarcns.auth.authorization.Permission
-import javax.inject.Singleton
-import javax.ws.rs.*
-import javax.ws.rs.core.Context
-import javax.ws.rs.core.MediaType
+import jakarta.inject.Singleton
+import jakarta.ws.rs.*
+import jakarta.ws.rs.core.Context
+import jakarta.ws.rs.core.MediaType
 
 @Path("global")
 @Singleton

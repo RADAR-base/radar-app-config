@@ -1,9 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     kotlin("jvm") apply false
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.0"
+    id("com.github.ben-manes.versions") version "0.36.0" apply false
 }
 
 subprojects {
@@ -12,7 +14,11 @@ subprojects {
     repositories {
         // Use jcenter for resolving your dependencies.
         // You can declare any Maven/Ivy/file repository here.
+        mavenCentral()
         jcenter()
+        maven(url = "https://dl.bintray.com/radar-base/org.radarbase")
+        maven(url = "https://dl.bintray.com/radar-cns/org.radarcns")
+        maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
 
     tasks.withType<KotlinCompile> {
@@ -22,8 +28,23 @@ subprojects {
             apiVersion = "1.4"
         }
     }
+
+    apply(plugin = "com.github.ben-manes.versions")
+
+    fun isNonStable(version: String): Boolean {
+        val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+        val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+        val isStable = stableKeyword || regex.matches(version)
+        return isStable.not()
+    }
+
+    tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
+        rejectVersionIf {
+            isNonStable(candidate.version)
+        }
+    }
 }
 
 tasks.wrapper {
-    gradleVersion = "6.8.2"
+    gradleVersion = "6.8.3"
 }

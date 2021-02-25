@@ -3,7 +3,7 @@ package org.radarbase.appconfig.service
 import nl.thehyve.lang.expression.*
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
-import javax.ws.rs.core.Context
+import jakarta.ws.rs.core.Context
 
 class ConfigService(
     @Context private val resolver: ClientVariableResolver,

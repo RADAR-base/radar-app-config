@@ -10,14 +10,14 @@ import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
-import org.radarbase.jersey.service.managementportal.MPProject
 import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarcns.auth.authorization.Permission.Entity
 import org.radarcns.auth.authorization.Permission.Operation
-import javax.inject.Singleton
-import javax.ws.rs.*
-import javax.ws.rs.core.Context
-import javax.ws.rs.core.MediaType
+import jakarta.inject.Singleton
+import jakarta.ws.rs.*
+import jakarta.ws.rs.core.Context
+import jakarta.ws.rs.core.MediaType
+import org.radarbase.management.client.MPProject
 
 @Path("projects")
 @Produces(MediaType.APPLICATION_JSON)
