@@ -15,7 +15,6 @@ subprojects {
         // Use jcenter for resolving your dependencies.
         // You can declare any Maven/Ivy/file repository here.
         mavenCentral()
-        maven(url = "https://oss.sonatype.org/content/repositories/releases")
 
         // Temporary until Dokka is fully published on maven central.
         // https://github.com/Kotlin/kotlinx.html/issues/81
