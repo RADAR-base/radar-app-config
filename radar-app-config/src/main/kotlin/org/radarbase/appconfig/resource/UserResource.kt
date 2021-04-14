@@ -6,11 +6,11 @@ import org.radarbase.appconfig.domain.UserList
 import org.radarbase.appconfig.domain.toUser
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.UserService
+import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.exception.HttpNotFoundException
 import org.radarbase.jersey.service.managementportal.RadarProjectService
-import org.radarcns.auth.authorization.Permission
 import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context

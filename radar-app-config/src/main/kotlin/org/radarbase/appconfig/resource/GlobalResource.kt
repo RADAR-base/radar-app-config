@@ -1,11 +1,11 @@
 package org.radarbase.appconfig.resource
 
+import org.radarbase.auth.authorization.Permission
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
-import org.radarcns.auth.authorization.Permission
 import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context

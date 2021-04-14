@@ -7,12 +7,12 @@ import org.radarbase.appconfig.domain.toProject
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigProjectService
 import org.radarbase.appconfig.service.ConfigService
+import org.radarbase.auth.authorization.Permission.Entity
+import org.radarbase.auth.authorization.Permission.Operation
 import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.service.managementportal.RadarProjectService
-import org.radarcns.auth.authorization.Permission.Entity
-import org.radarcns.auth.authorization.Permission.Operation
 import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context

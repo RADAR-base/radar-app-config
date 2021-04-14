@@ -3,9 +3,9 @@ package org.radarbase.appconfig.resource
 import org.radarbase.appconfig.domain.OAuthClientList
 import org.radarbase.appconfig.domain.toOAuthClient
 import org.radarbase.appconfig.service.ClientService
+import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
-import org.radarcns.auth.authorization.Permission
 import jakarta.inject.Singleton
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
