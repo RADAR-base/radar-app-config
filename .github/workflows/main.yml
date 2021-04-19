@@ -83,6 +83,12 @@ jobs:
         # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
         - uses: actions/checkout@v2
 
+        - name: Login to Docker Hub
+          uses: docker/login-action@v1
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+
         - name: Build Kotlin docker
           run: docker build -t radarbase/radar-app-config:SNAPSHOT -f radar-app-config/Dockerfile .
 

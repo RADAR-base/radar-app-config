@@ -34,6 +34,9 @@ dependencies {
     implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
     runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
+    val logbackVersion: String by project
+    runtimeOnly("ch.qos.logback:logback-classic:$logbackVersion")
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.1")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
