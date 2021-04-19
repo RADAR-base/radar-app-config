@@ -1,6 +1,5 @@
 package nl.thehyve.lang.expression
 
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.math.BigDecimal
 import java.util.stream.Collectors
 import java.util.stream.Stream
@@ -64,34 +63,20 @@ class DirectVariableResolver : VariableResolver {
     }
 
     override fun replace(scope: Scope, prefix: QualifiedId?, variables: Stream<Pair<QualifiedId, Variable>>) {
-        if (prefix == null) {
-            this.variables[scope] = variables
-                .collect(
-                    Collectors.toMap<Pair<QualifiedId, Variable>, QualifiedId, Variable>(
-                        { it.first },
-                        { it.second })
-                )
-                .toMutableMap()
+        val newVariables = variables
+            .collect(Collectors.toMap({ it.first }, { it.second }))
+        this.variables[scope] = if (prefix == null) {
+            newVariables
         } else {
-            val variableMap = this.variables[scope]
-            val newVariableMap =
-                variableMap?.filterKeys { k -> k.isPrefixedBy(prefix) }?.toMutableMap() ?: mutableMapOf()
-            newVariableMap += variables
-                .collect(
-                    Collectors.toMap<Pair<QualifiedId, Variable>, QualifiedId, Variable>(
-                        { it.first },
-                        { it.second })
-                )
-            this.variables[scope] = newVariableMap
-        }
+            val existingVariables = this.variables[scope]
+                ?.filterKeys { k -> k.isPrefixedBy(prefix) }
+                ?: mapOf()
+            existingVariables + newVariables
+        }.toMutableMap()
     }
 
     override fun register(scope: Scope, id: QualifiedId, variable: Variable) {
-        var root = variables[scope]
-        if (root == null) {
-            root = mutableMapOf()
-            variables[scope] = root
-        }
+        val root = variables.computeIfAbsent(scope) { mutableMapOf() }
         root[id] = variable
     }
 
@@ -114,33 +99,10 @@ class DirectVariableResolver : VariableResolver {
     }
 
     override fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable {
-        val result = scopes.stream()
-            .map { Pair(it, variables[it]?.get(id)) }
-            .filter { it.second != null }
-            .map { ResolvedVariable(it.first, id, it.second!!) }
-            .findFirst()
-            .orElse(null)
-
-        if (result == null) {
-            val variables = list(scopes, null)
-                .collect(Collectors.toList())
-
-            val query = id.asString().replace('.', ' ')
-
-            val alternatives = FuzzySearch.extractSorted(query, variables, { it.names.joinToString(" ") }, 75)
-                .take(5)
-
-            if (alternatives.isEmpty()) {
-                throw UnsupportedOperationException("Unknown variable $id in scopes $scopes.")
-            } else {
-                throw UnsupportedOperationException(
-                    "Unknown variable $id in scopes $scopes." +
-                        " Did you mean any of the following variables?\n - ${alternatives.joinToString(separator = "\n - ") { it.referent.asString() }}"
-                )
-            }
-        } else {
-            return result
-        }
+        return scopes.asSequence()
+            .mapNotNull { s -> variables[s]?.get(id)?.let { ResolvedVariable(s, id, it) }}
+            .firstOrNull()
+            ?: throw UnsupportedOperationException("Unknown variable $id in scopes $scopes.")
     }
 
     override fun toString(): String {

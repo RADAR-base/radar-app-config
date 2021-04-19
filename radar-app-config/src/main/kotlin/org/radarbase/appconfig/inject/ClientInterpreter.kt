@@ -1,7 +1,7 @@
 package org.radarbase.appconfig.inject
 
 import nl.thehyve.lang.expression.Interpreter
-import javax.ws.rs.core.Context
+import jakarta.ws.rs.core.Context
 
 class ClientInterpreter(
     @Context private val clientVariableResolver: ClientVariableResolver,

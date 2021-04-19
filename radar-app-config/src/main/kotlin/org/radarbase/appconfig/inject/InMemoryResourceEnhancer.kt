@@ -5,7 +5,7 @@ import nl.thehyve.lang.expression.VariableResolver
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.jersey.config.JerseyResourceEnhancer
 import java.util.concurrent.ConcurrentHashMap
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 class InMemoryResourceEnhancer : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {

@@ -1,12 +1,12 @@
 package org.radarbase.appconfig.service
 
 import org.radarbase.jersey.exception.HttpNotFoundException
-import org.radarbase.jersey.service.managementportal.MPClient
-import org.radarbase.jersey.service.managementportal.MPOAuthClient
 import org.radarbase.jersey.util.CacheConfig
 import org.radarbase.jersey.util.CachedMap
 import java.time.Duration
-import javax.ws.rs.core.Context
+import jakarta.ws.rs.core.Context
+import org.radarbase.management.client.MPClient
+import org.radarbase.management.client.MPOAuthClient
 
 class ClientService(@Context private val mpClient: MPClient) {
     private val clients = CachedMap(
@@ -15,7 +15,7 @@ class ClientService(@Context private val mpClient: MPClient) {
             retryDuration = Duration.ofMinutes(5)
         )
     ) {
-        mpClient.readClients().map { it.id to it }.toMap(HashMap())
+        mpClient.requestClients().map { it.id to it }.toMap(HashMap())
     }
 
     fun readClients(): Collection<MPOAuthClient> = clients.get().values

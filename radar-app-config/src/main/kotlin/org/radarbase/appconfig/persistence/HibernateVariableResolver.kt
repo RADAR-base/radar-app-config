@@ -8,7 +8,7 @@ import org.radarbase.jersey.hibernate.HibernateRepository
 import java.util.*
 import java.util.stream.Collectors
 import java.util.stream.Stream
-import javax.inject.Provider
+import jakarta.inject.Provider
 import javax.persistence.EntityManager
 import javax.persistence.Query
 import javax.persistence.TypedQuery

@@ -22,7 +22,6 @@ dependencies {
     antlr("org.antlr:antlr4:$antlrVersion")
 
     implementation("org.antlr:antlr4-runtime:$antlrVersion")
-    implementation("me.xdrop:fuzzywuzzy:1.2.0")
 
     // Use the Kotlin JDK 8 standard library.
     implementation(kotlin("stdlib-jdk8"))

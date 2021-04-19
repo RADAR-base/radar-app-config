@@ -17,13 +17,6 @@ application {
     )
 }
 
-repositories {
-    jcenter()
-    maven(url = "https://dl.bintray.com/radar-base/org.radarbase")
-    maven(url = "https://dl.bintray.com/radar-cns/org.radarcns")
-    maven(url = "https://repo.thehyve.nl/content/repositories/snapshots")
-}
-
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
@@ -41,8 +34,11 @@ dependencies {
     implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
     runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
+    val logbackVersion: String by project
+    runtimeOnly("ch.qos.logback:logback-classic:$logbackVersion")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.1")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
