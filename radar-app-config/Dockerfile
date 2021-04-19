@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM gradle:6.6.1-jdk11 as builder
+FROM gradle:7.0-jdk11 as builder
 
 RUN mkdir /code
 WORKDIR /code
@@ -19,12 +19,12 @@ ENV GRADLE_USER_HOME=/code/.gradlecache
 COPY build.gradle.kts settings.gradle.kts gradle.properties /code/
 COPY radar-app-config/build.gradle.kts  /code/radar-app-config/
 COPY radar-expression-lang/build.gradle.kts  /code/radar-expression-lang/
-RUN gradle :radar-app-config:downloadDependencies
+RUN gradle :radar-app-config:downloadDependencies --no-watch-fs
 
 COPY radar-expression-lang/src /code/radar-expression-lang/src
 COPY radar-app-config/src /code/radar-app-config/src
 
-RUN gradle :radar-app-config:distTar \
+RUN gradle :radar-app-config:distTar --no-watch-fs \
     && cd radar-app-config/build/distributions \
     && tar zxf *.tar.gz \
     && rm *.tar.gz radar-app-config*/lib/radar-app-config*.jar

@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm") apply false
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.0"
-    id("com.github.ben-manes.versions") version "0.36.0" apply false
+    id("com.github.ben-manes.versions") version "0.38.0" apply false
 }
 
 subprojects {
@@ -48,5 +48,5 @@ subprojects {
 }
 
 tasks.wrapper {
-    gradleVersion = "6.8.3"
+    gradleVersion = "7.0"
 }
