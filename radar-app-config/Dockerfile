@@ -42,9 +42,15 @@ ENV JAVA_OPTS="" \
 RUN mkdir -p /var/lib/radar-app-config/data
 WORKDIR /var/lib/radar-app-config
 
+RUN apt-get update && apt-get install -y \
+  curl \
+  && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /code/radar-app-config/build/distributions/radar-app-config*/bin/* /usr/bin/
 COPY --from=builder /code/radar-app-config/build/distributions/radar-app-config*/lib/* /usr/lib/
 COPY --from=builder /code/radar-app-config/build/libs/radar-app-config*.jar /usr/lib/
+
+USER 101
 
 EXPOSE 8090
 
