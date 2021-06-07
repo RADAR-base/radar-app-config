@@ -37,8 +37,9 @@ dependencies {
     val logbackVersion: String by project
     runtimeOnly("ch.qos.logback:logback-classic:$logbackVersion")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.1")
+    val junitVersion: String by project
+    testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
