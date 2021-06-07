@@ -28,6 +28,10 @@ dependencies {
     implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
     implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
 
+    val jacksonVersion: String by project
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+
     val hazelcastHibernateVersion: String by project
     implementation("com.hazelcast:hazelcast-hibernate53:$hazelcastHibernateVersion")
     val hazelcastVersion: String by project
@@ -38,6 +42,8 @@ dependencies {
     implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
     runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
+    val slf4jVersion: String by project
+    implementation("org.slf4j:slf4j-api:$slf4jVersion")
     val log4j2Version: String by project
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
     runtimeOnly("org.apache.logging.log4j:log4j-api:$log4j2Version")
@@ -66,8 +72,15 @@ tasks.withType<Tar> {
 
 tasks.register("downloadDependencies") {
     doLast {
-        configurations["runtimeClasspath"].files
-        configurations["compileClasspath"].files
-        println("Downloaded all dependencies")
+        configurations.compileClasspath.get().files
+        println("Downloaded compile-time dependencies")
+    }
+}
+
+tasks.register<Copy>("copyDependencies") {
+    from(configurations.runtimeClasspath.map { it.files })
+    into("$buildDir/third-party/")
+    doLast {
+        println("Copied third-party runtime dependencies")
     }
 }

@@ -10,10 +10,12 @@ import jakarta.inject.Singleton
 class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyResourceEnhancer {
     override val classes: Array<Class<*>> = if (config.isCorsEnabled) arrayOf(
         ConfigLoader.Filters.cors,
-        ConfigLoader.Filters.logResponse
+        ConfigLoader.Filters.logResponse,
+        ConfigLoader.Filters.cache,
     )
     else arrayOf(
-        ConfigLoader.Filters.logResponse
+        ConfigLoader.Filters.logResponse,
+        ConfigLoader.Filters.cache,
     )
 
     override val packages: Array<String> = arrayOf("org.radarbase.appconfig.resource")
@@ -31,7 +33,7 @@ class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyR
             .to(ConfigService::class.java)
             .`in`(Singleton::class.java)
 
-        bind(MPProjectService::class.java)
+        bind(ConfigProjectServiceImpl::class.java)
             .to(ConfigProjectService::class.java)
             .`in`(Singleton::class.java)
 

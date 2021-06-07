@@ -5,11 +5,16 @@ plugins {
     kotlin("jvm") apply false
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.0"
-    id("com.github.ben-manes.versions") version "0.38.0" apply false
+    id("com.github.ben-manes.versions") version "0.39.0"
+}
+
+allprojects {
+    group = "org.radarbase"
+    version = "0.3.3-SNAPSHOT"
 }
 
 subprojects {
-    version = "0.3.3-SNAPSHOT"
+//    apply(plugin = "com.github.ben-manes.versions")
 
     repositories {
         // Use jcenter for resolving your dependencies.
@@ -26,24 +31,22 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "11"
-            languageVersion = "1.4"
-            apiVersion = "1.4"
+            languageVersion = "1.5"
+            apiVersion = "1.5"
         }
     }
+}
 
-    apply(plugin = "com.github.ben-manes.versions")
+fun isNonStable(version: String): Boolean {
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+    val isStable = stableKeyword || regex.matches(version)
+    return isStable.not()
+}
 
-    fun isNonStable(version: String): Boolean {
-        val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
-        val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-        val isStable = stableKeyword || regex.matches(version)
-        return isStable.not()
-    }
-
-    tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
-        rejectVersionIf {
-            isNonStable(candidate.version)
-        }
+tasks.withType<DependencyUpdatesTask> {
+    rejectVersionIf {
+        isNonStable(candidate.version)
     }
 }
 

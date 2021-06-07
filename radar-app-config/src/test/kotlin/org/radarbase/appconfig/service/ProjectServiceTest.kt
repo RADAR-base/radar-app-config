@@ -17,7 +17,7 @@ internal class ProjectServiceTest {
     @BeforeEach
     fun setUp() {
         resolver = InMemoryResourceEnhancer.InMemoryClientVariableResolver()
-        projectService = MPProjectService(resolver)
+        projectService = ConfigProjectServiceImpl(resolver)
     }
 
     @Test
