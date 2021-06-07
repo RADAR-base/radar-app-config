@@ -33,17 +33,18 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
         val radarEnhancer = ConfigLoader.Enhancers.radar(config.auth).apply {
             utilityResourceEnhancer = null
         }
-        val utility = ConfigLoader.Enhancers.utility
-        utility.mapper.registerModule(SimpleModule().apply {
-            val allowedFunctions = listOf<Function>(
-                SumFunction(),
-                ListVariablesFunction(),
-                CountFunction()
-            )
-            val deserializer = ExpressionDeserializer(ExpressionParser(allowedFunctions))
+        val utility = ConfigLoader.Enhancers.utility.apply {
+            mapper.registerModule(SimpleModule().apply {
+                val allowedFunctions = listOf<Function>(
+                    SumFunction(),
+                    ListVariablesFunction(),
+                    CountFunction()
+                )
+                val deserializer = ExpressionDeserializer(ExpressionParser(allowedFunctions))
 
-            addDeserializer(Expression::class.java, deserializer)
-        })
+                addDeserializer(Expression::class.java, deserializer)
+            })
+        }
 
         return listOf(
             AppConfigResourceEnhancer(config),
