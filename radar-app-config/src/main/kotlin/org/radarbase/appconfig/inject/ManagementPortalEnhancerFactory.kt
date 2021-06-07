@@ -30,8 +30,11 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
             listOf(InMemoryResourceEnhancer())
         }
 
-        val radarEnhancer = ConfigLoader.Enhancers.radar(config.auth)
-        radarEnhancer.mapper.registerModule(SimpleModule().apply {
+        val radarEnhancer = ConfigLoader.Enhancers.radar(config.auth).apply {
+            utilityResourceEnhancer = null
+        }
+        val utility = ConfigLoader.Enhancers.utility
+        utility.mapper.registerModule(SimpleModule().apply {
             val allowedFunctions = listOf<Function>(
                 SumFunction(),
                 ListVariablesFunction(),
@@ -45,6 +48,7 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
         return listOf(
             AppConfigResourceEnhancer(config),
             radarEnhancer,
+            utility,
             ConfigLoader.Enhancers.managementPortal(config.auth),
             ConfigLoader.Enhancers.health,
             ConfigLoader.Enhancers.generalException,

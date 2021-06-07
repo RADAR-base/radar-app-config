@@ -7,6 +7,7 @@ application {
     mainClass.set("org.radarbase.appconfig.MainKt")
     applicationDefaultJvmArgs = listOf(
         "-Djava.security.egd=file:/dev/./urandom",
+        "-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager",
         "--add-modules", "java.se",
         "--add-exports", "java.base/jdk.internal.ref=ALL-UNNAMED",
         "--add-opens", "java.base/java.lang=ALL-UNNAMED",
@@ -27,15 +28,20 @@ dependencies {
     implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
     implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
 
-    implementation("com.hazelcast:hazelcast-hibernate53:${project.property("hazelcastHibernateVersion")}")
-    implementation("com.hazelcast:hazelcast:${project.property("hazelcastVersion")}")
-    runtimeOnly("com.hazelcast:hazelcast-kubernetes:${project.property("hazelcastKubernetesVersion")}")
+    val hazelcastHibernateVersion: String by project
+    implementation("com.hazelcast:hazelcast-hibernate53:$hazelcastHibernateVersion")
+    val hazelcastVersion: String by project
+    implementation("com.hazelcast:hazelcast:$hazelcastVersion")
+    val hazelcastKubernetesVersion: String by project
+    runtimeOnly("com.hazelcast:hazelcast-kubernetes:$hazelcastKubernetesVersion")
 
     implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
     runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
-    val logbackVersion: String by project
-    runtimeOnly("ch.qos.logback:logback-classic:$logbackVersion")
+    val log4j2Version: String by project
+    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
+    runtimeOnly("org.apache.logging.log4j:log4j-api:$log4j2Version")
+    runtimeOnly("org.apache.logging.log4j:log4j-jul:$log4j2Version")
 
     val junitVersion: String by project
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
