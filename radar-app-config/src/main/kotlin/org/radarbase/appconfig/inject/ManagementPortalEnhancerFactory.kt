@@ -2,11 +2,11 @@ package org.radarbase.appconfig.inject
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.jsonMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import nl.thehyve.lang.expression.*
 import nl.thehyve.lang.expression.Function
 import org.radarbase.appconfig.config.ApplicationConfig
@@ -40,17 +40,17 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
             utilityResourceEnhancer = null
         }
         val utility = ConfigLoader.Enhancers.utility.apply {
-            mapper = ObjectMapper().apply {
-                setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                registerModule(JavaTimeModule())
-                registerModule(KotlinModule(
-                    nullIsSameAsDefault = true,
-                    nullToEmptyCollection = true,
-                    nullToEmptyMap = true,
-                ))
+            mapper = jsonMapper {
+                serializationInclusion(JsonInclude.Include.NON_NULL)
+                addModule(JavaTimeModule())
+                addModule(kotlinModule {
+                    nullIsSameAsDefault(true)
+                    nullToEmptyCollection(true)
+                    nullToEmptyMap(true)
+                })
                 configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                 configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                registerModule(SimpleModule().apply {
+                addModule(SimpleModule().apply {
                     val allowedFunctions = listOf<Function>(
                         SumFunction(),
                         ListVariablesFunction(),
@@ -61,7 +61,6 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
                     addDeserializer(Expression::class.java, deserializer)
                 })
             }
-            mapper.registerModule(KotlinModule())
         }
 
         return listOf(
