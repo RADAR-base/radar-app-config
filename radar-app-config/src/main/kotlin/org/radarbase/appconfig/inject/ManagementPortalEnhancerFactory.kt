@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jsonMapper
-import com.fasterxml.jackson.module.kotlin.kotlinModule
+import com.fasterxml.jackson.module.kotlin.*
 import nl.thehyve.lang.expression.*
 import nl.thehyve.lang.expression.Function
 import org.radarbase.appconfig.config.ApplicationConfig
@@ -30,7 +29,7 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
             )
             listOf(
                 HibernateResourceEnhancer(databaseConfig),
-                HibernatePersistenceResourceEnhancer(config.hazelcast)
+                HibernatePersistenceResourceEnhancer(config.hazelcast),
             )
         } else {
             listOf(InMemoryResourceEnhancer())
@@ -58,7 +57,7 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
                     )
                     val deserializer = ExpressionDeserializer(ExpressionParser(allowedFunctions))
 
-                    addDeserializer(Expression::class.java, deserializer)
+                    addDeserializer(Expression::class, deserializer)
                 })
             }
         }
