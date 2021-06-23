@@ -38,6 +38,7 @@ interface Scope {
     val id: QualifiedId
     fun splitHead(): Pair<String?, Scope?>
     fun asString(): String = id.asString()
+    operator fun plus(part: String): Scope
 }
 
 data class SimpleScope(override val id: QualifiedId) : Scope {
@@ -49,6 +50,8 @@ data class SimpleScope(override val id: QualifiedId) : Scope {
         }
 
     override fun toString() = id.toString()
+
+    override fun plus(part: String): Scope = SimpleScope(id + part)
 
     companion object {
         val root = SimpleScope(QualifiedId(listOf()))

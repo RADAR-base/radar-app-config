@@ -1,12 +1,14 @@
 package org.radarbase.appconfig.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
 import nl.thehyve.lang.expression.Expression
 import nl.thehyve.lang.expression.ResolvedVariable
 import nl.thehyve.lang.expression.Scope
 import org.radarbase.management.client.MPOAuthClient
 import org.radarbase.management.client.MPProject
 import org.radarbase.management.client.MPSubject
+import java.time.Instant
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -79,4 +81,16 @@ data class ClientConfig(
     }
 }
 
-data class SingleVariable(val name: String, val value: String?, val scope: String? = null)
+data class SingleVariable(
+    val name: String,
+    val value: String?,
+    val scope: String? = null,
+)
+
+data class ClientProtocol(
+    val clientId: String,
+    val scope: String?,
+    val version: String,
+    val contents: JsonNode,
+    val lastModifiedAt: Instant,
+)

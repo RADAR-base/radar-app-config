@@ -1,9 +1,5 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.domain.Project
-import org.radarbase.appconfig.domain.ProjectList
-import org.radarbase.appconfig.domain.toProject
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigProjectService
 import org.radarbase.appconfig.service.ConfigService
@@ -17,8 +13,12 @@ import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.UriInfo
+import org.radarbase.appconfig.domain.*
 import org.radarbase.jersey.cache.Cache
 import org.radarbase.management.client.MPProject
+import java.net.URI
 
 @Path("projects")
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,7 +28,6 @@ import org.radarbase.management.client.MPProject
 class ProjectResource(
     @Context private val radarProjectService: RadarProjectService,
     @Context private val projectService: ConfigProjectService,
-    @Context private val configService: ConfigService,
     @Context private val clientService: ClientService,
 ) {
     @GET
@@ -69,4 +68,32 @@ class ProjectResource(
         projectService.putProjectConfig(clientId, projectId, clientConfig)
         return projectService.projectConfig(clientId, projectId)
     }
+
+//    @Path("{projectId}/protocol/{clientId}")
+//    @GET
+//    @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
+//    fun protocol(
+//        @PathParam("projectId") projectId: String,
+//        @PathParam("clientId") clientId: String,
+//    ): ClientProtocol {
+//        clientService.ensureClient(clientId)
+//        return protocolService.globalProtocol(clientId)
+//    }
+//
+//    @Path("protocol")
+//    @POST
+//    @NeedsPermission(Entity.PROJECT, Operation.UPDATE, "projectId")
+//    fun setProtocol(
+//        @PathParam("projectId") projectId: String,
+//        @Context uriInfo: UriInfo,
+//        clientProtocol: ClientProtocol,
+//    ): Response {
+//        clientService.ensureClient(clientProtocol.clientId)
+//        val didExist = protocolService.setGlobalProtocol(clientProtocol)
+//        return if (didExist) {
+//            Response.notModified()
+//        } else {
+//            Response.created(URI.create("${uriInfo.path}/${clientProtocol.clientId}"))
+//        }.build()
+//    }
 }

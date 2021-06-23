@@ -42,6 +42,9 @@ dependencies {
     implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
     runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
+    val jsonSchemaVersion: String by project
+    implementation("com.networknt:json-schema-validator:$jsonSchemaVersion")
+
     val slf4jVersion: String by project
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     val log4j2Version: String by project
