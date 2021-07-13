@@ -1,5 +1,6 @@
 baseUri: http://0.0.0.0:8090/appconfig/api
 isJmxEnabled: false
+isAuthEnabled: false
 
 inject:
   enhancerFactory: org.radarbase.appconfig.inject.ManagementPortalEnhancerFactory
@@ -15,3 +16,11 @@ database:
   driver: "org.h2.Driver"
   url: "jdbc:h2:./build/resources/h2"
   dialect: org.hibernate.dialect.H2Dialect
+
+projects:
+  p1:
+    u1: eu1
+    u2: eu2
+  p2:
+    u3: eu3
+    u4: eu4

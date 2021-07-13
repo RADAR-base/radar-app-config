@@ -4,25 +4,23 @@ import nl.thehyve.lang.expression.*
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import jakarta.ws.rs.core.Context
+import org.radarbase.appconfig.persistence.entity.ConfigStateEntity
+import java.time.Instant
 
 class ConfigService(
     @Context private val resolver: ClientVariableResolver,
-    @Context private val conditionService: ConditionService,
-    @Context private val clientService: ClientService,
 ) {
     fun globalConfig(clientId: String): ClientConfig {
         return ClientConfig.fromStream(
-            clientId, globalScope,
-            resolver[clientId].resolveAll(listOf(globalScope), null)
+            clientId = clientId,
+            scope = globalScope,
+            resolver[clientId].resolve(ConfigStateEntity.Type.CONFIG.name, globalScope),
+            emptyList(),
         )
     }
 
     fun putGlobalConfig(config: ClientConfig, clientId: String) {
-        resolver[clientId].replace(globalScope, null, config.config.stream()
-            .map { (innerId, variable, _) ->
-                QualifiedId(innerId) to
-                        (variable?.toVariable() ?: NullLiteral())
-            })
+        resolver[clientId].replace(config.toVariableSet(globalScope))
     }
 
     companion object {

@@ -32,6 +32,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
+    val liquibaseVersion: String by project
+    implementation("org.liquibase:liquibase-core:$liquibaseVersion")
     val hazelcastHibernateVersion: String by project
     implementation("com.hazelcast:hazelcast-hibernate53:$hazelcastHibernateVersion")
     val hazelcastVersion: String by project

@@ -6,6 +6,10 @@ import org.radarbase.appconfig.service.*
 import org.radarbase.jersey.config.ConfigLoader
 import org.radarbase.jersey.config.JerseyResourceEnhancer
 import jakarta.inject.Singleton
+import org.radarbase.jersey.service.ProjectService
+import org.radarbase.jersey.service.managementportal.ProjectServiceWrapper
+import org.radarbase.jersey.service.managementportal.RadarProjectService
+import org.radarbase.management.client.MPOAuthClient
 
 class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyResourceEnhancer {
     override val classes: Array<Class<*>> = if (config.isCorsEnabled) arrayOf(
@@ -25,10 +29,6 @@ class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyR
         bind(config)
             .to(ApplicationConfig::class.java)
 
-        bind(ConditionService::class.java)
-            .to(ConditionService::class.java)
-            .`in`(Singleton::class.java)
-
         bind(ConfigService::class.java)
             .to(ConfigService::class.java)
             .`in`(Singleton::class.java)
@@ -37,13 +37,26 @@ class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyR
             .to(ConfigProjectService::class.java)
             .`in`(Singleton::class.java)
 
-        bind(ClientService::class.java)
-            .to(ClientService::class.java)
-            .`in`(Singleton::class.java)
+        if (config.isAuthEnabled) {
+            bind(MPClientService::class.java)
+                .to(ClientService::class.java)
+                .`in`(Singleton::class.java)
+        } else {
+            bind(FixedRadarProjectService::class.java)
+                .to(RadarProjectService::class.java)
+                .`in`(Singleton::class.java)
 
-        bind(ClientInterpreter::class.java)
-            .to(ClientInterpreter::class.java)
-            .`in`(Singleton::class.java)
+            bind(ProjectServiceWrapper::class.java)
+                .to(ProjectService::class.java)
+                .`in`(Singleton::class.java)
+
+            val clients = mapOf(
+                "aRMT" to MPOAuthClient(id = "aRMT"),
+                "pRMT" to MPOAuthClient(id = "pRMT"),
+            )
+            bind(FixedClientService(clients))
+                .to(ClientService::class.java)
+        }
 
         bind(UserService::class.java)
             .to(UserService::class.java)

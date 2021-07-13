@@ -1,7 +1,6 @@
 package org.radarbase.appconfig.service
 
-import nl.thehyve.lang.expression.register
-import nl.thehyve.lang.expression.toVariable
+import nl.thehyve.lang.expression.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -9,6 +8,7 @@ import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.SingleVariable
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.inject.InMemoryResourceEnhancer
+import java.time.Instant
 
 internal class ProjectServiceTest {
     private lateinit var projectService: ConfigProjectService
@@ -22,21 +22,42 @@ internal class ProjectServiceTest {
 
     @Test
     fun projectConfig() {
-        resolver["aRMT"].register("project.radar-test", "a.c", "b".toVariable())
-        resolver["aRMT"].register("project.radar-test", "a.d", 5.toVariable())
+        val now = Instant.now()
+        val variableSet = VariableSet(
+            type = "CONFIG",
+            scope = SimpleScope("project.radar-test"),
+            variables = mapOf(
+                QualifiedId("a.c") to "b".toVariable(),
+                QualifiedId("a.d") to 5.toVariable(),
+            ),
+            lastModifiedAt = now,
+        )
+
+        resolver["aRMT"].replace(variableSet)
         println(resolver["aRMT"])
         assertEquals(
             ClientConfig(
-                "aRMT", "project.radar-test", listOf(
+                "aRMT",
+                "project.radar-test",
+                listOf(
                     SingleVariable("a.c", "b"),
-                    SingleVariable("a.d", "5")
-                )
+                    SingleVariable("a.d", "5"),
+                ),
+                lastModifiedAt = now,
             ),
             projectService.projectConfig("aRMT", "radar-test")
         )
 
-        resolver["aRMT"].register("global", "a.c", "f".toVariable())
-        resolver["aRMT"].register("global", "a.e", 5.toVariable())
+        val globalVariableSet = VariableSet(
+            type = "CONFIG",
+            scope = SimpleScope("global"),
+            variables = mapOf(
+                QualifiedId("a.c") to "f".toVariable(),
+                QualifiedId("a.e") to 5.toVariable(),
+            ),
+            lastModifiedAt = now,
+        )
+        resolver["aRMT"].replace(globalVariableSet)
 
         assertEquals(
             ClientConfig(
@@ -48,17 +69,22 @@ internal class ProjectServiceTest {
                 listOf(
                     SingleVariable("a.c", "f", "global"),
                     SingleVariable("a.e", "5", "global")
-                )
+                ),
+                lastModifiedAt = now,
             ),
             projectService.projectConfig("aRMT", "radar-test")
         )
 
         assertEquals(
             ClientConfig(
-                "aRMT", "project.radar-demo", listOf(), listOf(
+                clientId = "aRMT",
+                scope = "project.radar-demo",
+                config = listOf(),
+                defaults = listOf(
                     SingleVariable("a.c", "f", "global"),
-                    SingleVariable("a.e", "5", "global")
-                )
+                    SingleVariable("a.e", "5", "global"),
+                ),
+                lastModifiedAt = now,
             ),
             projectService.projectConfig("aRMT", "radar-demo")
         )

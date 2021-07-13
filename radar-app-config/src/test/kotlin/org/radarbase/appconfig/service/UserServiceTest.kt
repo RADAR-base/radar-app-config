@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.SingleVariable
-import org.radarbase.appconfig.inject.ClientInterpreter
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.inject.InMemoryResourceEnhancer
 
@@ -17,9 +16,7 @@ internal class UserServiceTest {
     @BeforeEach
     fun setUp() {
         resolver = InMemoryResourceEnhancer.InMemoryClientVariableResolver()
-
-        val conditionService = ConditionService(resolver, ClientInterpreter(resolver))
-        userService = UserService(conditionService, resolver)
+        userService = UserService(resolver)
         projectService = ConfigProjectServiceImpl(resolver)
     }
 
