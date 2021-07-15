@@ -88,7 +88,7 @@ data class QualifiedId(val names: List<String>) : Expression {
     operator fun plus(name: String) = QualifiedId(names + name)
     operator fun plus(id: QualifiedId) = QualifiedId(names + id.names)
 
-    fun prefixWith(prefix: String) = QualifiedId(prefix + names)
+    fun prefixWith(prefix: String) = QualifiedId(listOf(prefix) + names)
 
     fun asString() = names.joinToString(separator = ".")
 

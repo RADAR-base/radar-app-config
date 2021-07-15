@@ -23,7 +23,7 @@ class Interpreter(val variables: VariableResolver) {
                 is LessThanOrEqualExpression -> BooleanLiteral(left.evaluate(type, scope) <= right.evaluate(type, scope))
                 is Variable -> this
                 is FunctionReference -> function.apply(this@Interpreter, type, scope, parameters)
-                is QualifiedId -> variables.resolve(type, scope, this).variable
+                is QualifiedId -> variables.resolve(scope, this).variable
                 is InvertExpression -> BooleanLiteral(!value.evaluate(type, scope).asBoolean())
                 is NegateExpression -> value.evaluate(type, scope).asNumber().negate().toVariable()
                 else -> throw UnsupportedOperationException("Cannot evaluate unknown expression $this")
@@ -39,6 +39,8 @@ interface Scope {
     fun splitHead(): Pair<String?, Scope?>
     fun asString(): String = id.asString()
     operator fun plus(part: String): Scope
+    fun prefixWith(prefix: String): Scope
+    fun startsWith(prefix: String): Boolean
 }
 
 data class SimpleScope(override val id: QualifiedId) : Scope {
@@ -52,6 +54,9 @@ data class SimpleScope(override val id: QualifiedId) : Scope {
     override fun toString() = id.toString()
 
     override fun plus(part: String): Scope = SimpleScope(id + part)
+
+    override fun prefixWith(prefix: String): Scope = SimpleScope(id.prefixWith(prefix))
+    override fun startsWith(prefix: String): Boolean = id.isPrefixedBy(QualifiedId(prefix))
 
     companion object {
         val root = SimpleScope(QualifiedId(listOf()))

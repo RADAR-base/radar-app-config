@@ -21,8 +21,7 @@
 <databaseChangeLog
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
     <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle,mssql"/>
     <property name="now" value="now()" dbms="postgresql"/>
     <property name="now" value="CURRENT_TIMESTAMP()" dbms="h2"/>
@@ -30,11 +29,6 @@
     <changeSet id="Add config_state status enum type" author="joris" dbms="h2,postgresql">
         <sql>CREATE TYPE config_state_status AS ENUM('ACTIVE', 'INACTIVE')</sql>
         <rollback>DROP TYPE config_state_status</rollback>
-    </changeSet>
-
-    <changeSet id="Add config_state type enum type" author="joris" dbms="h2,postgresql">
-        <sql>CREATE TYPE config_state_type AS ENUM('CONFIG', 'PROTOCOL')</sql>
-        <rollback>DROP TYPE config_state_type</rollback>
     </changeSet>
 
     <changeSet id="Create config_state table" author="joris" dbms="h2,postgresql">
@@ -52,9 +46,6 @@
             <column name="status" type="config_state_status">
                 <constraints nullable="false"/>
             </column>
-            <column name="type" type="config_state_type">
-                <constraints nullable="false"/>
-            </column>
             <column name="last_modified_at" type="datetime" defaultValueComputed="${now}">
                 <constraints nullable="false"/>
             </column>
@@ -63,8 +54,8 @@
 
     <changeSet id="Insert data into config_state" author="joris" dbms="h2,postgresql">
         <sql>
-            INSERT INTO config_state (client_id, scope, status, type)
-            (SELECT DISTINCT client_id, scope, 'ACTIVE' AS status, 'CONFIG' as type FROM config)
+            INSERT INTO config_state (client_id, scope, status)
+            (SELECT DISTINCT c.client_id, CONCAT('config.', c.scope) as scope, 'ACTIVE' AS status FROM config AS c)
         </sql>
         <rollback>
             DELETE FROM config_state
@@ -75,13 +66,11 @@
         <createIndex tableName="config_state" indexName="idx_config_state_client_scope_status">
             <column name="client_id"/>
             <column name="scope"/>
-            <column name="type"/>
             <column name="status"/>
         </createIndex>
         <createIndex tableName="config_state" indexName="idx_config_state_client_scope_date">
             <column name="client_id"/>
             <column name="scope"/>
-            <column name="type"/>
             <column name="last_modified_at"/>
         </createIndex>
     </changeSet>

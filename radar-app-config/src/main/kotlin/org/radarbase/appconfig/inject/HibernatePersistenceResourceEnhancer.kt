@@ -3,14 +3,12 @@ package org.radarbase.appconfig.inject
 import com.hazelcast.config.Config
 import com.hazelcast.core.Hazelcast
 import com.hazelcast.core.HazelcastInstance
-import nl.thehyve.lang.expression.VariableResolver
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.HazelcastConfig
-import org.radarbase.appconfig.persistence.HibernateVariableResolver
 import org.radarbase.jersey.config.JerseyResourceEnhancer
 import jakarta.inject.Singleton
-import javax.persistence.EntityManager
-import jakarta.ws.rs.core.Context
+import org.radarbase.appconfig.persistence.ConfigRepository
+import org.radarbase.appconfig.persistence.HibernateConfigRepository
 
 class HibernatePersistenceResourceEnhancer(private val hazelcastConfig: HazelcastConfig) : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {
@@ -32,16 +30,8 @@ class HibernatePersistenceResourceEnhancer(private val hazelcastConfig: Hazelcas
             .to(HazelcastInstance::class.java)
             .`in`(Singleton::class.java)
 
-        bind(HibernateClientVariableResolver::class.java)
-            .to(ClientVariableResolver::class.java)
+        bind(HibernateConfigRepository::class.java)
+            .to(ConfigRepository::class.java)
             .`in`(Singleton::class.java)
-    }
-
-    class HibernateClientVariableResolver(
-        @Context private val em: jakarta.inject.Provider<EntityManager>,
-        @Context private val hazelcastInstance: HazelcastInstance,
-    ) : ClientVariableResolver {
-        override fun get(clientId: String): VariableResolver =
-            HibernateVariableResolver(em, clientId, hazelcastInstance.getMap(clientId))
     }
 }

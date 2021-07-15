@@ -13,5 +13,5 @@ data class ApplicationConfig(
     val inject: InjectConfig = InjectConfig(),
     val database: DatabaseConfig? = null,
     val hazelcast: HazelcastConfig = HazelcastConfig(),
-    val projects: Map<String, Map<String, String>> = emptyMap()
+    val projects: Map<String, Map<String, String>> = emptyMap(),
 )

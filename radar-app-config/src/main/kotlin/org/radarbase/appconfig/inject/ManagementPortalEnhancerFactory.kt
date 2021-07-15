@@ -57,7 +57,7 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
                 addModule(SimpleModule().apply {
                     val allowedFunctions = listOf<Function>(
                         SumFunction(),
-                        ListVariablesFunction(),
+//                        ListVariablesFunction(),
                         CountFunction()
                     )
                     val deserializer = ExpressionDeserializer(ExpressionParser(allowedFunctions))

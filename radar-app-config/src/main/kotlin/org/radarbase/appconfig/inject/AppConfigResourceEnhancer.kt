@@ -6,6 +6,7 @@ import org.radarbase.appconfig.service.*
 import org.radarbase.jersey.config.ConfigLoader
 import org.radarbase.jersey.config.JerseyResourceEnhancer
 import jakarta.inject.Singleton
+import org.radarbase.appconfig.domain.ProtocolMapper
 import org.radarbase.jersey.service.ProjectService
 import org.radarbase.jersey.service.managementportal.ProjectServiceWrapper
 import org.radarbase.jersey.service.managementportal.RadarProjectService
@@ -33,8 +34,12 @@ class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyR
             .to(ConfigService::class.java)
             .`in`(Singleton::class.java)
 
-        bind(ConfigProjectServiceImpl::class.java)
-            .to(ConfigProjectService::class.java)
+        bind(ProtocolService::class.java)
+            .to(ProtocolService::class.java)
+            .`in`(Singleton::class.java)
+
+        bind(ProtocolMapper::class.java)
+            .to(ProtocolMapper::class.java)
             .`in`(Singleton::class.java)
 
         if (config.isAuthEnabled) {
@@ -57,9 +62,5 @@ class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyR
             bind(FixedClientService(clients))
                 .to(ClientService::class.java)
         }
-
-        bind(UserService::class.java)
-            .to(UserService::class.java)
-            .`in`(Singleton::class.java)
     }
 }

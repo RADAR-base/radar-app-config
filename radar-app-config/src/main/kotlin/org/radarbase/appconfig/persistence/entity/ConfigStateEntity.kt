@@ -9,7 +9,6 @@ import javax.persistence.*
 @Entity(name = "ConfigState")
 @Table(name = "config_state")
 @Cacheable
-@Immutable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class ConfigStateEntity {
     @Id
@@ -36,15 +35,7 @@ class ConfigStateEntity {
     @OrderBy(value = "rank, name")
     lateinit var values: Map<String, ConfigEntity>
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    lateinit var type: Type
-
     enum class Status {
         ACTIVE, INACTIVE
-    }
-
-    enum class Type {
-        CONFIG, PROTOCOL
     }
 }

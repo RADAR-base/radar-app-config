@@ -1,11 +1,7 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.domain.User
-import org.radarbase.appconfig.domain.UserList
-import org.radarbase.appconfig.domain.toUser
+import com.fasterxml.jackson.databind.JsonNode
 import org.radarbase.appconfig.service.ClientService
-import org.radarbase.appconfig.service.UserService
 import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
@@ -15,6 +11,12 @@ import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.UriInfo
+import org.radarbase.appconfig.domain.*
+import org.radarbase.appconfig.service.ConfigService
+import org.radarbase.appconfig.service.ProtocolService
+import org.radarbase.appconfig.service.ProtocolService.Companion.toResponse
 import org.radarbase.jersey.cache.Cache
 import org.radarbase.management.client.MPSubject
 
@@ -25,9 +27,10 @@ import org.radarbase.management.client.MPSubject
 @Authenticated
 @Singleton
 class UserResource(
-    @Context private val userService: UserService,
+    @Context private val configService: ConfigService,
     @Context private val clientService: ClientService,
-    @Context private val radarProjectService: RadarProjectService,
+    @Context private val projectService: RadarProjectService,
+    @Context private val protocolService: ProtocolService,
 ) {
     @GET
     @Cache(maxAge = 60, isPrivate = true)
@@ -36,7 +39,7 @@ class UserResource(
         @PathParam("projectId") projectId: String,
     ): UserList {
         return UserList(
-            radarProjectService.projectUsers(projectId)
+            projectService.projectUsers(projectId)
                 .map(MPSubject::toUser)
         )
     }
@@ -49,7 +52,7 @@ class UserResource(
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
     ): User {
-        return radarProjectService.getUser(projectId, userId)?.toUser()
+        return projectService.getUser(projectId, userId)?.toUser()
             ?: throw HttpNotFoundException("user_missing", "User not found")
     }
 
@@ -62,8 +65,8 @@ class UserResource(
         @PathParam("clientId") clientId: String,
     ): ClientConfig {
         clientService.ensureClient(clientId)
-        radarProjectService.ensureUser(projectId, userId)
-        return userService.userConfig(clientId, projectId, userId)
+        projectService.ensureUser(projectId, userId)
+        return configService.userConfig(clientId, projectId, userId)
     }
 
     @Path("/{userId}/config/{clientId}")
@@ -76,8 +79,56 @@ class UserResource(
         clientConfig: ClientConfig,
     ): ClientConfig {
         clientService.ensureClient(clientId)
-        radarProjectService.ensureUser(projectId, userId)
-        userService.putUserConfig(clientId, userId, clientConfig)
-        return userService.userConfig(clientId, projectId, userId)
+        projectService.ensureUser(projectId, userId)
+        configService.putUserConfig(clientId, userId, clientConfig)
+        return configService.userConfig(clientId, projectId, userId)
+    }
+
+    @Path("{userId}/protocol/{clientId}")
+    @Cache(maxAge = 300, isPrivate = true)
+    @GET
+    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.READ, "projectId")
+    fun protocol(
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
+        @PathParam("clientId") clientId: String,
+        ): ClientProtocol {
+        clientService.ensureClient(clientId)
+        projectService.ensureUser(projectId, userId)
+        return protocolService.userProtocol(clientId, projectId, userId)
+    }
+
+    @Path("/{userId}/protocol")
+    @POST
+    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
+    fun setProtocol(
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
+        @Context uriInfo: UriInfo,
+        clientProtocol: ClientProtocol,
+    ): Response {
+        clientService.ensureClient(clientProtocol.clientId)
+        projectService.ensureUser(projectId, userId)
+        val updateResult = protocolService.setUserProtocol(clientProtocol, userId)
+        return updateResult.toResponse(uriInfo.baseUriBuilder)
+    }
+
+    @Path("/{userId}/protocol/{clientId}/contents")
+    @PUT
+    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
+    fun setProtocol(
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
+        @PathParam("clientId") clientId: String,
+        @Context uriInfo: UriInfo,
+        protocol: JsonNode,
+    ): Response {
+        clientService.ensureClient(clientId)
+        projectService.ensureUser(projectId, userId)
+        val updateResult = protocolService.setUserProtocol(ClientProtocol(
+            clientId = clientId,
+            contents = protocol,
+        ), userId)
+        return updateResult.toResponse(uriInfo.baseUriBuilder)
     }
 }

@@ -10,7 +10,7 @@ import kotlin.system.exitProcess
 fun main() {
     val functions = listOf<Function>(
         SumFunction(),
-        ListVariablesFunction(),
+//        ListVariablesFunction(),
         CountFunction()
     )
     val parser = ExpressionParser(functions)
