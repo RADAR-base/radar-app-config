@@ -80,7 +80,7 @@
             <column name="state_id" type="bigint" valueComputed="(SELECT cs.id FROM config_state AS cs WHERE client_id = cs.client_id AND scope = cs.scope)">
                 <constraints nullable="false" foreignKeyName="fk_config_config_state" references="config_state(id)"/>
             </column>
-            <column name="rank" value="0" defaultValue="0" type="int">
+            <column name="rank" value="0" defaultValue="0" type="float">
                 <constraints nullable="false"/>
             </column>
         </addColumn>

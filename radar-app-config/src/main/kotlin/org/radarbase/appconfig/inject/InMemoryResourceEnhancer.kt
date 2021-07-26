@@ -4,9 +4,9 @@ import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.jersey.config.JerseyResourceEnhancer
 import java.util.concurrent.ConcurrentHashMap
 import jakarta.inject.Singleton
-import nl.thehyve.lang.expression.*
 import org.radarbase.appconfig.persistence.ClientVariableSet
 import org.radarbase.appconfig.persistence.ConfigRepository
+import org.radarbase.lang.expression.*
 
 class InMemoryResourceEnhancer : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {
@@ -17,14 +17,22 @@ class InMemoryResourceEnhancer : JerseyResourceEnhancer {
     }
 
     class InMemoryConfigRepository : ConfigRepository {
-        private val resolvers = ConcurrentHashMap<String, VariableResolver>()
+        private val resolvers = ConcurrentHashMap<String, VariableRepository>()
 
         private fun clientResolver(clientId: String) = resolvers.computeIfAbsent(clientId) {
-            DirectVariableResolver()
+            DirectVariableRepository()
         }
 
         override fun update(clientId: String, variableSet: VariableSet): UpdateResult {
             return clientResolver(clientId).update(variableSet)
+        }
+
+        override fun findActiveValue(clientId: String, scopes: List<Scope>, id: QualifiedId): ResolvedVariable? {
+            return try {
+                clientResolver(clientId).resolve(scopes, id)
+            } catch (ex: NoSuchElementException) {
+                null
+            }
         }
 
         override fun findActive(clientId: String, scope: Scope): VariableSet? {

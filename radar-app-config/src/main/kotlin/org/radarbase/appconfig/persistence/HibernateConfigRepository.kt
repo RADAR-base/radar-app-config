@@ -3,10 +3,11 @@ package org.radarbase.appconfig.persistence
 import com.hazelcast.core.HazelcastInstance
 import jakarta.inject.Provider
 import jakarta.ws.rs.core.Context
-import nl.thehyve.lang.expression.*
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.appconfig.persistence.entity.ConfigStateEntity
+import org.radarbase.appconfig.persistence.entity.EntityStatus
 import org.radarbase.jersey.hibernate.HibernateRepository
+import org.radarbase.lang.expression.*
 import java.time.Instant
 import javax.persistence.EntityManager
 
@@ -29,23 +30,23 @@ class HibernateConfigRepository(
                 if (previousVariables == variableSet.variables) {
                     return@transact UpdateResult(requireNotNull(previousConfig.id), false)
                 } else {
-                    previousConfig.status = ConfigStateEntity.Status.INACTIVE
+                    previousConfig.status = EntityStatus.INACTIVE
                     merge(previousConfig)
                 }
             }
 
-            val configState = ConfigStateEntity().apply {
-                this.clientId = clientId
-                scope = variableSet.scope.asString()
-                lastModifiedAt = variableSet.lastModifiedAt ?: Instant.now()
-                status = ConfigStateEntity.Status.ACTIVE
-                values = emptyMap()
-            }
+            val configState = ConfigStateEntity(
+                clientId = clientId,
+                scope = variableSet.scope.asString(),
+                lastModifiedAt = variableSet.lastModifiedAt ?: Instant.now(),
+                status = EntityStatus.ACTIVE,
+                values = emptyMap(),
+            )
             persist(configState)
             configState.values = variableSet.variables
                 .asSequence()
                 .filter { (id, _) -> !id.isEmpty() }
-                .mapIndexed { i, (id, value) -> save(configState, id, value, i) }
+                .mapIndexed { i, (id, value) -> save(configState, id, value, i.toFloat()) }
                 .associateBy { config -> config.name }
 
             UpdateResult(requireNotNull(configState.id), true)
@@ -57,22 +58,45 @@ class HibernateConfigRepository(
         return result
     }
 
+    override fun findActiveValue(
+        clientId: String,
+        scopes: List<Scope>,
+        id: QualifiedId
+    ): ResolvedVariable? = transact {
+        val query = createQuery("""
+            SELECT cs.scope, c.value
+            FROM Config AS c LEFT JOIN ConfigState AS cs ON c.state = cs
+            WHERE cs.clientId = :clientId
+                AND cs.scope IN (:scopes)
+                AND cs.status = 'ACTIVE'
+                AND c.name = :name
+        """.trimIndent()).apply {
+            setParameter("clientId", clientId)
+            setParameter("scopes", scopes)
+            setParameter("name", id.asString())
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        (query.resultList as List<Array<String>>)
+            .asSequence()
+            .map { result -> ResolvedVariable(SimpleScope(result[0]), id, result[1].toVariable()) }
+            .minByOrNull { scopes.indexOf(it.scope) }
+    }
+
     private fun EntityManager.save(
         configState: ConfigStateEntity,
         id: QualifiedId,
         variable: Variable,
-        rank: Int,
+        rank: Float,
     ): ConfigEntity {
         require(!id.isEmpty()) { "Cannot save variable without variable name" }
 
-        val configEntity = ConfigEntity().apply {
-            this.name = id.asString()
-            this.value = variable.asOptString()
-            this.state = configState
-            this.rank = rank
-        }
-        persist(configEntity)
-        return configEntity
+        return ConfigEntity(
+            name = id.asString(),
+            value = variable.asOptString(),
+            state = configState,
+            rank = rank,
+        ).also { persist(it) }
     }
 
     override fun findActive(
@@ -137,26 +161,4 @@ class HibernateConfigRepository(
                 ?.also { latestConfigCache[scopeString] = it.id }
         }
     }
-//
-//    private fun EntityManager.selectConfigName(
-//        clientId: String,
-//        scopes: List<Scope>,
-//        name: QualifiedId,
-//    ): Query = createQuery("""
-//        SELECT cs.scope, c.value
-//        FROM Config c
-//            LEFT JOIN ConfigState cs ON c.state = cs
-//        WHERE cs.clientId = :clientId
-//            AND cs.scope IN (:scopes)
-//            AND c.name = :name
-//    """.trimIndent())
-//        .setParameter("clientId", clientId)
-//        .setParameter("scopes", scopes.map { it.asString() })
-//        .setParameter("name", name.asString())
-//
-//    companion object {
-//        @get:Suppress("UNCHECKED_CAST")
-//        val Query.arrayResultSequence: Sequence<Array<Any>>
-//            get() = (resultList as List<Array<Any>>).asSequence()
-//    }
 }

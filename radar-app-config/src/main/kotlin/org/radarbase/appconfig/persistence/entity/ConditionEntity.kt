@@ -6,33 +6,28 @@ import org.hibernate.annotations.Immutable
 import java.time.Instant
 import javax.persistence.*
 
-@Entity(name = "ConfigState")
-@Table(name = "config_state")
+@Entity(name = "Condition")
+@Table(name = "condition")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-class ConfigStateEntity(
+class ConditionEntity(
+    @Column(name = "project_id")
+    val projectId: String,
     @Column
-    val scope: String,
-    @Column(name = "client_id")
-    val clientId: String,
+    var name: String,
     @Column(name = "last_modified_at")
     val lastModifiedAt: Instant,
     @Column
     @Enumerated(EnumType.STRING)
     var status: EntityStatus,
-    @Immutable
-    @OneToMany(
-        targetEntity = ConfigEntity::class,
-        cascade = [CascadeType.ALL],
-        fetch = FetchType.EAGER,
-        mappedBy = "state",
-    )
-    @MapKey(name = "name")
-    @OrderBy(value = "rank, name")
-    var values: Map<String, ConfigEntity>,
+    @Column
+    @Lob
+    val expression: String,
+    @Column
+    val rank: Float = 0.0f,
 ) {
     @Id
-    @GeneratedValue(generator = "config_state_id_sequence")
+    @GeneratedValue(generator = "condition_id_sequence")
     var id: Long? = null
         protected set
 }

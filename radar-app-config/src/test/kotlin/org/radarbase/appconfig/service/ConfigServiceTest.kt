@@ -1,9 +1,9 @@
 package org.radarbase.appconfig.service
 
-import nl.thehyve.lang.expression.QualifiedId
-import nl.thehyve.lang.expression.SimpleScope
-import nl.thehyve.lang.expression.VariableSet
-import nl.thehyve.lang.expression.toVariable
+import org.radarbase.lang.expression.QualifiedId
+import org.radarbase.lang.expression.SimpleScope
+import org.radarbase.lang.expression.VariableSet
+import org.radarbase.lang.expression.toVariable
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

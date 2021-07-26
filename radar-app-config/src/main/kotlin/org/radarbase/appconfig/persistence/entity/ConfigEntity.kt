@@ -10,22 +10,22 @@ import javax.persistence.*
 @Cacheable
 @Immutable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-class ConfigEntity {
-    @Id
-    @GeneratedValue(generator = "config_id_sequence")
-    var id: Long? = null
-        private set
+class ConfigEntity(
+    @Column
+    val name: String,
 
     @Column
-    lateinit var name: String
+    val rank: Float = 0.0f,
+
+    @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
+    val state: ConfigStateEntity,
 
     @Column
     @Lob
-    var value: String? = null
-
-    @Column
-    var rank: Int = 0
-
-    @ManyToOne(cascade = [CascadeType.REFRESH], fetch = FetchType.LAZY)
-    var state: ConfigStateEntity? = null
+    val value: String?
+) {
+    @Id
+    @GeneratedValue(generator = "config_id_sequence")
+    var id: Long? = null
+        protected set
 }

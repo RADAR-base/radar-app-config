@@ -1,4 +1,4 @@
-package nl.thehyve.lang.expression
+package org.radarbase.lang.expression
 
 import java.math.BigDecimal
 import java.time.Instant
@@ -7,12 +7,16 @@ import java.util.Collections.unmodifiableMap
 data class ResolvedVariable(val scope: Scope, val id: QualifiedId, val variable: Variable)
 data class VariableSet(val id: Long?, val scope: Scope, val variables: Map<QualifiedId, Variable>, val lastModifiedAt: Instant? = null)
 
-interface VariableResolver {
+
+interface VariableRepository : VariableResolver {
     fun update(variableSet: VariableSet): UpdateResult
-    fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable
     fun resolve(scope: Scope): VariableSet?
     fun get(id: Long): VariableSet?
 //    fun list(scopes: List<Scope>, prefix: QualifiedId?): Sequence<QualifiedId>
+}
+
+interface VariableResolver {
+    fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable
 }
 
 data class UpdateResult(val id: Long, val didUpdate: Boolean)
@@ -26,7 +30,7 @@ fun String?.toVariable(): Variable = this?.toVariable() ?: NullLiteral()
 fun Collection<Variable>.toVariable(): CollectionLiteral = CollectionLiteral(this)
 fun Boolean.toVariable(): BooleanLiteral = BooleanLiteral(this)
 
-class DirectVariableResolver : VariableResolver {
+class DirectVariableRepository : VariableRepository {
     private var nextId: Long = 1L
     private val variables = mutableMapOf<Scope, VariableSet>()
 //
@@ -74,7 +78,7 @@ class DirectVariableResolver : VariableResolver {
                     ?.let { ResolvedVariable(s, id, it) }
             }
             .firstOrNull()
-            ?: throw UnsupportedOperationException("Unknown variable $id in scopes $scopes.")
+            ?: throw NoSuchElementException("Unknown variable $id in scopes $scopes.")
     }
 
     override fun toString(): String {

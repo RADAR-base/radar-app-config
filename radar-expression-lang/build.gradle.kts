@@ -40,9 +40,9 @@ dependencies {
 }
 
 tasks.generateGrammarSource {
-    outputDirectory = file("$buildDir/generated-src/antlr/main/nl/thehyve/lang/expression/antlr")
+    outputDirectory = file("$buildDir/generated-src/antlr/main/org/radarbase/lang/expression/antlr")
     arguments = arguments + listOf(
-        "-package", "nl.thehyve.lang.expression.antlr"
+        "-package", "org.radarbase.lang.expression.antlr"
     )
 }
 

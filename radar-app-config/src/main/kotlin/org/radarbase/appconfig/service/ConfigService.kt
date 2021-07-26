@@ -1,10 +1,11 @@
 package org.radarbase.appconfig.service
 
-import nl.thehyve.lang.expression.*
 import org.radarbase.appconfig.domain.ClientConfig
 import jakarta.ws.rs.core.Context
 import org.radarbase.appconfig.persistence.ConfigRepository
-import org.radarbase.appconfig.service.ConfigService.Companion.configScope
+import org.radarbase.lang.expression.QualifiedId
+import org.radarbase.lang.expression.Scope
+import org.radarbase.lang.expression.SimpleScope
 
 class ConfigService(
     @Context private val configRepository: ConfigRepository,

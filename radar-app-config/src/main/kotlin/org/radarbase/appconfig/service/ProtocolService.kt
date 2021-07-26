@@ -7,8 +7,8 @@ import com.networknt.schema.SpecVersionDetector
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriBuilder
-import nl.thehyve.lang.expression.Scope
-import nl.thehyve.lang.expression.UpdateResult
+import org.radarbase.lang.expression.Scope
+import org.radarbase.lang.expression.UpdateResult
 import org.radarbase.appconfig.domain.ClientProtocol
 import org.radarbase.appconfig.domain.ProtocolMapper
 import org.radarbase.appconfig.persistence.ConfigRepository
@@ -63,13 +63,13 @@ class ProtocolService(
 
         when {
             scope == null -> Unit
-            scope.startsWith("global") -> Unit
-            scope.startsWith("project") -> {
+            scope.isPrefixedBy("global") -> Unit
+            scope.isPrefixedBy("project") -> {
                 val projectId = scope.id.names[1]
                 projectService.ensureProject(projectId)
                 auth.checkPermissionOnProject(PROJECT_READ, projectId, "getProtocol")
             }
-            scope.startsWith("user") -> {
+            scope.isPrefixedBy("user") -> {
                 val userId = scope.id.names[1]
                 val user = projectService.userProjects(auth, SUBJECT_READ)
                     .asSequence()

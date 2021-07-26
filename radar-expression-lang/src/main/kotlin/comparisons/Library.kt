@@ -3,8 +3,8 @@
  */
 package comparisons
 
-import nl.thehyve.lang.expression.*
-import nl.thehyve.lang.expression.Function
+import org.radarbase.lang.expression.*
+import org.radarbase.lang.expression.Function
 import kotlin.system.exitProcess
 
 fun main() {
@@ -23,7 +23,7 @@ fun main() {
     }
 
     println(expr)
-    val resolver = DirectVariableResolver()
+    val resolver = DirectVariableRepository()
 //    resolver.register(functions)
 //    resolver.register("user", "a", 1.toVariable())
 //    resolver.register("user", "b", 1.toVariable())
@@ -35,7 +35,7 @@ fun main() {
 
     val interpreter = Interpreter(resolver)
     try {
-        print(interpreter.interpret("CONFIG", listOf(SimpleScope("user.blootsvoets"), SimpleScope("user")), expr))
+        print(interpreter.interpret(listOf(SimpleScope("user.blootsvoets"), SimpleScope("user")), expr))
     } catch (ex: InterpreterException) {
         println("Failed to evaluate expression ${ex.expression}:\n\n${ex.message}")
     }

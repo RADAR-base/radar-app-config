@@ -1,9 +1,9 @@
 package org.radarbase.appconfig.domain
 
-import nl.thehyve.lang.expression.QualifiedId
-import nl.thehyve.lang.expression.Scope
-import nl.thehyve.lang.expression.VariableSet
-import nl.thehyve.lang.expression.toVariable
+import org.radarbase.lang.expression.QualifiedId
+import org.radarbase.lang.expression.Scope
+import org.radarbase.lang.expression.VariableSet
+import org.radarbase.lang.expression.toVariable
 import java.time.Instant
 
 data class ClientConfig(

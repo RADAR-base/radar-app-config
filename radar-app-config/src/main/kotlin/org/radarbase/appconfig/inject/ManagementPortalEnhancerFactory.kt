@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.*
-import nl.thehyve.lang.expression.*
-import nl.thehyve.lang.expression.Function
 import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.appconfig.persistence.entity.ConfigStateEntity
@@ -15,6 +13,8 @@ import org.radarbase.jersey.config.ConfigLoader
 import org.radarbase.jersey.config.EnhancerFactory
 import org.radarbase.jersey.config.JerseyResourceEnhancer
 import org.radarbase.jersey.hibernate.config.HibernateResourceEnhancer
+import org.radarbase.lang.expression.*
+import org.radarbase.lang.expression.Function
 import kotlin.reflect.jvm.jvmName
 
 /** This binder needs to register all non-Jersey classes, otherwise initialization fails. */

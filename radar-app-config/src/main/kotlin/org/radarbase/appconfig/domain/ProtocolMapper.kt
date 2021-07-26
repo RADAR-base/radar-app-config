@@ -2,8 +2,11 @@ package org.radarbase.appconfig.domain
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.ws.rs.core.Context
-import nl.thehyve.lang.expression.*
 import org.radarbase.jersey.exception.HttpNotFoundException
+import org.radarbase.lang.expression.QualifiedId
+import org.radarbase.lang.expression.SimpleScope
+import org.radarbase.lang.expression.VariableSet
+import org.radarbase.lang.expression.toVariable
 
 class ProtocolMapper(
     @Context private val mapper: ObjectMapper,

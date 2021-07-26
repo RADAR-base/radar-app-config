@@ -1,14 +1,18 @@
 package org.radarbase.appconfig.persistence
 
-import nl.thehyve.lang.expression.Scope
-import nl.thehyve.lang.expression.UpdateResult
-import nl.thehyve.lang.expression.VariableSet
+import org.radarbase.lang.expression.*
 
 interface ConfigRepository {
     fun update(
         clientId: String,
         variableSet: VariableSet,
     ): UpdateResult
+
+    fun findActiveValue(
+        clientId: String,
+        scopes: List<Scope>,
+        id: QualifiedId,
+    ): ResolvedVariable?
 
     fun findActive(
         clientId: String,

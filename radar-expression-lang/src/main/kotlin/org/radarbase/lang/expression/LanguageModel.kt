@@ -1,4 +1,4 @@
-package nl.thehyve.lang.expression
+package org.radarbase.lang.expression
 
 import java.math.BigDecimal
 import java.util.stream.Stream
@@ -95,6 +95,8 @@ data class QualifiedId(val names: List<String>) : Expression {
     fun isPrefixedBy(id: QualifiedId): Boolean {
         return names.size >= id.names.size && names.subList(0, id.names.size) == id.names
     }
+
+    fun isPrefixedBy(id: String): Boolean = isPrefixedBy(QualifiedId(id))
 
     fun isEmpty(): Boolean = names.all { it.isEmpty() }
     fun hasTail(): Boolean = names.size > 1

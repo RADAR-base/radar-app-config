@@ -1,6 +1,9 @@
 plugins {
     application
     kotlin("jvm")
+    id("org.jetbrains.kotlin.plugin.noarg")
+    id("org.jetbrains.kotlin.plugin.jpa")
+    id("org.jetbrains.kotlin.plugin.allopen")
 }
 
 application {
@@ -59,6 +62,12 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+}
+
+allOpen {
+    annotation("javax.persistence.Entity")
+    annotation("javax.persistence.MappedSuperclass")
+    annotation("javax.persistence.Embeddable")
 }
 
 tasks.withType<Test> {
