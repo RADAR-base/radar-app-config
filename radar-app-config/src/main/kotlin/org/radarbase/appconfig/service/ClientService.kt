@@ -13,7 +13,7 @@ class ClientService(
     @Context private val mpClient: MPClient,
     @Context private val authConfig: AuthConfig,
 ) {
-    private val clients = CachedMap(
+    private val clients: CachedMap<String, MPOAuthClient> = CachedMap(
         CacheConfig(
             refreshDuration = Duration.ofHours(1),
             retryDuration = Duration.ofMinutes(5)
