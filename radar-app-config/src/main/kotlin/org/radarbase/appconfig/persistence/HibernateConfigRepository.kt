@@ -3,6 +3,7 @@ package org.radarbase.appconfig.persistence
 import com.hazelcast.core.HazelcastInstance
 import jakarta.inject.Provider
 import jakarta.ws.rs.core.Context
+import org.radarbase.appconfig.config.ConfigScope
 import org.radarbase.appconfig.config.Scopes.toAppConfigScope
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.appconfig.persistence.entity.ConfigStateEntity
@@ -21,8 +22,11 @@ class HibernateConfigRepository(
         clientId: String,
         variableSet: VariableSet
     ): UpdateResult {
+        val configScope = variableSet.scope.toAppConfigScope()
+        require(configScope is ConfigScope) { "Cannot store scopes not intended for configuration" }
+
         val result = transact {
-            val previousConfig = selectConfig(clientId, variableSet.scope)
+            val previousConfig = selectConfig(clientId, configScope)
 
             if (previousConfig != null) {
                 val previousVariables = previousConfig.values.entries
@@ -39,7 +43,7 @@ class HibernateConfigRepository(
 
             val configState = ConfigStateEntity(
                 clientId = clientId,
-                scope = variableSet.scope.asString(),
+                scope = configScope.asString(),
                 lastModifiedAt = variableSet.lastModifiedAt ?: Instant.now(),
                 status = EntityStatus.ACTIVE,
                 values = emptyMap(),
@@ -55,7 +59,7 @@ class HibernateConfigRepository(
         }
 
         if (result.didUpdate) {
-            hazelcastInstance.getMap<String, Long>(clientId)[variableSet.scope.asString()] = result.id
+            hazelcastInstance.getMap<String, Long>(clientId)[configScope.asString()] = result.id
         }
         return result
     }
@@ -64,9 +68,16 @@ class HibernateConfigRepository(
         clientId: String,
         scopes: List<Scope>,
         id: QualifiedId
-    ): ResolvedVariable? = transact {
-        val query = createQuery(
-            """
+    ): ResolvedVariable? {
+        val configScopes = scopes
+            .map { it.toAppConfigScope() }
+            .filterIsInstance<ConfigScope>()
+
+        if (configScopes.isEmpty()) return null
+
+        return transact {
+            val query = createQuery(
+                """
                 SELECT cs.scope, c.value
                 FROM Config AS c LEFT JOIN ConfigState AS cs ON c.state = cs
                 WHERE cs.clientId = :clientId
@@ -74,17 +85,18 @@ class HibernateConfigRepository(
                     AND cs.status = 'ACTIVE'
                     AND c.name = :name
             """.trimIndent()
-        ).apply {
-            setParameter("clientId", clientId)
-            setParameter("scopes", scopes)
-            setParameter("name", id.asString())
-        }
+            ).apply {
+                setParameter("clientId", clientId)
+                setParameter("scopes", configScopes)
+                setParameter("name", id.asString())
+            }
 
-        @Suppress("UNCHECKED_CAST")
-        (query.resultList as List<Array<String>>)
-            .asSequence()
-            .map { result -> ResolvedVariable(result[0].toAppConfigScope(), id, result[1].toVariable()) }
-            .minByOrNull { scopes.indexOf(it.scope) }
+            @Suppress("UNCHECKED_CAST")
+            (query.resultList as List<Array<String>>)
+                .asSequence()
+                .map { result -> ResolvedVariable(result[0].toAppConfigScope(), id, result[1].toVariable()) }
+                .minByOrNull { scopes.indexOf(it.scope) }
+        }
     }
 
     private fun EntityManager.save(
@@ -106,18 +118,23 @@ class HibernateConfigRepository(
     override fun findActive(
         clientId: String,
         scope: Scope,
-    ): VariableSet? = transact {
-        val configStatus = selectConfig(clientId, scope)
+    ): VariableSet? {
+        val configScope = scope.toAppConfigScope()
+        require(configScope is ConfigScope) { "Cannot store scopes not intended for configuration" }
 
-        if (configStatus != null) {
-            VariableSet(
-                id = configStatus.id,
-                scope = configStatus.scope.toAppConfigScope(),
-                variables = configStatus.values.entries
-                    .associate { (k, v) -> QualifiedId(k) to v.value.toVariable() },
-                lastModifiedAt = configStatus.lastModifiedAt,
-            )
-        } else null
+        return transact {
+            val configStatus = selectConfig(clientId, configScope)
+
+            if (configStatus != null) {
+                VariableSet(
+                    id = configStatus.id,
+                    scope = configScope,
+                    variables = configStatus.values.entries
+                        .associate { (k, v) -> QualifiedId(k) to v.value.toVariable() },
+                    lastModifiedAt = configStatus.lastModifiedAt,
+                )
+            } else null
+        }
     }
 
     override fun get(id: Long): ClientVariableSet? = transact {
@@ -138,7 +155,7 @@ class HibernateConfigRepository(
 
     private fun EntityManager.selectConfig(
         clientId: String,
-        scope: Scope,
+        scope: ConfigScope,
     ): ConfigStateEntity? {
         val scopeString = scope.asString()
         val latestConfigCache = hazelcastInstance.getMap<String, Long>(clientId)

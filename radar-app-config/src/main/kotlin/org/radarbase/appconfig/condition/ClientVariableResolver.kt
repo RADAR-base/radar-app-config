@@ -1,6 +1,11 @@
-package org.radarbase.appconfig.inject
+package org.radarbase.appconfig.condition
 
 import jakarta.ws.rs.core.Context
+import org.radarbase.appconfig.config.ConfigScope
+import org.radarbase.appconfig.config.DynamicScope
+import org.radarbase.appconfig.config.Scopes.dynamic
+import org.radarbase.appconfig.config.Scopes.toAppConfigScope
+import org.radarbase.appconfig.config.UserScope
 import org.radarbase.appconfig.persistence.ConfigRepository
 import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarbase.lang.expression.*
@@ -15,13 +20,15 @@ class ClientVariableResolver(
         private val clientId: String
     ) : VariableResolver {
         override fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable {
-            var variable = configRepository.findActiveValue(clientId, scopes, id)
+            val appScopes = scopes.map { it.toAppConfigScope() }
+
+            var variable = configRepository.findActiveValue(clientId, appScopes.filterIsInstance<ConfigScope>(), id)
 
             val remainingScopes = if (variable != null) {
-                scopes.subList(0, scopes.indexOf(variable.scope))
+                appScopes.subList(0, appScopes.indexOf(variable.scope))
             } else scopes
 
-            val projectVariable = resolveProjectVariables(remainingScopes, id)
+            val projectVariable = resolveDynamicVariables(remainingScopes.filterIsInstance<DynamicScope>(), id)
             if (projectVariable != null) {
                 variable = projectVariable
             }
@@ -30,21 +37,20 @@ class ClientVariableResolver(
                 ?: throw NoSuchElementException("Unknown variable $id in scopes $scopes.")
         }
 
-        private fun resolveProjectVariables(scopes: List<Scope>, id: QualifiedId): ResolvedVariable? {
-            val dynamicProjectIds = scopes
-                .filter { scope -> scope.isPrefixedBy("dynamic.project") && scope.id.names.size == 3 }
-                .map { it.id.names[2] to it }
-
-            if (dynamicProjectIds.isEmpty()) return null
+        private fun resolveDynamicVariables(scopes: List<DynamicScope>, id: QualifiedId): ResolvedVariable? {
+            val userScopes = scopes
+                .map { it.subScope }
+                .filterIsInstance<UserScope>()
+                .filter { it.projectScope != null }
 
             val (type, idSecond) = id.splitHead()
             if (type == "user" && idSecond != null) {
                 val (userId, attribute) = idSecond.splitHead()
                 if (userId != null && attribute != null) {
-                    dynamicProjectIds
-                        .firstNotNullOfOrNull { (projectId, scope) ->
-                            projectService.getUser(projectId, userId)
-                                ?.let { subject -> scope to subject }
+                    userScopes
+                        .firstNotNullOfOrNull { userScope ->
+                            projectService.getUser(userScope.projectScope!!.projectId, userId)
+                                ?.let { subject -> userScope.dynamic to subject }
                         }
                         ?.let { (scope, subject) ->
                             return ResolvedVariable(

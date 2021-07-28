@@ -1,4 +1,4 @@
-package org.radarbase.appconfig.inject
+package org.radarbase.appconfig.condition
 
 import jakarta.ws.rs.core.Context
 import org.radarbase.lang.expression.Interpreter

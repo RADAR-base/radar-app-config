@@ -1,7 +1,11 @@
 package org.radarbase.appconfig.persistence
 
+import com.hazelcast.core.HazelcastInstance
+import com.hazelcast.map.IMap
 import jakarta.inject.Provider
 import jakarta.ws.rs.core.Context
+import org.radarbase.appconfig.config.CONDITION_TOKEN
+import org.radarbase.appconfig.config.ConditionScope.Companion.conditionScopeString
 import org.radarbase.appconfig.persistence.entity.ConditionEntity
 import org.radarbase.appconfig.persistence.entity.EntityStatus
 import org.radarbase.jersey.exception.HttpNotFoundException
@@ -11,7 +15,9 @@ import javax.persistence.EntityManager
 
 class ConditionRepository(
     @Context em: Provider<EntityManager>,
+    @Context private val hazelcastInstance: HazelcastInstance,
 ) : HibernateRepository(em) {
+    private val conditionCache: IMap<String, Long> = hazelcastInstance.getMap(CONDITION_TOKEN)
 
     fun create(condition: ConditionEntity) = transact {
         getConditionOrNull(condition.projectId, condition.name)?.apply {
@@ -19,7 +25,7 @@ class ConditionRepository(
         }?.also { merge(it) }
         persist(condition)
         condition
-    }
+    }.cached()
 
     fun list(projectId: String): List<ConditionEntity> = transact {
         createQuery(
@@ -41,19 +47,27 @@ class ConditionRepository(
     }
 
     private fun EntityManager.getConditionOrNull(projectId: String, name: String): ConditionEntity? {
-        return createQuery(
-            """
-                SELECT ce
-                FROM Condition ce
-                WHERE ce.projectId = :projectId
-                    AND ce.status = 'ACTIVE'
-                    AND ce.name = :name
-            """.trimIndent(),
-            ConditionEntity::class.java,
-        ).apply {
-            setParameter("projectId", projectId)
-            setParameter("name", name)
-        }.resultList.firstOrNull()
+        val cache = hazelcastInstance.getMap<String, Long>(CONDITION_TOKEN)
+        val cachedId = cache[conditionScopeString(name, projectId)]
+        return if (cachedId != null) {
+            find(ConditionEntity::class.java, cachedId)
+        } else {
+            val query = createQuery(
+                """
+                    SELECT ce
+                    FROM Condition ce
+                    WHERE ce.projectId = :projectId
+                        AND ce.status = 'ACTIVE'
+                        AND ce.name = :name
+                """.trimIndent(),
+                ConditionEntity::class.java,
+            ).apply {
+                setParameter("projectId", projectId)
+                setParameter("name", name)
+            }
+            query.resultList
+                .firstOrNull()
+        }
     }
 
     private fun EntityManager.getCondition(projectId: String, name: String): ConditionEntity = getConditionOrNull(projectId, name)
@@ -65,14 +79,22 @@ class ConditionRepository(
             deactivatedAt = Instant.now()
             lastModifiedAt = Instant.now()
         }.also { merge(it) }
+    }.uncached()
+
+    fun update(condition: ConditionEntity) = transact {
+        getCondition(condition.projectId, condition.name).apply {
+            title = condition.title
+            lastModifiedAt = Instant.now()
+            expression = condition.expression
+            rank = condition.rank
+        }.also { merge(it) }
+    }.cached()
+
+    private fun ConditionEntity.uncached(): ConditionEntity = apply {
+        conditionCache -= conditionScopeString(name, projectId)
     }
 
-    fun update(conditionEntity: ConditionEntity) = transact {
-        getCondition(conditionEntity.projectId, conditionEntity.name).apply {
-            title = conditionEntity.title
-            lastModifiedAt = Instant.now()
-            expression = conditionEntity.expression
-            rank = conditionEntity.rank
-        }.also { merge(it) }
+    private fun ConditionEntity.cached(): ConditionEntity = apply {
+        conditionCache[conditionScopeString(name, projectId)] = id
     }
 }
