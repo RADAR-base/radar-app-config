@@ -3,6 +3,7 @@ package org.radarbase.appconfig.persistence
 import com.hazelcast.core.HazelcastInstance
 import jakarta.inject.Provider
 import jakarta.ws.rs.core.Context
+import org.radarbase.appconfig.config.Scopes.toAppConfigScope
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.appconfig.persistence.entity.ConfigStateEntity
 import org.radarbase.appconfig.persistence.entity.EntityStatus
@@ -31,6 +32,7 @@ class HibernateConfigRepository(
                     return@transact UpdateResult(requireNotNull(previousConfig.id), false)
                 } else {
                     previousConfig.status = EntityStatus.INACTIVE
+                    previousConfig.deactivatedAt = Instant.now()
                     merge(previousConfig)
                 }
             }
@@ -63,14 +65,16 @@ class HibernateConfigRepository(
         scopes: List<Scope>,
         id: QualifiedId
     ): ResolvedVariable? = transact {
-        val query = createQuery("""
-            SELECT cs.scope, c.value
-            FROM Config AS c LEFT JOIN ConfigState AS cs ON c.state = cs
-            WHERE cs.clientId = :clientId
-                AND cs.scope IN (:scopes)
-                AND cs.status = 'ACTIVE'
-                AND c.name = :name
-        """.trimIndent()).apply {
+        val query = createQuery(
+            """
+                SELECT cs.scope, c.value
+                FROM Config AS c LEFT JOIN ConfigState AS cs ON c.state = cs
+                WHERE cs.clientId = :clientId
+                    AND cs.scope IN (:scopes)
+                    AND cs.status = 'ACTIVE'
+                    AND c.name = :name
+            """.trimIndent()
+        ).apply {
             setParameter("clientId", clientId)
             setParameter("scopes", scopes)
             setParameter("name", id.asString())
@@ -79,7 +83,7 @@ class HibernateConfigRepository(
         @Suppress("UNCHECKED_CAST")
         (query.resultList as List<Array<String>>)
             .asSequence()
-            .map { result -> ResolvedVariable(SimpleScope(result[0]), id, result[1].toVariable()) }
+            .map { result -> ResolvedVariable(result[0].toAppConfigScope(), id, result[1].toVariable()) }
             .minByOrNull { scopes.indexOf(it.scope) }
     }
 
@@ -108,7 +112,7 @@ class HibernateConfigRepository(
         if (configStatus != null) {
             VariableSet(
                 id = configStatus.id,
-                scope = SimpleScope(configStatus.scope),
+                scope = configStatus.scope.toAppConfigScope(),
                 variables = configStatus.values.entries
                     .associate { (k, v) -> QualifiedId(k) to v.value.toVariable() },
                 lastModifiedAt = configStatus.lastModifiedAt,
@@ -123,7 +127,7 @@ class HibernateConfigRepository(
                 configStatus.clientId,
                 VariableSet(
                     id = configStatus.id,
-                    scope = SimpleScope(configStatus.scope),
+                    scope = configStatus.scope.toAppConfigScope(),
                     variables = configStatus.values.entries
                         .associate { (k, v) -> QualifiedId(k) to v.value.toVariable() },
                     lastModifiedAt = configStatus.lastModifiedAt,

@@ -1,67 +1,94 @@
 package org.radarbase.appconfig.service
 
-import org.radarbase.appconfig.domain.Condition
-import org.radarbase.appconfig.inject.ClientInterpreter
-import org.radarbase.appconfig.service.ConfigService.Companion.globalScope
-import org.radarbase.appconfig.service.ConfigService.Companion.projectScope
-import org.radarbase.appconfig.service.ConfigService.Companion.userScope
 import jakarta.ws.rs.core.Context
-import org.radarbase.appconfig.persistence.ConfigRepository
-import org.radarbase.lang.expression.*
+import org.radarbase.appconfig.config.ConditionScope
+import org.radarbase.appconfig.config.ProjectScope
+import org.radarbase.appconfig.config.Scopes.GLOBAL_CONFIG_SCOPE
+import org.radarbase.appconfig.config.Scopes.config
+import org.radarbase.appconfig.config.Scopes.dynamic
+import org.radarbase.appconfig.config.UserScope
+import org.radarbase.appconfig.domain.Condition
+import org.radarbase.appconfig.domain.Condition.Companion.toCondition
+import org.radarbase.appconfig.inject.ClientInterpreter
+import org.radarbase.appconfig.persistence.ConditionRepository
+import org.radarbase.appconfig.persistence.entity.ConditionEntity
+import org.radarbase.appconfig.persistence.entity.EntityStatus
+import org.radarbase.jersey.exception.HttpNotFoundException
+import org.radarbase.lang.expression.ExpressionParser
+import java.time.Instant
 
-
-class ConditionService(
+open class ConditionService(
     @Context private val interpreter: ClientInterpreter,
-    @Context private val configRepository: ConfigRepository,
+    @Context private val conditionRepository: ConditionRepository,
+    @Context private val expressionParser: ExpressionParser,
 ) {
-    fun matchingConditions(clientId: String, projectId: String, userId: String?): List<Condition> {
-        val allConditions = listOf<Condition>()
+    open fun matchingScopes(clientId: String, projectId: String, userId: String): List<ConditionScope> {
+        val allConditions = conditionRepository.list(projectId)
+            .filter { it.expression != null }
+            .map { it.toCondition(expressionParser) }
 
-        val conditionScopes = mutableListOf<Scope>()
-
-        userId?.let {
-            conditionScopes += userScope(it)
-            // TODO: Add user event scope
-        }
-        conditionScopes += projectScope(projectId)
-        conditionScopes += globalScope
+        val projectScope = ProjectScope(projectId)
+        val conditionScopes = listOf(
+            UserScope(userId).config,
+            UserScope(userId, projectScope).dynamic,
+            projectScope.config,
+            projectScope.dynamic,
+            GLOBAL_CONFIG_SCOPE,
+        )
 
         return allConditions
-            .filter { interpreter[clientId].interpret(conditionScopes, it.expression).asBoolean() }
+            .filter { interpreter[clientId].interpret(conditionScopes, it.expression!!).asBoolean() }
+            .map { ConditionScope(it.name, projectScope) }
     }
 
     fun create(projectId: String, condition: Condition): Condition {
-        configRepositorgity.update("", VariableSet(
-            scope = projectScope(projectId).asConditionScope(),
-            variables = mapOf(
-                QualifiedId("expression") to NullLiteral()
+        val conditionEntity = conditionRepository.create(
+            ConditionEntity(
+                projectId = projectId,
+                name = condition.name,
+                title = condition.title,
+                rank = condition.rank,
+                expression = condition.expression?.toString(),
+                createdAt = Instant.now(),
+                lastModifiedAt = Instant.now(),
+                status = EntityStatus.ACTIVE,
             )
         )
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return condition.copy(
+            id = conditionEntity.id,
+            lastModifiedAt = conditionEntity.lastModifiedAt,
+        )
     }
 
     fun list(projectId: String): List<Condition> {
-        return listOf()
-    }
-
-    fun order(projectId: String, conditions: List<Condition>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return conditionRepository.list(projectId)
+            .map { it.toCondition(expressionParser) }
     }
 
     fun update(projectId: String, condition: Condition): Condition {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return conditionRepository
+            .update(
+                ConditionEntity(
+                    projectId = projectId,
+                    name = condition.name,
+                    title = condition.title,
+                    rank = condition.rank,
+                    expression = condition.expression?.toString(),
+                    status = EntityStatus.ACTIVE,
+                    lastModifiedAt = Instant.now(),
+                ),
+            )
+            .toCondition(expressionParser)
     }
 
-    fun get(projectId: String, conditionId: Long): Condition {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    fun get(projectId: String, conditionName: String): Condition {
+        val conditionEntity = conditionRepository.get(projectId, conditionName)
+            ?: throw HttpNotFoundException("condition_not_found", "Cannot find matching condition $conditionName in project $projectId")
+
+        return conditionEntity.toCondition(expressionParser)
     }
 
-    fun delete(projectId: String, conditionId: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    companion object {
-        fun Scope.asConditionScope() = prefixWith("condition")
-        fun conditionScope(condition: Condition): Scope = SimpleScope("condition.${condition.id}")
+    fun deactivate(projectId: String, conditionName: String) {
+        conditionRepository.deactivate(projectId, conditionName)
     }
 }

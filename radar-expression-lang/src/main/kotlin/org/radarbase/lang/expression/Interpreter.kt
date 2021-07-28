@@ -56,7 +56,17 @@ data class SimpleScope(override val id: QualifiedId) : Scope {
     override fun plus(part: String): Scope = SimpleScope(id + part)
 
     override fun prefixWith(prefix: String): Scope = SimpleScope(id.prefixWith(prefix))
+
     override fun isPrefixedBy(prefix: String): Boolean = id.isPrefixedBy(QualifiedId(prefix))
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Scope) return false
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int = id.hashCode()
 
     companion object {
         val root = SimpleScope(QualifiedId(listOf()))

@@ -17,6 +17,8 @@ class ConfigStateEntity(
     val clientId: String,
     @Column(name = "last_modified_at")
     val lastModifiedAt: Instant,
+    @Column(name = "deactivated_at")
+    var deactivatedAt: Instant? = null,
     @Column
     @Enumerated(EnumType.STRING)
     var status: EntityStatus,

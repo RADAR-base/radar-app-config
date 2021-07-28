@@ -12,7 +12,7 @@ import java.time.Duration
 class MPClientService(
     @Context private val mpClient: MPClient,
     @Context private val authConfig: AuthConfig,
-): ClientService {
+) : ClientService {
     private val clients = CachedMap(
         CacheConfig(
             refreshDuration = Duration.ofHours(1),

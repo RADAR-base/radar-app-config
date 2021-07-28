@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.*
+import com.fasterxml.jackson.module.kotlin.addDeserializer
+import com.fasterxml.jackson.module.kotlin.jsonMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.appconfig.persistence.entity.ConfigStateEntity
@@ -47,23 +49,26 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
             mapper = jsonMapper {
                 serializationInclusion(JsonInclude.Include.NON_NULL)
                 addModule(JavaTimeModule())
-                addModule(kotlinModule {
-                    nullIsSameAsDefault(true)
-                    nullToEmptyCollection(true)
-                    nullToEmptyMap(true)
-                })
+                addModule(
+                    kotlinModule {
+                        nullIsSameAsDefault(true)
+                        nullToEmptyCollection(true)
+                        nullToEmptyMap(true)
+                    }
+                )
                 configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                 configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                addModule(SimpleModule().apply {
-                    val allowedFunctions = listOf<Function>(
-                        SumFunction(),
-//                        ListVariablesFunction(),
-                        CountFunction()
-                    )
-                    val deserializer = ExpressionDeserializer(ExpressionParser(allowedFunctions))
+                addModule(
+                    SimpleModule().apply {
+                        val allowedFunctions = listOf<Function>(
+                            SumFunction(),
+                            CountFunction()
+                        )
+                        val deserializer = ExpressionDeserializer(ExpressionParser(allowedFunctions))
 
-                    addDeserializer(Expression::class, deserializer)
-                })
+                        addDeserializer(Expression::class, deserializer)
+                    }
+                )
             }
         }
 

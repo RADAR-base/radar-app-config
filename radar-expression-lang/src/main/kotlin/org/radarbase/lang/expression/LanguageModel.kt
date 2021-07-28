@@ -3,7 +3,6 @@ package org.radarbase.lang.expression
 import java.math.BigDecimal
 import java.util.stream.Stream
 
-
 interface Expression
 
 interface BinaryExpression : Expression {
@@ -72,7 +71,12 @@ data class InvertExpression(override val value: Expression) : AbstractUnaryExpre
 data class NegateExpression(override val value: Expression) : AbstractUnaryExpression("-")
 
 data class QualifiedId(val names: List<String>) : Expression {
-    constructor(vararg value: String) : this(value.toList().flatMap { it.split('.') })
+    constructor(vararg value: String) : this(value.flatMap { it.split('#') })
+
+    operator fun get(index: Int) = names[index]
+
+    val size: Int
+        get() = names.size
 
     fun head(): String = names.first()
     fun headOrNull(): String? = names.firstOrNull()
@@ -90,7 +94,7 @@ data class QualifiedId(val names: List<String>) : Expression {
 
     fun prefixWith(prefix: String) = QualifiedId(listOf(prefix) + names)
 
-    fun asString() = names.joinToString(separator = ".")
+    fun asString() = names.joinToString(separator = "#")
 
     fun isPrefixedBy(id: QualifiedId): Boolean {
         return names.size >= id.names.size && names.subList(0, id.names.size) == id.names
@@ -177,11 +181,9 @@ data class StringLiteral(val value: String) : AbstractVariable() {
         .filter { it.isNotEmpty() }
         .map { it.toVariable() }
 
-    override fun toString() = "'${
-        value
-            .replace("\\", "\\\\")
-            .replace("'", "\\'")
-    }'"
+    override fun toString() = value
+        .replace("\\", "\\\\")
+        .replace("'", "\\'")
 
     override fun compareTo(other: Variable): Int = when (other) {
         is BooleanLiteral -> -other.compareTo(this)
@@ -203,7 +205,7 @@ fun String.toUnescapedStringLiteral(): StringLiteral {
 }
 
 data class CollectionLiteral(val values: Collection<Variable>) : Variable {
-    override fun asOptString(): String? = asString()
+    override fun asOptString(): String = asString()
 
     override fun asNumber(): BigDecimal = throw UnsupportedOperationException("Cannot convert $this to a number.")
 
@@ -233,6 +235,5 @@ data class CollectionLiteral(val values: Collection<Variable>) : Variable {
             .filter { it != 0 }
             .findFirst()
             .orElse(0)
-
     }
 }

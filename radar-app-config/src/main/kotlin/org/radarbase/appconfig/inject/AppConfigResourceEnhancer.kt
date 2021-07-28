@@ -1,12 +1,12 @@
 package org.radarbase.appconfig.inject
 
+import jakarta.inject.Singleton
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.ApplicationConfig
+import org.radarbase.appconfig.domain.ProtocolMapper
 import org.radarbase.appconfig.service.*
 import org.radarbase.jersey.config.ConfigLoader
 import org.radarbase.jersey.config.JerseyResourceEnhancer
-import jakarta.inject.Singleton
-import org.radarbase.appconfig.domain.ProtocolMapper
 import org.radarbase.jersey.service.ProjectService
 import org.radarbase.jersey.service.managementportal.ProjectServiceWrapper
 import org.radarbase.jersey.service.managementportal.RadarProjectService

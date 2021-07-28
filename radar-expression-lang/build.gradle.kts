@@ -6,6 +6,7 @@ import org.jetbrains.gradle.ext.TaskTriggersConfig
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
     kotlin("jvm")
+    id("org.jlleitschuh.gradle.ktlint")
     antlr
     idea
     id("org.jetbrains.gradle.plugin.idea-ext")
@@ -47,7 +48,7 @@ tasks.generateGrammarSource {
 }
 
 tasks["compileKotlin"].dependsOn(tasks.generateGrammarSource)
-
+tasks["runKtlintCheckOverMainSourceSet"].dependsOn(tasks.generateGrammarSource)
 
 fun Project.idea(block: IdeaModel.() -> Unit) =
     (this as ExtensionAware).extensions.configure("idea", block)
@@ -57,7 +58,6 @@ fun IdeaProject.settings(block: ProjectSettings.() -> Unit) =
 
 fun ProjectSettings.taskTriggers(block: TaskTriggersConfig.() -> Unit) =
     (this@taskTriggers as ExtensionAware).extensions.configure("taskTriggers", block)
-
 
 idea {
     module {

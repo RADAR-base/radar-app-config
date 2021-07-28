@@ -35,7 +35,7 @@ fun main() {
 
     val interpreter = Interpreter(resolver)
     try {
-        print(interpreter.interpret(listOf(SimpleScope("user.blootsvoets"), SimpleScope("user")), expr))
+        print(interpreter.interpret(listOf(SimpleScope("\$u#blootsvoets"), SimpleScope("\$u")), expr))
     } catch (ex: InterpreterException) {
         println("Failed to evaluate expression ${ex.expression}:\n\n${ex.message}")
     }

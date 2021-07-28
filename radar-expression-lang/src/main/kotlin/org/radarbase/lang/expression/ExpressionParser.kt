@@ -1,11 +1,11 @@
 package org.radarbase.lang.expression
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import org.radarbase.lang.expression.antlr.ComparisonLexer
-import org.radarbase.lang.expression.antlr.ComparisonParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
+import org.radarbase.lang.expression.antlr.ComparisonLexer
+import org.radarbase.lang.expression.antlr.ComparisonParser
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.math.BigDecimal
@@ -25,7 +25,6 @@ class ExpressionParser(functions: List<Function>) {
 
     private inner class ParserContext(private val parser: ComparisonParser) {
         fun parse(): Expression = parser.expression().toModel()
-
 
         private fun ComparisonParser.ExpressionContext.toModel(): Expression = when (this) {
             is ComparisonParser.BinaryOperationContext -> toModel()

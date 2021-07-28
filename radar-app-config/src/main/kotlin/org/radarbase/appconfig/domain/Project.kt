@@ -9,4 +9,3 @@ data class Project(
     val organization: String? = null,
     val description: String? = null
 )
-

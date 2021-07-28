@@ -1,12 +1,12 @@
 package org.radarbase.appconfig.inject
 
-import org.glassfish.jersey.internal.inject.AbstractBinder
-import org.radarbase.jersey.config.JerseyResourceEnhancer
-import java.util.concurrent.ConcurrentHashMap
 import jakarta.inject.Singleton
+import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.persistence.ClientVariableSet
 import org.radarbase.appconfig.persistence.ConfigRepository
+import org.radarbase.jersey.config.JerseyResourceEnhancer
 import org.radarbase.lang.expression.*
+import java.util.concurrent.ConcurrentHashMap
 
 class InMemoryResourceEnhancer : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {

@@ -21,22 +21,6 @@ class SumFunction : AbstractFunction() {
         .reduce(BigDecimal.ZERO, BigDecimal::add)
         .toVariable()
 }
-//
-//class ListVariablesFunction : AbstractFunction() {
-//    override val name = "listVariables"
-//    override val numberOfArguments = 0..1
-//    override fun apply(interpreter: Interpreter, type: String, scope: List<Scope>, parameters: List<Expression>): Variable {
-//        val id = if (parameters.isNotEmpty()) {
-//            parameters.firstOrNull() as? QualifiedId
-//                ?: throw UnsupportedOperationException("Can only list variables of an ID")
-//        } else null
-//
-//        return interpreter.variables.list(scope, id)
-//            .map { it.asString().toVariable() }
-//            .toList()
-//            .toVariable()
-//    }
-//}
 
 class CountFunction : AbstractFunction() {
     override val name = "count"

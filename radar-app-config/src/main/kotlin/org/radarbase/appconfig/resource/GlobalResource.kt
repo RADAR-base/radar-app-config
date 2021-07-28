@@ -1,22 +1,21 @@
 package org.radarbase.appconfig.resource
 
 import com.fasterxml.jackson.databind.JsonNode
-import org.radarbase.auth.authorization.Permission
-import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.service.ClientService
-import org.radarbase.appconfig.service.ConfigService
-import org.radarbase.jersey.auth.Authenticated
-import org.radarbase.jersey.auth.NeedsPermission
 import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
+import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.ClientProtocol
-
+import org.radarbase.appconfig.service.ClientService
+import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.appconfig.service.ProtocolService
 import org.radarbase.appconfig.service.ProtocolService.Companion.toResponse
+import org.radarbase.auth.authorization.Permission
+import org.radarbase.jersey.auth.Authenticated
+import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.cache.Cache
 
 @Path("global")
@@ -50,7 +49,7 @@ class GlobalResource(
         return configService.globalConfig(clientId)
     }
 
-    @Path("protocol/{clientId}")
+    @Path("protocols/{clientId}")
     @GET
     @Cache(maxAge = 300, isPrivate = true)
     @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.READ)
@@ -61,7 +60,18 @@ class GlobalResource(
         return protocolService.globalProtocol(clientId)
     }
 
-    @Path("protocol")
+    @Path("protocols/{clientId}/contents")
+    @GET
+    @Cache(maxAge = 300, isPrivate = true)
+    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.READ)
+    fun protocolContents(
+        @PathParam("clientId") clientId: String
+    ): JsonNode {
+        clientService.ensureClient(clientId)
+        return protocolService.globalProtocol(clientId).contents
+    }
+
+    @Path("protocols")
     @POST
     @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.CREATE)
     fun setProtocol(
@@ -73,19 +83,20 @@ class GlobalResource(
         return updateResult.toResponse(uriInfo.baseUriBuilder)
     }
 
-    @Path("protocol/{clientId}/contents")
+    @Path("protocols/{clientId}/contents")
     @PUT
     @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
     fun setProtocol(
         @PathParam("clientId") clientId: String,
-        @Context uriInfo: UriInfo,
         protocol: JsonNode,
     ): Response {
         clientService.ensureClient(clientId)
-        val updateResult = protocolService.setGlobalProtocol(ClientProtocol(
-            clientId = clientId,
-            contents = protocol,
-        ))
-        return updateResult.toResponse(uriInfo.baseUriBuilder)
+        protocolService.setGlobalProtocol(
+            ClientProtocol(
+                clientId = clientId,
+                contents = protocol,
+            ),
+        )
+        return Response.notModified().build()
     }
 }

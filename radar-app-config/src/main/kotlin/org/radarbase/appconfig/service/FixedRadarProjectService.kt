@@ -11,7 +11,7 @@ import org.radarbase.management.client.MPSubject
 
 class FixedRadarProjectService(
     @Context config: ApplicationConfig,
-): RadarProjectService {
+) : RadarProjectService {
     private val projects = config.projects
 
     override fun ensureUser(projectId: String, userId: String) {

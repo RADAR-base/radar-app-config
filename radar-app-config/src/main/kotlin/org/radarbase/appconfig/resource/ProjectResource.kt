@@ -1,13 +1,6 @@
 package org.radarbase.appconfig.resource
 
 import com.fasterxml.jackson.databind.JsonNode
-import org.radarbase.appconfig.service.ClientService
-import org.radarbase.auth.authorization.Permission.Entity
-import org.radarbase.auth.authorization.Permission.Operation
-import org.radarbase.jersey.auth.Auth
-import org.radarbase.jersey.auth.Authenticated
-import org.radarbase.jersey.auth.NeedsPermission
-import org.radarbase.jersey.service.managementportal.RadarProjectService
 import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
@@ -15,13 +8,18 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
 import org.radarbase.appconfig.domain.*
+import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.appconfig.service.ProtocolService
 import org.radarbase.appconfig.service.ProtocolService.Companion.toResponse
+import org.radarbase.auth.authorization.Permission.Entity
+import org.radarbase.auth.authorization.Permission.Operation
+import org.radarbase.jersey.auth.Auth
+import org.radarbase.jersey.auth.Authenticated
+import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.cache.Cache
+import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarbase.management.client.MPProject
-import java.net.URI
-import javax.annotation.processing.Generated
 
 @Path("projects")
 @Produces(MediaType.APPLICATION_JSON)
@@ -73,7 +71,7 @@ class ProjectResource(
         return configService.projectConfig(clientId, projectId)
     }
 
-    @Path("{projectId}/protocol/{clientId}")
+    @Path("{projectId}/protocols/{clientId}")
     @GET
     @Cache(maxAge = 300, isPrivate = true)
     @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
@@ -86,20 +84,20 @@ class ProjectResource(
         return protocolService.projectProtocol(clientId, projectId)
     }
 
-    @Path("{projectId}/protocol/{clientId}/contents")
+    @Path("{projectId}/protocols/{clientId}/contents")
     @GET
     @Cache(maxAge = 300, isPrivate = true)
     @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
     fun protocolContents(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
-    ): ClientProtocol {
+    ): JsonNode {
         clientService.ensureClient(clientId)
         projectService.ensureProject(projectId)
-        return protocolService.projectProtocol(clientId, projectId)
+        return protocolService.projectProtocol(clientId, projectId).contents
     }
 
-    @Path("{projectId}/protocol")
+    @Path("{projectId}/protocols")
     @POST
     @NeedsPermission(Entity.PROJECT, Operation.UPDATE, "projectId")
     fun setProtocol(
@@ -113,22 +111,23 @@ class ProjectResource(
         return updateResult.toResponse(uriInfo.baseUriBuilder)
     }
 
-
-    @Path("{projectId}/protocol/{clientId}/contents")
+    @Path("{projectId}/protocols/{clientId}/contents")
     @PUT
     @NeedsPermission(Entity.PROJECT, Operation.UPDATE, "projectId")
     fun setProtocol(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
-        @Context uriInfo: UriInfo,
         protocol: JsonNode,
     ): Response {
         clientService.ensureClient(clientId)
         projectService.ensureProject(projectId)
-        val updateResult = protocolService.setProjectProtocol(ClientProtocol(
-            clientId = clientId,
-            contents = protocol,
-        ), projectId)
-        return updateResult.toResponse(uriInfo.baseUriBuilder)
+        protocolService.setProjectProtocol(
+            ClientProtocol(
+                clientId = clientId,
+                contents = protocol,
+            ),
+            projectId,
+        )
+        return Response.notModified().build()
     }
 }

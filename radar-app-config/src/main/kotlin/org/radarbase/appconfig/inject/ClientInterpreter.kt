@@ -1,7 +1,7 @@
 package org.radarbase.appconfig.inject
 
-import org.radarbase.lang.expression.Interpreter
 import jakarta.ws.rs.core.Context
+import org.radarbase.lang.expression.Interpreter
 
 class ClientInterpreter(
     @Context private val clientVariableResolver: ClientVariableResolver,

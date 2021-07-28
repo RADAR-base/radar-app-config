@@ -32,7 +32,6 @@
     </changeSet>
 
     <changeSet id="Create config_state table" author="joris" dbms="h2,postgresql">
-        <createSequence sequenceName="config_state_id_sequence" startValue="1" incrementBy="1"/>
         <createTable tableName="config_state">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
@@ -49,13 +48,16 @@
             <column name="last_modified_at" type="datetime" defaultValueComputed="${now}">
                 <constraints nullable="false"/>
             </column>
+            <column name="deactivated_at" type="datetime" defaultValue="NULL">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
     </changeSet>
 
     <changeSet id="Insert data into config_state" author="joris" dbms="h2,postgresql">
         <sql>
             INSERT INTO config_state (client_id, scope, status)
-            (SELECT DISTINCT c.client_id, CONCAT('config.', c.scope) as scope, 'ACTIVE' AS status FROM config AS c)
+            (SELECT DISTINCT c.client_id, CONCAT('C$#', REPLACE(REPLACE(REPLACE(c.scope, 'user.', '$u#'), 'project.', '$p#'), 'global', '$g')) as scope, 'ACTIVE' AS status FROM config AS c)
         </sql>
         <rollback>
             DELETE FROM config_state

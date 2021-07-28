@@ -1,12 +1,6 @@
 package org.radarbase.appconfig.resource
 
 import com.fasterxml.jackson.databind.JsonNode
-import org.radarbase.appconfig.service.ClientService
-import org.radarbase.auth.authorization.Permission
-import org.radarbase.jersey.auth.Authenticated
-import org.radarbase.jersey.auth.NeedsPermission
-import org.radarbase.jersey.exception.HttpNotFoundException
-import org.radarbase.jersey.service.managementportal.RadarProjectService
 import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
@@ -14,10 +8,16 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
 import org.radarbase.appconfig.domain.*
+import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.appconfig.service.ProtocolService
 import org.radarbase.appconfig.service.ProtocolService.Companion.toResponse
+import org.radarbase.auth.authorization.Permission
+import org.radarbase.jersey.auth.Authenticated
+import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.cache.Cache
+import org.radarbase.jersey.exception.HttpNotFoundException
+import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarbase.management.client.MPSubject
 
 /** Root path, just forward requests without authentication. */
@@ -53,7 +53,7 @@ class UserResource(
         @PathParam("userId") userId: String,
     ): User {
         return projectService.getUser(projectId, userId)?.toUser()
-            ?: throw HttpNotFoundException("user_missing", "User not found")
+            ?: throw HttpNotFoundException("user_not_found", "User $userId not found in project $projectId")
     }
 
     @Path("/{userId}/config/{clientId}")
@@ -92,7 +92,7 @@ class UserResource(
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
         @PathParam("clientId") clientId: String,
-        ): ClientProtocol {
+    ): ClientProtocol {
         clientService.ensureClient(clientId)
         projectService.ensureUser(projectId, userId)
         return protocolService.userProtocol(clientId, projectId, userId)
@@ -125,10 +125,13 @@ class UserResource(
     ): Response {
         clientService.ensureClient(clientId)
         projectService.ensureUser(projectId, userId)
-        val updateResult = protocolService.setUserProtocol(ClientProtocol(
-            clientId = clientId,
-            contents = protocol,
-        ), userId)
+        val updateResult = protocolService.setUserProtocol(
+            ClientProtocol(
+                clientId = clientId,
+                contents = protocol,
+            ),
+            userId,
+        )
         return updateResult.toResponse(uriInfo.baseUriBuilder)
     }
 }

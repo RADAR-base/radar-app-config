@@ -2,7 +2,6 @@ package org.radarbase.appconfig.persistence.entity
 
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy
-import org.hibernate.annotations.Immutable
 import java.time.Instant
 import javax.persistence.*
 
@@ -14,20 +13,26 @@ class ConditionEntity(
     @Column(name = "project_id")
     val projectId: String,
     @Column
-    var name: String,
+    val name: String,
+    @Column
+    var title: String?,
+    @Column(name = "created_at")
+    val createdAt: Instant? = null,
     @Column(name = "last_modified_at")
-    val lastModifiedAt: Instant,
+    var lastModifiedAt: Instant,
+    @Column(name = "deactivated_at")
+    var deactivatedAt: Instant? = null,
     @Column
     @Enumerated(EnumType.STRING)
     var status: EntityStatus,
     @Column
     @Lob
-    val expression: String,
+    var expression: String?,
     @Column
-    val rank: Float = 0.0f,
+    var rank: Float = 0.0f,
 ) {
     @Id
-    @GeneratedValue(generator = "condition_id_sequence")
+    @GeneratedValue
     var id: Long? = null
         protected set
 }

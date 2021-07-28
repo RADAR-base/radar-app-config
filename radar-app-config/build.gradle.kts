@@ -1,6 +1,7 @@
 plugins {
     application
     kotlin("jvm")
+    id("org.jlleitschuh.gradle.ktlint")
     id("org.jetbrains.kotlin.plugin.noarg")
     id("org.jetbrains.kotlin.plugin.jpa")
     id("org.jetbrains.kotlin.plugin.allopen")

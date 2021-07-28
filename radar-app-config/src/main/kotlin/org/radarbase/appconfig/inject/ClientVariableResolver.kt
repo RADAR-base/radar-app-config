@@ -13,7 +13,7 @@ class ClientVariableResolver(
 
     inner class DelegatingVariableResolver(
         private val clientId: String
-    ): VariableResolver {
+    ) : VariableResolver {
         override fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable {
             var variable = configRepository.findActiveValue(clientId, scopes, id)
 
