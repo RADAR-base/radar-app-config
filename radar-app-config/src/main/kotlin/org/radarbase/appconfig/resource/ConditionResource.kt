@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
+import java.net.URI
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.domain.ClientProtocol
 import org.radarbase.appconfig.domain.Condition
@@ -21,7 +22,6 @@ import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.cache.Cache
 import org.radarbase.jersey.exception.HttpBadRequestException
-import java.net.URI
 
 /** Topics submission and listing. Requests need authentication. */
 @Path("/projects/{projectId}/conditions")

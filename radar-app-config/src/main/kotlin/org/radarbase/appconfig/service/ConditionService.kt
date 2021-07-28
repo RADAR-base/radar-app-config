@@ -1,5 +1,8 @@
 package org.radarbase.appconfig.service
 
+import jakarta.ws.rs.core.Context
+import java.time.Instant
+import org.radarbase.appconfig.condition.ClientInterpreter
 import org.radarbase.appconfig.config.ConditionScope
 import org.radarbase.appconfig.config.ProjectScope
 import org.radarbase.appconfig.config.Scopes.GLOBAL_CONFIG_SCOPE
@@ -8,14 +11,11 @@ import org.radarbase.appconfig.config.Scopes.dynamic
 import org.radarbase.appconfig.config.UserScope
 import org.radarbase.appconfig.domain.Condition
 import org.radarbase.appconfig.domain.Condition.Companion.toCondition
-import org.radarbase.appconfig.condition.ClientInterpreter
 import org.radarbase.appconfig.persistence.ConditionRepository
 import org.radarbase.appconfig.persistence.entity.ConditionEntity
 import org.radarbase.appconfig.persistence.entity.EntityStatus
 import org.radarbase.jersey.exception.HttpNotFoundException
 import org.radarbase.lang.expression.ExpressionParser
-import jakarta.ws.rs.core.Context
-import java.time.Instant
 
 open class ConditionService(
     @Context private val interpreter: ClientInterpreter,

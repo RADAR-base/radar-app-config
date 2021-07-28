@@ -3,6 +3,7 @@ package org.radarbase.appconfig.service
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import java.time.Instant
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -14,7 +15,6 @@ import org.radarbase.appconfig.persistence.ConfigRepository
 import org.radarbase.lang.expression.SimpleScope
 import org.radarbase.lang.expression.VariableSet
 import org.radarbase.lang.expression.toVariable
-import java.time.Instant
 
 internal class ConfigServiceTest {
     private lateinit var configService: ConfigService

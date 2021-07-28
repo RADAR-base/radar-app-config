@@ -3,6 +3,8 @@ package org.radarbase.appconfig.persistence
 import com.hazelcast.core.HazelcastInstance
 import jakarta.inject.Provider
 import jakarta.ws.rs.core.Context
+import java.time.Instant
+import javax.persistence.EntityManager
 import org.radarbase.appconfig.config.ConfigScope
 import org.radarbase.appconfig.config.Scopes.toAppConfigScope
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
@@ -10,8 +12,6 @@ import org.radarbase.appconfig.persistence.entity.ConfigStateEntity
 import org.radarbase.appconfig.persistence.entity.EntityStatus
 import org.radarbase.jersey.hibernate.HibernateRepository
 import org.radarbase.lang.expression.*
-import java.time.Instant
-import javax.persistence.EntityManager
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 class HibernateConfigRepository(
@@ -78,13 +78,13 @@ class HibernateConfigRepository(
         return transact {
             val query = createQuery(
                 """
-                SELECT cs.scope, c.value
-                FROM Config AS c LEFT JOIN ConfigState AS cs ON c.state = cs
-                WHERE cs.clientId = :clientId
-                    AND cs.scope IN (:scopes)
-                    AND cs.status = 'ACTIVE'
-                    AND c.name = :name
-            """.trimIndent()
+                    SELECT cs.scope, c.value
+                    FROM Config AS c LEFT JOIN ConfigState AS cs ON c.state = cs
+                    WHERE cs.clientId = :clientId
+                        AND cs.scope IN (:scopes)
+                        AND cs.status = 'ACTIVE'
+                        AND c.name = :name
+                """.trimIndent()
             ).apply {
                 setParameter("clientId", clientId)
                 setParameter("scopes", configScopes)

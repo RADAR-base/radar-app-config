@@ -7,6 +7,10 @@ import com.networknt.schema.SpecVersionDetector
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriBuilder
+import java.time.Instant
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 import org.radarbase.appconfig.config.*
 import org.radarbase.appconfig.config.Scopes.GLOBAL_PROTOCOL_SCOPE
 import org.radarbase.appconfig.config.Scopes.protocol
@@ -23,10 +27,6 @@ import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarbase.lang.expression.Scope
 import org.radarbase.lang.expression.UpdateResult
 import org.slf4j.LoggerFactory
-import java.time.Instant
-import java.util.*
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 
 class ProtocolService(
     @Context private val projectService: RadarProjectService,

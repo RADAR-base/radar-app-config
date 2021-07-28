@@ -1,10 +1,10 @@
 package org.radarbase.appconfig.domain
 
+import java.time.Instant
 import org.radarbase.lang.expression.QualifiedId
 import org.radarbase.lang.expression.Scope
 import org.radarbase.lang.expression.VariableSet
 import org.radarbase.lang.expression.toVariable
-import java.time.Instant
 
 data class ClientConfig(
     val clientId: String?,

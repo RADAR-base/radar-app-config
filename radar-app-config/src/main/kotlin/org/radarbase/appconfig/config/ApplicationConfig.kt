@@ -1,8 +1,8 @@
 package org.radarbase.appconfig.config
 
+import java.net.URI
 import org.radarbase.jersey.auth.AuthConfig
 import org.radarbase.jersey.hibernate.config.DatabaseConfig
-import java.net.URI
 
 data class ApplicationConfig(
     val baseUri: URI = URI.create("http://0.0.0.0:8090/appconfig/"),

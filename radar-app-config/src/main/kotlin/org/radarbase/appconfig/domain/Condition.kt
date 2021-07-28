@@ -1,9 +1,9 @@
 package org.radarbase.appconfig.domain
 
+import java.time.Instant
 import org.radarbase.appconfig.persistence.entity.ConditionEntity
 import org.radarbase.lang.expression.Expression
 import org.radarbase.lang.expression.ExpressionParser
-import java.time.Instant
 
 data class ConditionList(val conditions: List<Condition>)
 

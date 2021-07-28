@@ -3,9 +3,9 @@
  */
 package comparisons
 
+import kotlin.system.exitProcess
 import org.radarbase.lang.expression.*
 import org.radarbase.lang.expression.Function
-import kotlin.system.exitProcess
 
 fun main() {
     val functions = listOf<Function>(
