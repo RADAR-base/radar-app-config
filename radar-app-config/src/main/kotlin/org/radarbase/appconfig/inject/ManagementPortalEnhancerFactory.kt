@@ -6,10 +6,12 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.addDeserializer
+import com.fasterxml.jackson.module.kotlin.addSerializer
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import kotlin.reflect.jvm.jvmName
 import org.radarbase.appconfig.config.ApplicationConfig
+import org.radarbase.appconfig.persistence.entity.ConditionEntity
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.appconfig.persistence.entity.ConfigStateEntity
 import org.radarbase.jersey.config.ConfigLoader
@@ -27,6 +29,7 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
                 managedClasses = listOf(
                     ConfigEntity::class.jvmName,
                     ConfigStateEntity::class.jvmName,
+                    ConditionEntity::class.jvmName,
                 ),
                 properties = mapOf(
                     "hibernate.cache.use_second_level_cache" to "true",
@@ -45,6 +48,10 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
         val radarEnhancer = ConfigLoader.Enhancers.radar(config.auth).apply {
             utilityResourceEnhancer = null
         }
+        val allowedFunctions = listOf<Function>(
+            SumFunction(),
+            CountFunction(),
+        )
         val utility = ConfigLoader.Enhancers.utility.apply {
             mapper = jsonMapper {
                 serializationInclusion(JsonInclude.Include.NON_NULL)
@@ -60,13 +67,14 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
                 configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 addModule(
                     SimpleModule().apply {
-                        val allowedFunctions = listOf<Function>(
-                            SumFunction(),
-                            CountFunction()
+                        addDeserializer(
+                            Expression::class,
+                            ExpressionDeserializer(ExpressionParser(allowedFunctions)),
                         )
-                        val deserializer = ExpressionDeserializer(ExpressionParser(allowedFunctions))
-
-                        addDeserializer(Expression::class, deserializer)
+                        addSerializer(
+                            Expression::class,
+                            ExpressionSerializer(),
+                        )
                     }
                 )
             }
@@ -78,7 +86,7 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
 
         return listOf(
             utility,
-            AppConfigResourceEnhancer(config),
+            AppConfigResourceEnhancer(config, allowedFunctions),
             radarEnhancer,
             ConfigLoader.Enhancers.health,
             ConfigLoader.Enhancers.generalException,

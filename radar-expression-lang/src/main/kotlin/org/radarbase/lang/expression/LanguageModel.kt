@@ -30,6 +30,7 @@ interface Variable : Comparable<Variable>, Expression {
     fun asOptString(): String?
     fun asBoolean(): Boolean
     fun asStream(): Stream<Variable>
+    fun asRegularObject(): Any?
 }
 
 abstract class AbstractVariable : Variable {
@@ -117,6 +118,8 @@ data class NumberLiteral(val value: BigDecimal) : AbstractVariable() {
 
     override fun asNumber() = value
 
+    override fun asRegularObject(): BigDecimal = value
+
     override fun toString() = value.toString()
 
     override fun compareTo(other: Variable): Int = when (other) {
@@ -134,6 +137,8 @@ class NullLiteral : AbstractVariable() {
     override fun compareTo(other: Variable): Int =
         if (other is NullLiteral) 0 else throw UnsupportedOperationException("Cannot compare null to other value")
 
+    override fun asRegularObject(): Any? = null
+
     override fun asOptString(): String? = null
 
     override fun toString() = "null"
@@ -143,6 +148,8 @@ data class BooleanLiteral(val value: Boolean) : AbstractVariable() {
     override fun asString() = value.toString()
 
     override fun asBoolean() = value
+
+    override fun asRegularObject(): Boolean = value
 
     override fun toString() = value.toString()
 
@@ -173,6 +180,8 @@ data class StringLiteral(val value: String) : AbstractVariable() {
 
     override fun asBoolean() = value.toBooleanLiteral()?.asBoolean()
         ?: throw UnsupportedOperationException("Cannot convert $this to boolean.")
+
+    override fun asRegularObject(): String = value
 
     override fun asNumber(): BigDecimal = BigDecimal(value)
 
@@ -210,6 +219,8 @@ data class CollectionLiteral(val values: Collection<Variable>) : Variable {
     override fun asNumber(): BigDecimal = throw UnsupportedOperationException("Cannot convert $this to a number.")
 
     override fun asString() = values.joinToString(separator = " ") { it.asString() }
+
+    override fun asRegularObject(): List<Any?> = values.map { it.asRegularObject() }
 
     override fun asBoolean() = throw UnsupportedOperationException("Cannot convert $this to a boolaean.")
 

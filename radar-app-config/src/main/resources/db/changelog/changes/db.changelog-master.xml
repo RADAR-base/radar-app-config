@@ -27,4 +27,5 @@
     <include file="db/changelog/changes/202010071457-create-database.xml"/>
     <include file="db/changelog/changes/202011101201-change-index.xml"/>
     <include file="db/changelog/changes/202107121044-add-config-state.xml"/>
+    <include file="db/changelog/changes/202107261628-add-condition.xml"/>
 </databaseChangeLog>

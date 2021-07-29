@@ -5,8 +5,6 @@ import org.radarbase.appconfig.persistence.entity.ConditionEntity
 import org.radarbase.lang.expression.Expression
 import org.radarbase.lang.expression.ExpressionParser
 
-data class ConditionList(val conditions: List<Condition>)
-
 data class Condition(
     val id: Long?,
     val name: String,

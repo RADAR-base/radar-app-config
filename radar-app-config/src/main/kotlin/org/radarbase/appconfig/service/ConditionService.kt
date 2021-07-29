@@ -16,6 +16,7 @@ import org.radarbase.appconfig.persistence.entity.ConditionEntity
 import org.radarbase.appconfig.persistence.entity.EntityStatus
 import org.radarbase.jersey.exception.HttpNotFoundException
 import org.radarbase.lang.expression.ExpressionParser
+import org.slf4j.LoggerFactory
 
 open class ConditionService(
     @Context private val interpreter: ClientInterpreter,
@@ -37,8 +38,33 @@ open class ConditionService(
         )
 
         return allConditions
-            .filter { interpreter[clientId].interpret(conditionScopes, it.expression!!).asBoolean() }
+            .filter { try {
+                interpreter[clientId].interpret(conditionScopes, it.expression!!).asBoolean()
+            } catch (ex: Exception) {
+                logger.warn("Failed to evaluate condition ${it.name} in project $projectId: {}", ex.toString())
+                false
+            }}
             .map { ConditionScope(it.name, projectScope) }
+    }
+
+    fun evaluate(clientId: String, projectId: String, conditionName: String, userId: String): Pair<Condition, Any?> {
+        val condition = (conditionRepository.get(projectId, conditionName)
+            ?: throw HttpNotFoundException("condition_not_found", "No condition $conditionName in project $projectId"))
+            .toCondition(expressionParser)
+
+        val expression = condition.expression
+            ?: throw HttpNotFoundException("condition_expression_not_found", "No condition expression $conditionName in project $projectId")
+
+        val projectScope = ProjectScope(projectId)
+        val conditionScopes = listOf(
+            UserScope(userId).config,
+            UserScope(userId, projectScope).dynamic,
+            projectScope.config,
+            projectScope.dynamic,
+            GLOBAL_CONFIG_SCOPE,
+        )
+
+        return Pair(condition, interpreter[clientId].interpret(conditionScopes, expression).asRegularObject())
     }
 
     fun create(projectId: String, condition: Condition): Condition {
@@ -90,5 +116,9 @@ open class ConditionService(
 
     fun deactivate(projectId: String, conditionName: String) {
         conditionRepository.deactivate(projectId, conditionName)
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(ConditionService::class.java)
     }
 }

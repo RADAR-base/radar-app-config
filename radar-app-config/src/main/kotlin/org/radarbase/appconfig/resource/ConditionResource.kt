@@ -8,10 +8,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
 import java.net.URI
-import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.domain.ClientProtocol
-import org.radarbase.appconfig.domain.Condition
-import org.radarbase.appconfig.domain.ConditionList
+import org.radarbase.appconfig.domain.*
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConditionService
 import org.radarbase.appconfig.service.ConfigService
@@ -69,6 +66,25 @@ class ConditionResource(
         condition: Condition,
     ): Condition {
         return conditionService.update(projectId, condition.copy(name = conditionName))
+    }
+
+    @GET
+    @Path("{conditionName}/evaluation")
+    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
+    fun evaluateCondition(
+        @PathParam("projectId") projectId: String,
+        @PathParam("conditionName") conditionName: String,
+        @QueryParam("user") userId: String,
+        @QueryParam("client") clientId: String,
+    ): Evaluation {
+        val (condition, evaluation) = conditionService.evaluate(clientId, projectId, conditionName, userId)
+        return Evaluation(
+            clientId = clientId,
+            projectId = projectId,
+            userId = userId,
+            condition = condition,
+            evaluation = evaluation,
+        )
     }
 
     @GET
