@@ -18,7 +18,10 @@ DECIMAL_LITERAL    : INTEGER_LITERAL ('.' [0-9]+)? (('e' | 'E') '-'? INTEGER_LIT
 STRING_LITERAL     : ('"' (~('"' | '\\' | '\r' | '\n') | '\\' ('"' | '\\'))* '"')
                    | ('\'' (~('\'' | '\\' | '\r' | '\n') | '\\' ('\'' | '\\'))* '\'');
 
+PLUS               : '+' ;
 MINUS              : '-' ;
+TIMES              : '*' ;
+DIVIDED            : '/' ;
 LPAREN             : '(' ;
 RPAREN             : ')' ;
 LBRACK             : '[' ;

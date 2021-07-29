@@ -1,6 +1,7 @@
 package org.radarbase.appconfig.service
 
 import jakarta.ws.rs.core.Context
+import java.lang.UnsupportedOperationException
 import java.time.Instant
 import org.radarbase.appconfig.condition.ClientInterpreter
 import org.radarbase.appconfig.config.ConditionScope
@@ -14,8 +15,10 @@ import org.radarbase.appconfig.domain.Condition.Companion.toCondition
 import org.radarbase.appconfig.persistence.ConditionRepository
 import org.radarbase.appconfig.persistence.entity.ConditionEntity
 import org.radarbase.appconfig.persistence.entity.EntityStatus
+import org.radarbase.jersey.exception.HttpInternalServerException
 import org.radarbase.jersey.exception.HttpNotFoundException
 import org.radarbase.lang.expression.ExpressionParser
+import org.radarbase.lang.expression.InterpreterException
 import org.slf4j.LoggerFactory
 
 open class ConditionService(
@@ -64,7 +67,11 @@ open class ConditionService(
             GLOBAL_CONFIG_SCOPE,
         )
 
-        return Pair(condition, interpreter[clientId].interpret(conditionScopes, expression).asRegularObject())
+        try {
+            return Pair(condition, interpreter[clientId].interpret(conditionScopes, expression).asRegularObject())
+        } catch (ex: InterpreterException) {
+            throw HttpInternalServerException("evaluation_error", "Cannot evaluate expression '${ex.expression}':  ${ex.message}.")
+        }
     }
 
     fun create(projectId: String, condition: Condition): Condition {

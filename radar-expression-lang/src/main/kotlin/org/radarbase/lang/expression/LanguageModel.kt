@@ -43,6 +43,18 @@ abstract class AbstractVariable : Variable {
 
 fun Expression.parenString(): String = if (this is BinaryExpression) "($this)" else toString()
 
+data class PlusExpression(override val left: Expression, override val right: Expression) :
+    AbstractBinaryExpression("+")
+
+data class MinusExpression(override val left: Expression, override val right: Expression) :
+    AbstractBinaryExpression("-")
+
+data class TimesExpression(override val left: Expression, override val right: Expression) :
+    AbstractBinaryExpression("*")
+
+data class DivisionExpression(override val left: Expression, override val right: Expression) :
+    AbstractBinaryExpression("/")
+
 data class EqualExpression(override val left: Expression, override val right: Expression) :
     AbstractBinaryExpression("==")
 
@@ -70,6 +82,10 @@ data class XorExpression(override val left: Expression, override val right: Expr
 data class InvertExpression(override val value: Expression) : AbstractUnaryExpression("!")
 
 data class NegateExpression(override val value: Expression) : AbstractUnaryExpression("-")
+
+data class CollectionExpression(val values: List<Expression>) : Expression {
+    override fun toString(): String = "[" + values.joinToString() + "]"
+}
 
 data class QualifiedId(val names: List<String>) : Expression {
     constructor(vararg value: String) : this(value.flatMap { it.split('#') })

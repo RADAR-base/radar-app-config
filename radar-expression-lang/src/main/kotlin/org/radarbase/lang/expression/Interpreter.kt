@@ -15,12 +15,17 @@ class Interpreter(val variables: VariableResolver) {
                 is XorExpression -> BooleanLiteral(
                     left.evaluate(scope).asBoolean() != right.evaluate(scope).asBoolean()
                 )
+                is PlusExpression -> NumberLiteral(left.evaluate(scope).asNumber().add(right.evaluate(scope).asNumber()))
+                is MinusExpression -> NumberLiteral(left.evaluate(scope).asNumber().subtract(right.evaluate(scope).asNumber()))
+                is TimesExpression -> NumberLiteral(left.evaluate(scope).asNumber().times(right.evaluate(scope).asNumber()))
+                is DivisionExpression -> NumberLiteral(left.evaluate(scope).asNumber().divide(right.evaluate(scope).asNumber()))
                 is EqualExpression -> BooleanLiteral(left.evaluate(scope).compareTo(right.evaluate(scope)) == 0)
                 is NotEqualExpression -> BooleanLiteral(left.evaluate(scope).compareTo(right.evaluate(scope)) != 0)
                 is GreaterThanOrEqualExpression -> BooleanLiteral(left.evaluate(scope) >= right.evaluate(scope))
                 is GreaterThanExpression -> BooleanLiteral(left.evaluate(scope) > right.evaluate(scope))
                 is LessThanExpression -> BooleanLiteral(left.evaluate(scope) < right.evaluate(scope))
                 is LessThanOrEqualExpression -> BooleanLiteral(left.evaluate(scope) <= right.evaluate(scope))
+                is CollectionExpression -> CollectionLiteral(values.map { it.evaluate(scope) })
                 is Variable -> this
                 is FunctionReference -> function.apply(this@Interpreter, scope, parameters)
                 is QualifiedId -> variables.resolve(scope, this).variable

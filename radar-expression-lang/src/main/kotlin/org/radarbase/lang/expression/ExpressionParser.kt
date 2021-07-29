@@ -28,6 +28,9 @@ class ExpressionParser(functions: List<Function>) {
 
         private fun ComparisonParser.ExpressionContext.toModel(): Expression = when (this) {
             is ComparisonParser.BinaryOperationContext -> toModel()
+            is ComparisonParser.AdditionOperationContext -> toModel()
+            is ComparisonParser.MultiplicationOperationContext -> toModel()
+            is ComparisonParser.DivisionOperationContext -> toModel()
             is ComparisonParser.CombinationOperationContext -> toModel()
             is ComparisonParser.UnaryOperationContext -> toModel()
             is ComparisonParser.ParenExpressionContext -> expression().toModel()
@@ -38,6 +41,7 @@ class ExpressionParser(functions: List<Function>) {
             is ComparisonParser.DecimalLiteralContext,
             is ComparisonParser.IntegerLiteralContext -> BigDecimal(text).toVariable()
             is ComparisonParser.FunctionExpressionContext -> function().toModel()
+            is ComparisonParser.CollectionExpressionContext -> collection().toModel()
             is ComparisonParser.QualifiedIdExpressionContext -> QualifiedId(text)
             else -> throw toException("Cannot map expression $javaClass at ${toInfoString(parser)}")
         }
@@ -46,6 +50,25 @@ class ExpressionParser(functions: List<Function>) {
             ComparisonLexer.MINUS -> NegateExpression(expression().toModel())
             ComparisonLexer.NOT -> InvertExpression(expression().toModel())
             else -> throw toException("Cannot map unknown unary operator ${operation.text}")
+        }
+
+        private fun ComparisonParser.AdditionOperationContext.toModel(): BinaryExpression {
+            val leftExpression = left.toModel()
+            val rightExpression = right.toModel()
+            return when (this.comparator.type) {
+                ComparisonLexer.PLUS -> PlusExpression(left = leftExpression, right = rightExpression)
+                ComparisonLexer.MINUS -> MinusExpression(left = leftExpression, right = rightExpression)
+                else -> throw toException("Cannot map binary operation $comparator at ${toInfoString(parser)}")
+            }
+        }
+
+
+        private fun ComparisonParser.MultiplicationOperationContext.toModel(): BinaryExpression {
+            return TimesExpression(left = left.toModel(), right = right.toModel())
+        }
+
+        private fun ComparisonParser.DivisionOperationContext.toModel(): BinaryExpression {
+            return DivisionExpression(left = left.toModel(), right = right.toModel())
         }
 
         private fun ComparisonParser.BinaryOperationContext.toModel(): BinaryExpression {
@@ -71,6 +94,10 @@ class ExpressionParser(functions: List<Function>) {
                 ComparisonLexer.XOR -> XorExpression(left = leftExpression, right = rightExpression)
                 else -> throw toException("Cannot map binary operation $comparator at ${toInfoString(parser)}")
             }
+        }
+
+        private fun ComparisonParser.CollectionContext.toModel(): CollectionExpression {
+            return CollectionExpression(values = expression().map { it.toModel() })
         }
 
         private fun ComparisonParser.FunctionContext.toModel(): FunctionReference {
