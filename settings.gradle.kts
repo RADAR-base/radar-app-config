@@ -10,11 +10,13 @@
 rootProject.name = "radar-app-config"
 include(":radar-app-config")
 include(":radar-expression-lang")
+include(":radar-app-config-client")
 
 pluginManagement {
     val kotlinVersion: String by settings
     plugins {
         kotlin("jvm") version kotlinVersion
+        kotlin("plugin.serialization") version kotlinVersion
         id("org.jetbrains.kotlin.plugin.noarg") version kotlinVersion
         id("org.jetbrains.kotlin.plugin.jpa") version kotlinVersion
         id("org.jetbrains.kotlin.plugin.allopen") version kotlinVersion
