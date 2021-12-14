@@ -28,10 +28,6 @@ dependencies {
     implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
     implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
 
-    val jacksonVersion: String by project
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-
     val hazelcastHibernateVersion: String by project
     implementation("com.hazelcast:hazelcast-hibernate53:$hazelcastHibernateVersion")
     val hazelcastVersion: String by project
@@ -52,8 +48,8 @@ dependencies {
     val junitVersion: String by project
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
-    testImplementation("org.hamcrest:hamcrest-all:1.3")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+    testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 }
 
 tasks.withType<Test> {

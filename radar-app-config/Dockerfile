@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM gradle:7.0-jdk11 as builder
+FROM gradle:7.3-jdk17 as builder
 
 RUN mkdir /code
 WORKDIR /code
@@ -27,20 +27,17 @@ COPY radar-app-config/src /code/radar-app-config/src
 
 RUN gradle jar --no-watch-fs
 
-FROM openjdk:11-jre-slim
+FROM azul/zulu-openjdk-alpine:17-jre-headless
 
 MAINTAINER @nivemaham @blootsvoets
 
 LABEL description="RADAR-base radar app config container"
 
-RUN apt-get update && apt-get install -y \
-  curl \
-  && rm -rf /var/lib/apt/lists/*
-
 # Override JAVA_OPTS to set heap parameters, for example
 ENV JAVA_OPTS="" \
     RADAR_APP_CONFIG_OPTS=""
 
+RUN apk add --no-cache curl
 RUN mkdir -p /var/lib/radar-app-config/data
 WORKDIR /var/lib/radar-app-config
 

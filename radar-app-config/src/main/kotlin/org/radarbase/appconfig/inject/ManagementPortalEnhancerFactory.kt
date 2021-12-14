@@ -1,18 +1,14 @@
 package org.radarbase.appconfig.inject
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.*
 import nl.thehyve.lang.expression.*
 import nl.thehyve.lang.expression.Function
 import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
-import org.radarbase.jersey.config.ConfigLoader
-import org.radarbase.jersey.config.EnhancerFactory
-import org.radarbase.jersey.config.JerseyResourceEnhancer
+import org.radarbase.jersey.enhancer.EnhancerFactory
+import org.radarbase.jersey.enhancer.Enhancers
+import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
+import org.radarbase.jersey.enhancer.MapperResourceEnhancer
 import org.radarbase.jersey.hibernate.config.HibernateResourceEnhancer
 
 /** This binder needs to register all non-Jersey classes, otherwise initialization fails. */
@@ -35,41 +31,28 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
             listOf(InMemoryResourceEnhancer())
         }
 
-        val radarEnhancer = ConfigLoader.Enhancers.radar(config.auth).apply {
-            utilityResourceEnhancer = null
-        }
-        val utility = ConfigLoader.Enhancers.utility.apply {
-            mapper = jsonMapper {
-                serializationInclusion(JsonInclude.Include.NON_NULL)
-                addModule(JavaTimeModule())
-                addModule(kotlinModule {
-                    nullIsSameAsDefault(true)
-                    nullToEmptyCollection(true)
-                    nullToEmptyMap(true)
-                })
-                configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                addModule(SimpleModule().apply {
+        val mapperEnhancer = MapperResourceEnhancer().apply {
+            mapper = MapperResourceEnhancer.createDefaultMapper()
+                .registerModule(SimpleModule().apply {
                     val allowedFunctions = listOf<Function>(
                         SumFunction(),
                         ListVariablesFunction(),
-                        CountFunction()
+                        CountFunction(),
                     )
-                    val deserializer = ExpressionDeserializer(ExpressionParser(allowedFunctions))
-
-                    addDeserializer(Expression::class, deserializer)
+                    addDeserializer(
+                        Expression::class.java,
+                        ExpressionDeserializer(ExpressionParser(allowedFunctions)),
+                    )
                 })
-            }
         }
 
         return listOf(
-            utility,
+            mapperEnhancer,
             AppConfigResourceEnhancer(config),
-            radarEnhancer,
-            ConfigLoader.Enhancers.managementPortal(config.auth),
-            ConfigLoader.Enhancers.health,
-            ConfigLoader.Enhancers.generalException,
-            ConfigLoader.Enhancers.httpException,
+            Enhancers.radar(config.auth, includeMapper = false),
+            Enhancers.managementPortal(config.auth),
+            Enhancers.health,
+            Enhancers.exception,
         ) + resolverEnhancer
     }
 }

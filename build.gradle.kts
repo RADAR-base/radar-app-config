@@ -4,7 +4,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 plugins {
     kotlin("jvm") apply false
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    id("org.jetbrains.gradle.plugin.idea-ext") version "1.0"
+    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.1"
     id("com.github.ben-manes.versions") version "0.39.0"
 }
 
@@ -14,25 +14,16 @@ allprojects {
 }
 
 subprojects {
-//    apply(plugin = "com.github.ben-manes.versions")
-
     repositories {
-        // Use jcenter for resolving your dependencies.
-        // You can declare any Maven/Ivy/file repository here.
         mavenCentral()
-
-        // Temporary until Dokka is fully published on maven central.
-        // https://github.com/Kotlin/kotlinx.html/issues/81
-        maven(url = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
-
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "11"
-            languageVersion = "1.5"
-            apiVersion = "1.5"
+            jvmTarget = "17"
+            languageVersion = "1.6"
+            apiVersion = "1.6"
         }
     }
 }
@@ -51,5 +42,5 @@ tasks.withType<DependencyUpdatesTask> {
 }
 
 tasks.wrapper {
-    gradleVersion = "7.0.2"
+    gradleVersion = "7.3.1"
 }
