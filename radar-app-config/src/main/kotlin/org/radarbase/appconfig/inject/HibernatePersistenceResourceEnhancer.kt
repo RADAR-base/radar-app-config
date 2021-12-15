@@ -7,7 +7,7 @@ import nl.thehyve.lang.expression.VariableResolver
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.HazelcastConfig
 import org.radarbase.appconfig.persistence.HibernateVariableResolver
-import org.radarbase.jersey.config.JerseyResourceEnhancer
+import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import jakarta.inject.Singleton
 import javax.persistence.EntityManager
 import jakarta.ws.rs.core.Context

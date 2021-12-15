@@ -6,7 +6,7 @@ services:
   # Management Portal                                                         #
   #---------------------------------------------------------------------------#
   managementportal:
-    image: radarbase/management-portal:0.6.1
+    image: radarbase/management-portal:0.7.1
     depends_on:
       - mp-postgresql
     environment:
@@ -28,7 +28,7 @@ services:
       - "traefik.http.services.managementportal.loadbalancer.server.port=8080"
 
   mp-postgresql:
-    image: bitnami/postgresql:12
+    image: bitnami/postgresql:13
     environment:
       - POSTGRESQL_USERNAME=radarcns
       - POSTGRESQL_PASSWORD=radarcns
@@ -37,7 +37,7 @@ services:
       - "traefik.enable=false"
 
   app-postgresql:
-    image: bitnami/postgresql:12
+    image: bitnami/postgresql:13
     environment:
       - POSTGRESQL_USERNAME=radarcns
       - POSTGRESQL_PASSWORD=radarcns
@@ -75,7 +75,7 @@ services:
       - "traefik.http.services.appconfigfrontend.loadbalancer.server.port=8080"
 
   traefik:
-    image: traefik:2.1
+    image: traefik:2.4
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --api.insecure=true --providers.docker
