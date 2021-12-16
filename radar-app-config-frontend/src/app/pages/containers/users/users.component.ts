@@ -20,9 +20,9 @@ export class UsersComponent implements OnInit {
   projectId;
   clientId;
 
-  projects: [Project];
-  clients: [Client];
-  users: [User] | void;
+  projects: Project[];
+  clients: Client[];
+  users: User[];
 
   loading = true;
 
@@ -32,7 +32,9 @@ export class UsersComponent implements OnInit {
     private clientService: ClientService,
     private projectService: ProjectService,
     private activatedRoute: ActivatedRoute,
-    private router: Router) {}
+    private router: Router) {
+    this.users = [];
+  }
 
   async ngOnInit() {
     this.projectId = this.activatedRoute.snapshot.queryParams.project;

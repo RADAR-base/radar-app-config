@@ -21,9 +21,9 @@
                   formControlName="name"
                   [placeholder]="'config.name' | translate"
                   aria-label="Name"
-                  [readonly]="group.value.scope"
-                  [ngClass]="{'disabled' : group.value.scope === 'global'}"
-                  (ngModelChange)="onChange($event)">
+                  [readonly]="!!group.value.scope"
+                  [ngClass]="{'disabled' : !!group.value.scope}"
+                  (ngModelChange)="onChange()">
               </td>
               <td>
                 <input
@@ -32,7 +32,7 @@
                   formControlName="value"
                   [placeholder]="'config.value' | translate"
                   aria-label="Value"
-                  (ngModelChange)="onChange($event)">
+                  (ngModelChange)="onChange()">
               </td>
               <td class="align-middle" style="width: 33%;">
                 <p class="my-0">{{group.value.default}}</p>
@@ -40,12 +40,10 @@
               <td style="width: 16px;">
                 <button *ngIf="!group.value.scope" (click)="remove(i)"
                         class="btn btn-primary" ngbTooltip="Delete">
-<!--                        [ngClass]="{'disabled' : group.value.scope === 'global'}"-->
-<!--                        [disabled]="group.value.scope === 'global'">-->
                   <mat-icon style="font-size: 16px;width: 16px; height:16px">delete</mat-icon>
                 </button>
                 <button *ngIf="group.value.scope" (click)="backToDefault(i)"
-                        class="btn btn-primary"
+                        class="btn btn-primary disabled"
                         [ngClass]="{'disabled' : group.value.value === group.value.default}"
                         [disabled]="group.value.value === group.value.default"
                         ngbTooltip="Reset to default">
@@ -69,7 +67,13 @@
               [ngClass]="{'disabled' : !updateEnabled}"
               [disabled]="!updateEnabled"
               (click)="onReset(modalContent)">{{'config.reset' | translate}}</button>
-      <button class="btn btn-primary btn-block" (click)="onCancel(modalContent)">{{'config.cancel' | translate}}</button>
+      <button class="btn btn-primary btn-block mt-3" (click)="onCancel(modalContent)">{{'config.cancel' | translate}}</button>
+      <hr class="my-2" style="border-top-width: 2px;">
+      <a [href]="downloadJsonHref" download="app-config-export.json" class="btn btn-primary btn-block">{{'config.export' | translate}}</a>
+        <div (click)="importFile.click()" class="btn btn-primary btn-block">
+            {{'config.import' | translate}}
+            <input style="display: none" type="file" #importFile (change)="onImport($event, modalContent)">
+        </div>
     </div>
   </div>
 </div>

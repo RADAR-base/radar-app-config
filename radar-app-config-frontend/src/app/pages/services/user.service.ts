@@ -15,21 +15,28 @@ export class UserService {
 
   constructor(private http: HttpClient, private toastService: ToastService) {}
 
-  private getUsersByProjectIdObservable(projectId): Observable<[User]> {
-    return this.http.get<any>(`${environment.backendUrl}/projects/${projectId}/users/`);
+  private getUsersByProjectIdObservable(projectId): Observable<User[]> {
+    return this.http.get<any>(`${environment.backendUrl}/projects/${encodeURIComponent(projectId)}/users/`);
   }
 
-  async getUsersByProjectId(projectId): Promise<[User] | void> {
-    return await this.getUsersByProjectIdObservable(projectId).toPromise()
+  async getUsersByProjectId(projectId): Promise<User[]> {
+    return this.getUsersByProjectIdObservable(projectId).toPromise()
       .then((data: any) => {
-        const results: [User] = data.users;
-        results.forEach(d => d.name = d.id);
+        const results: User[] = data.users;
+        results.forEach(d => {
+            if (d.externalUserId) {
+                d.name = d.externalUserId + ' (' + d.id + ')';
+            } else {
+                d.name = d.id;
+            }
+        });
         this.toastService.showSuccess(`Users of Project: ${projectId} loaded.`);
         return results;
       })
       .catch(e => {
         this.toastService.showError(e);
         console.log(e);
+        return [] as User[];
       })
       .finally(() => {});
   }

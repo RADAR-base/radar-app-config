@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {Config} from '@app/pages/models/config';
+import {Config, ConfigElement} from '@app/pages/models/config';
 import {ToastService} from '@app/shared/services/toast.service';
-import {Observable} from 'rxjs';
-import {environment} from "@environments/environment";
+import {Observable, pipe, OperatorFunction} from 'rxjs';
+import {environment} from '@environments/environment';
+import {map, tap} from 'rxjs/operators';
 
 /**
  * Config Service
@@ -16,34 +17,17 @@ export class ConfigService {
   constructor(private http: HttpClient, private toastService: ToastService) { }
 
   private getGlobalConfigByClientIdObservable(clientId): Observable<Config> {
-    return this.http.get<Config>(`${environment.backendUrl}/global/config/${clientId}`);
+    return this.http.get<Config>(this.url(clientId));
   }
 
   async getGlobalConfigByClientId(clientId) {
-    return await this.getGlobalConfigByClientIdObservable(clientId).toPromise()
-      .then((data: any) => {
-        const {config, defaults} = data;
-        config.forEach(c => {
-          if (defaults) {
-            const defaultValues = defaults.filter(d => d.name === c.name && d.scope === 'global');
-            if (defaultValues.length > 0) {
-              c.default = defaultValues[0].value;
-            }
-          }
-        });
-        this.toastService.showSuccess(`Configurations of Application: ${clientId} loaded.`);
-        return config;
-      })
-      .catch(e => {
-        this.toastService.showError(e);
-        console.log(e);
-      })
-      .finally(() => {});
+      return await this.getGlobalConfigByClientIdObservable(clientId).pipe(
+          this.mapConfigResponse(`Configurations of Application: ${clientId} loaded.`),
+      ).toPromise();
   }
 
-
   private getConfigByProjectIdClientIdObservable(projectId, clientId): Observable<Config> {
-    return this.http.get<Config>(`${environment.backendUrl}/projects/${projectId}/config/${clientId}`);
+      return this.http.get<Config>(this.url(clientId, projectId));
   }
 
   /*
@@ -59,39 +43,13 @@ export class ConfigService {
   }
   */
   async getConfigByProjectIdClientId(projectId, clientId) {
-    return await this.getConfigByProjectIdClientIdObservable(projectId, clientId).toPromise()
-      .then((data: any) => {
-        const result = [];
-        const {config, defaults} = data;
-        if(defaults) {
-          defaults.forEach(d => {
-            d.default = d.value;
-            result.push(d);
-          });
-        }
-        if(config) {
-          config.forEach(c => {
-            const matchedItem = result.filter(d => c.name === d.name);
-            if (matchedItem.length > 0) {
-              const index = result.indexOf(matchedItem[0]);
-              result[index].default = result[index].value;
-              result[index].value = c.value;
-            } else {
-              result.push(c);
-            }
-          });
-        }
-        this.toastService.showSuccess(`Configurations of Project: ${projectId} - Application: ${clientId} loaded.`);
-        return result;
-      })
-      .catch(e => {
-        this.toastService.showError(e);
-      })
-      .finally();
+    return await this.getConfigByProjectIdClientIdObservable(projectId, clientId).pipe(
+        this.mapConfigResponse(`Configurations of Project: ${projectId} - Application: ${clientId} loaded.`),
+    ).toPromise();
   }
 
   private getConfigByProjectIdUserIDClientIdObservable(projectId, userId, clientId): Observable<Config> {
-    return this.http.get<Config>(`${environment.backendUrl}/projects/${projectId}/users/${userId}/config/${clientId}`);
+    return this.http.get<Config>(this.url(clientId, projectId, userId));
   }
 
   /*
@@ -107,45 +65,21 @@ export class ConfigService {
   }
   */
   async getConfigByProjectIdUserIdClientId(projectId, userId, clientId) {
-    return await this.getConfigByProjectIdUserIDClientIdObservable(projectId, userId, clientId).toPromise()
-      .then((data: any) => {
-        const result = [];
-        const {config, defaults} = data;
-        if(defaults) {
-          defaults.forEach(d => {
-            d.default = d.value;
-            result.push(d);
-          });
-        }
-        if(config) {
-          config.forEach(c => {
-            const matchedItem = result.filter(d => c.name === d.name);
-            if (matchedItem.length > 0) {
-              const index = result.indexOf(matchedItem[0]);
-              result[index].default = result[index].value;
-              result[index].value = c.value;
-            } else {
-              result.push(c);
-            }
-          });
-        }
-        this.toastService.showSuccess(`Configurations of Project: ${projectId} - Application: ${clientId} loaded.`);
-        return result;
-      })
-      .catch(e => {
-        this.toastService.showError(e);
-      })
-      .finally();
+    return await this.getConfigByProjectIdUserIDClientIdObservable(projectId, userId, clientId).pipe(
+        this.mapConfigResponse(`Configurations of Project: ${projectId} - Participant: ${userId} - Application: ${clientId} loaded.`),
+    ).toPromise();
   }
 
 
-  postGlobalConfigByClientId(clientId, payload) {
+  postGlobalConfigByClientId(clientId, payload: ConfigElement[]): Observable<ConfigElement[]> {
     console.log('payload', payload);
-    return this.http.post(`${environment.backendUrl}/global/config/${clientId}`, payload, {
+    return this.http.post<Config>(this.url(clientId), this.configToServerConfig(payload), {
       headers: {
         'Content-Type': 'application/json'
       }
-    });
+    }).pipe(
+        this.mapConfigResponse(`Global configurations of Application: ${clientId} updated.`),
+    );
   }
 
   /*
@@ -157,19 +91,76 @@ export class ConfigService {
     ]
   }
   */
-  postConfigByProjectIdAndClientId(projectId, clientId, payload) {
-    return this.http.post(`${environment.backendUrl}/projects/${projectId}/config/${clientId}`, payload, {
+  postConfigByProjectIdAndClientId(projectId, clientId, payload: ConfigElement[]): Observable<ConfigElement[]> {
+    return this.http.post<Config>(this.url(clientId, projectId), this.configToServerConfig(payload), {
       headers: {
         'Content-Type': 'application/json'
       }
-    });
+    }).pipe(
+        this.mapConfigResponse(`Configurations of Project ${projectId} - Application: ${clientId} updated.`),
+    );
   }
 
-  postConfigByProjectIdAndClientIdAndUserId(projectId, clientId, userId, payload) {
-    return this.http.post(`${environment.backendUrl}/projects/${projectId}/users/${userId}/config/${clientId}`, payload, {
+  postConfigByProjectIdAndClientIdAndUserId(projectId, clientId, userId, payload: ConfigElement[]): Observable<ConfigElement[]> {
+    return this.http.post<Config>(this.url(clientId, projectId, userId), this.configToServerConfig(payload), {
       headers: {
         'Content-Type': 'application/json'
       }
-    });
+    }).pipe(
+        this.mapConfigResponse(`Configurations of Project ${projectId} - Participant ${userId} - Application: ${clientId} updated.`),
+    );
+  }
+
+  private mapConfigResponse(successMessage: string): OperatorFunction<Config, ConfigElement[]> {
+      return pipe(
+          map(config => this.serverConfigToConfig(config)),
+          tap(
+              () => this.toastService.showSuccess(successMessage),
+              e => {
+                  this.toastService.showError(e);
+                  console.log(e);
+              },
+          ),
+      );
+  }
+
+  private configToServerConfig(elements: ConfigElement[]): Config {
+    return {
+      config: elements
+          .filter(c => c.value !== c.default)
+          .map(({name, value}) => ({name, value})),
+    };
+  }
+
+  private url(clientId: string, projectId?: string, userId?: string): string {
+      const configPath = `config/${encodeURIComponent(clientId)}`;
+      const projectPath = projectId ? `projects/${encodeURIComponent(projectId)}` : '';
+      const userPath = userId ? `users/${encodeURIComponent(userId)}` : '';
+      if (userPath) {
+          return `${environment.backendUrl}/${projectPath}/${userPath}/${configPath}`;
+      } else if (projectPath) {
+          return `${environment.backendUrl}/${projectPath}/${configPath}`;
+      } else {
+          return `${environment.backendUrl}/global/${configPath}`;
+      }
+  }
+
+  private serverConfigToConfig(serverConfig: Config): ConfigElement[] {
+    const {config, defaults} = serverConfig;
+    let result: ConfigElement[] = [];
+    if (defaults) {
+      result = defaults.map(c => ({...c, default: c.value}));
+    }
+    if (config) {
+      config.forEach(c => {
+        const matchedItem = result.find(d => c.name === d.name);
+        if (matchedItem) {
+          matchedItem.value = c.value;
+        } else {
+          result.push(c);
+        }
+      });
+    }
+    return result;
   }
 }
