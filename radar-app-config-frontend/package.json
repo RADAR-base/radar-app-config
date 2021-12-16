@@ -1,6 +1,6 @@
 {
   "name": "appconfig",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port=4200 --base-href=/",
