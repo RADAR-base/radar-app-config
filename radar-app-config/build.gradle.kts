@@ -22,7 +22,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    implementation(project(":radar-expression-lang"))
+    implementation(project(":radar-app-config-core"))
 
     val radarJerseyVersion: String by project
     implementation("org.radarbase:radar-jersey:$radarJerseyVersion")

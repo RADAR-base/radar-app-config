@@ -2,7 +2,7 @@ package org.radarbase.appconfig.service
 
 import nl.thehyve.lang.expression.Scope
 import nl.thehyve.lang.expression.SimpleScope
-import org.radarbase.appconfig.domain.Condition
+import org.radarbase.appconfig.api.Condition
 import org.radarbase.appconfig.inject.ClientInterpreter
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.service.ConfigService.Companion.globalScope

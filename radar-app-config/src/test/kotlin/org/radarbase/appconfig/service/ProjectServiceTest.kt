@@ -5,8 +5,8 @@ import nl.thehyve.lang.expression.toVariable
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.domain.SingleVariable
+import org.radarbase.appconfig.api.ClientConfig
+import org.radarbase.appconfig.api.SingleVariable
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.inject.InMemoryResourceEnhancer
 

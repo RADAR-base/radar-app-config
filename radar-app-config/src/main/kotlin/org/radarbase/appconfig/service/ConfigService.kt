@@ -1,7 +1,7 @@
 package org.radarbase.appconfig.service
 
 import nl.thehyve.lang.expression.*
-import org.radarbase.appconfig.domain.ClientConfig
+import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import jakarta.ws.rs.core.Context
 
