@@ -3,16 +3,16 @@ package org.radarbase.appconfig.client
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.radarbase.oauth.OAuth2Client
-import kotlin.Throws
-import org.radarbase.exception.TokenException
-import java.io.IOException
-import com.fasterxml.jackson.databind.node.ObjectNode
-import okhttp3.*
+import okhttp3.HttpUrl
+import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.radarbase.appconfig.api.ClientConfig
-import org.radarbase.appconfig.api.SingleVariable
+import org.radarbase.exception.TokenException
+import org.radarbase.oauth.OAuth2Client
+import java.io.IOException
 import java.time.Duration
 
 @Suppress("unused")
@@ -20,11 +20,11 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     private val client: OkHttpClient = config.httpClient ?: OkHttpClient()
 
     private val oauth2ClientId: String = requireNotNull(config.clientId)
-    private val oauth2Client: OAuth2Client = OAuth2Client.Builder()
-        .httpClient(client)
-        .endpoint(requireNotNull(config.tokenUrl))
-        .credentials(oauth2ClientId, requireNotNull(config.clientSecret))
-        .build()
+    private val oauth2Client: OAuth2Client = OAuth2Client.Builder().apply {
+        httpClient(client)
+        endpoint(requireNotNull(config.tokenUrl))
+        credentials(oauth2ClientId, requireNotNull(config.clientSecret))
+    }.build()
 
     private val baseUrl: HttpUrl = requireNotNull(config.appConfigUrl)
     private val configPrefix: String? = config.configPrefix
@@ -36,53 +36,62 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
         : this(AppConfigClientConfig(type).apply(builder))
 
     @Throws(TokenException::class, IOException::class)
-    fun getConfig(projectId: String, userId: String): T? = cache.computeIfAbsent(userId) {
-        convertToLocalConfig(fetchConfig(projectId, userId))
+    fun getUserConfig(projectId: String, userId: String): T? = cache.computeIfAbsent(userId) {
+        fetchConfig(projectId, userId)
+            .convertToLocalConfig()
+    }
+
+    @Throws(TokenException::class, IOException::class)
+    fun setUserConfig(
+        projectId: String,
+        userId: String,
+        config: Map<String, String>
+    ): T {
+        val newConfig: ClientConfig = fetchConfig(projectId, userId)
+            .copyWithConfig(config)
+
+        return putConfig(projectId, userId, newConfig)
+            .convertToLocalConfig()
+            .also { cache[userId] = it }
     }
 
     @Throws(JsonProcessingException::class)
-    private fun convertToLocalConfig(config: ClientConfig): T {
+    private fun ClientConfig.convertToLocalConfig(): T {
         val node = objectMappers.mapper.createObjectNode().apply {
-            addConfig(config.defaults)
-            addConfig(config.config)
+            val values = (defaults?.asSequence() ?: emptySequence()) + config.asSequence()
+            if (configPrefix == null) {
+                values.forEach { (name, value) -> put(name, value) }
+            } else {
+                values
+                    .filter { it.name.startsWith(configPrefix) && it.name.length > configPrefix.length }
+                    .forEach { (name, value) -> put(name.substring(configPrefix.length), value) }
+            }
         }
         return objectMappers.readerFor(type).readValue(node.toString())
     }
 
-    private fun ObjectNode.addConfig(config: List<SingleVariable>?) {
-        if (config != null) {
-            if (configPrefix == null) {
-                config.forEach { (name, value) -> put(name, value) }
-            } else {
-                config.asSequence()
-                    .filter { it.name.startsWith(configPrefix) }
-                    .forEach { (name, value) -> put(name.substring(configPrefix.length), value) }
-            }
-        }
-    }
-
     @Throws(IOException::class, TokenException::class)
-    private fun fetchConfig(projectId: String, userId: String): ClientConfig {
-        val request: Request = configRequest(projectId, userId).get().build()
+    private fun fetchConfig(
+        projectId: String,
+        userId: String
+    ): ClientConfig {
+        val request: Request = buildConfigRequest(projectId, userId) { get() }
         return makeConfigRequest(request)
     }
 
-    @Throws(TokenException::class, IOException::class)
-    fun setConfig(projectId: String, userId: String, config: Map<String, String>): T {
-        val newConfig: ClientConfig = fetchConfig(projectId, userId).copyWithConfig(config)
-        val updatedConfig = putConfig(projectId, userId, newConfig)
-        val newValue = convertToLocalConfig(updatedConfig)
-        cache[userId] = newValue
-        return newValue
-    }
-
     @Throws(IOException::class, TokenException::class)
-    private fun putConfig(projectId: String, userId: String, config: ClientConfig): ClientConfig {
-        val request: Request = configRequest(projectId, userId)
-            .post(objectMappers.writerFor(ClientConfig::class.java)
-                .writeValueAsString(config)
-                .toRequestBody(APPLICATION_JSON))
-            .build()
+    private fun putConfig(
+        projectId: String,
+        userId: String,
+        config: ClientConfig
+    ): ClientConfig {
+        val request: Request = buildConfigRequest(projectId, userId) {
+            post(
+                objectMappers.writerFor(ClientConfig::class.java)
+                    .writeValueAsString(config)
+                    .toRequestBody(APPLICATION_JSON)
+            )
+        }
         return makeConfigRequest(request)
     }
 
@@ -103,20 +112,26 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     }
 
     @Throws(TokenException::class)
-    private fun configRequest(projectId: String, userId: String): Request.Builder {
+    private fun buildConfigRequest(
+        projectId: String,
+        userId: String,
+        builder: (Request.Builder.() -> Unit) = {}
+    ): Request {
         val token = oauth2Client.validToken.accessToken
-        return Request.Builder()
-            .url(
-                baseUrl.newBuilder()
-                    .addEncodedPathSegment("projects")
-                    .addPathSegment(projectId)
-                    .addEncodedPathSegment("users")
-                    .addPathSegment(userId)
-                    .addEncodedPathSegment("config")
-                    .addPathSegment(oauth2ClientId)
-                    .build()
+        return Request.Builder().apply {
+            url(
+                baseUrl.newBuilder().apply {
+                    addEncodedPathSegment("projects")
+                    addPathSegment(projectId)
+                    addEncodedPathSegment("users")
+                    addPathSegment(userId)
+                    addEncodedPathSegment("config")
+                    addPathSegment(oauth2ClientId)
+                }.build()
             )
-            .header("Authorization", "Bearer $token")
+            header("Authorization", "Bearer $token")
+            builder()
+        }.build()
     }
 
     companion object {
