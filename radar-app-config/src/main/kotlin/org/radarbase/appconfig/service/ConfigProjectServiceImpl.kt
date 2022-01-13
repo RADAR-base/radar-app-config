@@ -20,7 +20,7 @@ class ConfigProjectServiceImpl(
         resolver[clientId].replace(
             projectScope(projectId),
             null,
-            clientConfig.config.stream()
+            clientConfig.config.asSequence()
                 .map { (innerId, value, _) ->
                     Pair(QualifiedId(innerId), value?.toVariable() ?: NullLiteral())
                 })

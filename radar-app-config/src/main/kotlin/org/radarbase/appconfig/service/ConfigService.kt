@@ -18,7 +18,7 @@ class ConfigService(
     }
 
     fun putGlobalConfig(config: ClientConfig, clientId: String) {
-        resolver[clientId].replace(globalScope, null, config.config.stream()
+        resolver[clientId].replace(globalScope, null, config.config.asSequence()
             .map { (innerId, variable, _) ->
                 QualifiedId(innerId) to
                         (variable?.toVariable() ?: NullLiteral())

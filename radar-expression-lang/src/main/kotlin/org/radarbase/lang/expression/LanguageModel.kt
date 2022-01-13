@@ -30,7 +30,7 @@ interface Variable : Comparable<Variable>, Expression {
     fun asString(): String
     fun asOptString(): String?
     fun asBoolean(): Boolean
-    fun asStream(): Stream<Variable>
+    fun asSequence(): Sequence<Variable>
 }
 
 abstract class AbstractVariable : Variable {
@@ -38,7 +38,7 @@ abstract class AbstractVariable : Variable {
     override fun asString(): String = throw UnsupportedOperationException("Cannot convert $this to string")
     override fun asOptString(): String? = asString()
     override fun asBoolean(): Boolean = throw UnsupportedOperationException("Cannot convert $this to boolean")
-    override fun asStream(): Stream<Variable> = Stream.of(this)
+    override fun asSequence(): Sequence<Variable> = sequenceOf(this)
 }
 
 fun Expression.parenString(): String = if (this is BinaryExpression) "($this)" else toString()
@@ -170,8 +170,8 @@ data class StringLiteral(val value: String) : AbstractVariable() {
 
     override fun asNumber(): BigDecimal = BigDecimal(value)
 
-    override fun asStream(): Stream<Variable> = value.split(" ")
-        .stream()
+    override fun asSequence(): Sequence<Variable> = value.split(" ")
+        .asSequence()
         .filter { it.isNotEmpty() }
         .map { it.toVariable() }
 
@@ -201,7 +201,7 @@ fun String.toUnescapedStringLiteral(): StringLiteral {
 }
 
 data class CollectionLiteral(val values: Collection<Variable>) : Variable {
-    override fun asOptString(): String? = asString()
+    override fun asOptString(): String = asString()
 
     override fun asNumber(): BigDecimal = throw UnsupportedOperationException("Cannot convert $this to a number.")
 
@@ -209,28 +209,30 @@ data class CollectionLiteral(val values: Collection<Variable>) : Variable {
 
     override fun asBoolean() = throw UnsupportedOperationException("Cannot convert $this to a boolaean.")
 
-    override fun asStream() = values.stream()
+    override fun asSequence() = values.asSequence()
 
     override fun toString() = values.toString()
 
     override fun compareTo(other: Variable): Int {
-        val comparisonStream = if (other is CollectionLiteral) {
-            asStream().zipOrNull(other.asStream())
+        val comparisonSequence = if (other is CollectionLiteral) {
+            val terminator = Any()
+            val seq = asSequence() + terminator
+            val seqOther = other.asSequence() + terminator
+            seq.zip(seqOther)
                 .map { (a, b) ->
                     when {
-                        a == null -> -1
-                        b == null -> 1
-                        else -> a.compareTo(b)
+                        a === b -> 0
+                        a === terminator -> -1
+                        b === terminator -> 1
+                        else -> (a as Variable).compareTo(b as Variable)
                     }
                 }
         } else {
-            asStream().map { it.compareTo(other) }
+            asSequence()
+                .map { it.compareTo(other) }
         }
-
-        return comparisonStream
-            .filter { it != 0 }
-            .findFirst()
-            .orElse(0)
-
+        return comparisonSequence
+            .firstOrNull { it != 0 }
+            ?: 0
     }
 }

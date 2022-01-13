@@ -13,9 +13,7 @@ import java.text.ParseException
 
 @JsonDeserialize(using = ExpressionDeserializer::class)
 class ExpressionParser(functions: List<Function>) {
-    private val indexedFunctions: Map<String, Function> = functions
-        .map { it.name to it }
-        .toMap()
+    private val indexedFunctions: Map<String, Function> = functions.associateBy { it.name }
 
     fun parse(value: String) = parse(ByteArrayInputStream(value.toByteArray()))
 

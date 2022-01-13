@@ -3,7 +3,6 @@ package org.radarbase.appconfig.api
 import org.radarbase.lang.expression.ResolvedVariable
 import org.radarbase.lang.expression.Scope
 import java.util.stream.Collectors
-import java.util.stream.Stream
 
 data class ClientConfig(
     val clientId: String?,
@@ -15,9 +14,9 @@ data class ClientConfig(
         fun fromStream(
             clientId: String,
             scope: Scope,
-            configStream: Stream<ResolvedVariable>
+            configSequence: Sequence<ResolvedVariable>
         ): ClientConfig {
-            val configs = configStream.collect(Collectors.groupingBy { it.scope == scope })
+            val configs = configSequence.groupBy { it.scope == scope }
             return ClientConfig(
                 clientId,
                 scope.asString(),

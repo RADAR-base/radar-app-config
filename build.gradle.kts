@@ -35,6 +35,12 @@ subprojects {
     }
 }
 
+project(":radar-expression-lang-antlr") {
+    tasks.withType<JavaCompile> {
+        options.release.set(11)
+    }
+}
+
 configure(listOf(
     project(":radar-expression-lang"),
     project(":radar-app-config-core"),

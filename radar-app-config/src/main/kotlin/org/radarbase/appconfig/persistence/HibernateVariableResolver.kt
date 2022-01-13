@@ -4,14 +4,13 @@ import com.hazelcast.map.IMap
 import org.hibernate.criterion.MatchMode
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.jersey.hibernate.HibernateRepository
-import java.util.*
-import java.util.stream.Collectors
 import java.util.stream.Stream
 import jakarta.inject.Provider
 import org.radarbase.lang.expression.*
 import javax.persistence.EntityManager
 import javax.persistence.Query
 import javax.persistence.TypedQuery
+import kotlin.streams.asSequence
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 class HibernateVariableResolver(
@@ -22,7 +21,7 @@ class HibernateVariableResolver(
     override fun replace(
         scope: Scope,
         prefix: QualifiedId?,
-        variables: Stream<Pair<QualifiedId, Variable>>,
+        variables: Sequence<Pair<QualifiedId, Variable>>,
     ) = transact {
         deleteConfig(scope, prefix).executeUpdate()
 
@@ -74,29 +73,33 @@ class HibernateVariableResolver(
     override fun resolveAll(
         scopes: List<Scope>,
         prefix: QualifiedId?,
-    ): Stream<ResolvedVariable> = transact {
-        scopes.stream()
+    ): Sequence<ResolvedVariable> = transact {
+        scopes.asSequence()
             .flatMap { selectConfig(it, prefix) }
             .map { find(ConfigEntity::class.java, it).toResolvedVariable() }
-            .collect(Collectors.toMap({
+            .groupBy {
                 if (it.scope == scopes[0]) ActualVariableKey(it.id)
                 else DefaultsVariableKey(it.id)
-            }, { it }, higherScopedVariable(scopes)))
+            }
             .values
-            .stream()
+            .asSequence()
+            .map { v -> v.maxByOrNull {
+                scopes.indexOf(it.scope)
+            }}
+            .filterNotNull()
     }
 
     override fun list(
         scopes: List<Scope>,
         prefix: QualifiedId?,
-    ): Stream<QualifiedId> = transact {
+    ): Sequence<QualifiedId> = transact {
         (listConfig(scopes, prefix).resultStream as Stream<*>)
             .map { rawResult ->
                 val result = rawResult as Array<*>
                 QualifiedId(result[0] as String, result[1] as String)
             }
-            .collect(Collectors.toList())
-            .stream()
+            .toList()
+            .asSequence()
     }
 
     private fun EntityManager.deleteConfig(
@@ -126,16 +129,22 @@ class HibernateVariableResolver(
     private fun EntityManager.selectConfig(
         scope: Scope,
         prefix: QualifiedId?,
-    ): Stream<Long> {
+    ): Sequence<Long> {
         return if (prefix == null || prefix.isEmpty()) {
             var cachedValue = cache[scope.asString()]
             if (cachedValue == null) {
-                cachedValue = selectConfig(scope).resultList.map { it.toLong() }.toLongArray()
+                cachedValue = selectConfig(scope)
+                    .resultList
+                    .map { it.toLong() }
+                    .toLongArray()
                 cache[scope.asString()] = cachedValue
             }
-            Arrays.stream(cachedValue).mapToObj { it }
+            cachedValue.asSequence()
         } else {
-            selectConfigPrefix(scope, prefix.asString()).resultStream.map { it.toLong() }
+            selectConfigPrefix(scope, prefix.asString())
+                .resultStream
+                .map { it.toLong() }
+                .asSequence()
         }
     }
 

@@ -18,7 +18,7 @@ class UserService(
         resolver[clientId].replace(
             userScope(userId),
             null,
-            clientConfig.config.stream()
+            clientConfig.config.asSequence()
                 .map { (innerId, value, _) ->
                     Pair(QualifiedId(innerId), value?.toVariable() ?: NullLiteral())
                 })
