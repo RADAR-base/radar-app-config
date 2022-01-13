@@ -1,9 +1,9 @@
 package org.radarbase.appconfig.service
 
-import nl.thehyve.lang.expression.NullLiteral
-import nl.thehyve.lang.expression.QualifiedId
-import nl.thehyve.lang.expression.Scope
-import nl.thehyve.lang.expression.toVariable
+import org.radarbase.lang.expression.NullLiteral
+import org.radarbase.lang.expression.QualifiedId
+import org.radarbase.lang.expression.Scope
+import org.radarbase.lang.expression.toVariable
 import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.service.ConfigService.Companion.userScope

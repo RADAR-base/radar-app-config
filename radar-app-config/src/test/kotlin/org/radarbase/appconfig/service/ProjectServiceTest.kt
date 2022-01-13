@@ -1,7 +1,7 @@
 package org.radarbase.appconfig.service
 
-import nl.thehyve.lang.expression.register
-import nl.thehyve.lang.expression.toVariable
+import org.radarbase.lang.expression.register
+import org.radarbase.lang.expression.toVariable
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

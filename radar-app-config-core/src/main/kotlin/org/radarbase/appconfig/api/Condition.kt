@@ -1,6 +1,6 @@
 package org.radarbase.appconfig.api
 
-import nl.thehyve.lang.expression.Expression
+import org.radarbase.lang.expression.Expression
 
 
 data class Condition(

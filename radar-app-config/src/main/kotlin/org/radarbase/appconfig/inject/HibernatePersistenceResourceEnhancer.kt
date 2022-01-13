@@ -3,7 +3,7 @@ package org.radarbase.appconfig.inject
 import com.hazelcast.config.Config
 import com.hazelcast.core.Hazelcast
 import com.hazelcast.core.HazelcastInstance
-import nl.thehyve.lang.expression.VariableResolver
+import org.radarbase.lang.expression.VariableResolver
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.HazelcastConfig
 import org.radarbase.appconfig.persistence.HibernateVariableResolver

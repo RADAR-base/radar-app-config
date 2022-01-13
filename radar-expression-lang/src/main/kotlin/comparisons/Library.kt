@@ -3,8 +3,8 @@
  */
 package comparisons
 
-import nl.thehyve.lang.expression.*
-import nl.thehyve.lang.expression.Function
+import org.radarbase.lang.expression.Function
+import org.radarbase.lang.expression.*
 import kotlin.system.exitProcess
 
 fun main() {

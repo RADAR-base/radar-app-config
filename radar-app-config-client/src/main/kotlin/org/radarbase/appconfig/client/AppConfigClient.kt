@@ -36,7 +36,7 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
         : this(AppConfigClientConfig(type).apply(builder))
 
     @Throws(TokenException::class, IOException::class)
-    fun getUserConfig(projectId: String, userId: String): T? = cache.computeIfAbsent(userId) {
+    fun getUserConfig(projectId: String, userId: String): T = cache.computeIfAbsent(userId) {
         fetchConfig(projectId, userId)
             .convertToLocalConfig()
     }
@@ -55,28 +55,15 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
             .also { cache[userId] = it }
     }
 
-    @Throws(JsonProcessingException::class)
-    private fun ClientConfig.convertToLocalConfig(): T {
-        val node = objectMappers.mapper.createObjectNode().apply {
-            val values = (defaults?.asSequence() ?: emptySequence()) + config.asSequence()
-            if (configPrefix == null) {
-                values.forEach { (name, value) -> put(name, value) }
-            } else {
-                values
-                    .filter { it.name.startsWith(configPrefix) && it.name.length > configPrefix.length }
-                    .forEach { (name, value) -> put(name.substring(configPrefix.length), value) }
-            }
-        }
-        return objectMappers.readerFor(type).readValue(node.toString())
-    }
-
     @Throws(IOException::class, TokenException::class)
     private fun fetchConfig(
         projectId: String,
         userId: String
     ): ClientConfig {
-        val request: Request = buildConfigRequest(projectId, userId) { get() }
-        return makeConfigRequest(request)
+        val request: Request = buildConfigRequest(projectId, userId) {
+            get()
+        }
+        return executeConfigRequest(request)
     }
 
     @Throws(IOException::class, TokenException::class)
@@ -92,11 +79,11 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
                     .toRequestBody(APPLICATION_JSON)
             )
         }
-        return makeConfigRequest(request)
+        return executeConfigRequest(request)
     }
 
     @Throws(IOException::class)
-    private fun makeConfigRequest(request: Request): ClientConfig {
+    private fun executeConfigRequest(request: Request): ClientConfig {
         client.newCall(request).execute().use { response ->
             response.body.use { body ->
                 if (!response.isSuccessful || body == null) {
@@ -132,6 +119,21 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
             header("Authorization", "Bearer $token")
             builder()
         }.build()
+    }
+
+    @Throws(JsonProcessingException::class)
+    private fun ClientConfig.convertToLocalConfig(): T {
+        val node = objectMappers.mapper.createObjectNode().apply {
+            val values = (defaults?.asSequence() ?: emptySequence()) + config.asSequence()
+            if (configPrefix == null) {
+                values.forEach { (name, value) -> put(name, value) }
+            } else {
+                values
+                    .filter { it.name.startsWith(configPrefix) && it.name.length > configPrefix.length }
+                    .forEach { (name, value) -> put(name.substring(configPrefix.length), value) }
+            }
+        }
+        return objectMappers.readerFor(type).readValue(node.toString())
     }
 
     companion object {

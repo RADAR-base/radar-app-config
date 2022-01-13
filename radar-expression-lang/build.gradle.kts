@@ -40,13 +40,15 @@ dependencies {
 }
 
 tasks.generateGrammarSource {
-    outputDirectory = file("$buildDir/generated-src/antlr/main/nl/thehyve/lang/expression/antlr")
+    outputDirectory = file("$buildDir/generated-src/antlr/main/org/radarbase/lang/expression/antlr")
     arguments = arguments + listOf(
-        "-package", "nl.thehyve.lang.expression.antlr"
+        "-package", "org.radarbase.lang.expression.antlr"
     )
 }
 
 tasks["compileKotlin"].dependsOn(tasks.generateGrammarSource)
+tasks["dokkaJavadoc"].dependsOn(tasks.generateGrammarSource)
+tasks["sourcesJar"].dependsOn(tasks.generateGrammarSource)
 
 
 fun Project.idea(block: IdeaModel.() -> Unit) =

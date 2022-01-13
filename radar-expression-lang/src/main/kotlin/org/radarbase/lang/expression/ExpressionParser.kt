@@ -1,8 +1,8 @@
-package nl.thehyve.lang.expression
+package org.radarbase.lang.expression
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import nl.thehyve.lang.expression.antlr.ComparisonLexer
-import nl.thehyve.lang.expression.antlr.ComparisonParser
+import org.radarbase.lang.expression.antlr.ComparisonLexer
+import org.radarbase.lang.expression.antlr.ComparisonParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext

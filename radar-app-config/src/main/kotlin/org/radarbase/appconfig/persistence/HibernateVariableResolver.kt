@@ -1,7 +1,6 @@
 package org.radarbase.appconfig.persistence
 
 import com.hazelcast.map.IMap
-import nl.thehyve.lang.expression.*
 import org.hibernate.criterion.MatchMode
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.jersey.hibernate.HibernateRepository
@@ -9,6 +8,7 @@ import java.util.*
 import java.util.stream.Collectors
 import java.util.stream.Stream
 import jakarta.inject.Provider
+import org.radarbase.lang.expression.*
 import javax.persistence.EntityManager
 import javax.persistence.Query
 import javax.persistence.TypedQuery

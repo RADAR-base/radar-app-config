@@ -1,7 +1,7 @@
 package org.radarbase.appconfig.inject
 
-import nl.thehyve.lang.expression.Interpreter
-import nl.thehyve.lang.expression.VariableResolver
+import org.radarbase.lang.expression.Interpreter
+import org.radarbase.lang.expression.VariableResolver
 import java.util.function.Supplier
 import jakarta.ws.rs.core.Context
 
