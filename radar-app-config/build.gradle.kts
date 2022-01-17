@@ -35,8 +35,6 @@ dependencies {
     val hazelcastKubernetesVersion: String by project
     runtimeOnly("com.hazelcast:hazelcast-kubernetes:$hazelcastKubernetesVersion")
 
-    implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
-
     val slf4jVersion: String by project
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     val log4j2Version: String by project
