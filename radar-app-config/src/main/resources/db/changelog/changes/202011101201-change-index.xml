@@ -22,7 +22,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-    http2://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
     <property name="autoIncrement" value="true" dbms="mysql,postgresql,oracle,mssql"/>
 
     <changeSet id="2" author="joris" dbms="postgresql">

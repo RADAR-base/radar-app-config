@@ -3,6 +3,7 @@ package org.radarbase.appconfig.inject
 import com.hazelcast.config.Config
 import com.hazelcast.core.Hazelcast
 import com.hazelcast.core.HazelcastInstance
+import com.hazelcast.jet.config.JetConfig
 import org.radarbase.lang.expression.VariableResolver
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.HazelcastConfig
@@ -12,7 +13,9 @@ import jakarta.inject.Singleton
 import javax.persistence.EntityManager
 import jakarta.ws.rs.core.Context
 
-class HibernatePersistenceResourceEnhancer(private val hazelcastConfig: HazelcastConfig) : JerseyResourceEnhancer {
+class HibernatePersistenceResourceEnhancer(
+    private val hazelcastConfig: HazelcastConfig,
+) : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {
         System.setProperty("hazelcast.logging.type", "slf4j");
         val hzConfig = if (hazelcastConfig.configPath != null) {
