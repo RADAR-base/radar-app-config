@@ -6,7 +6,7 @@ services:
   # Management Portal                                                         #
   #---------------------------------------------------------------------------#
   managementportal:
-    image: radarbase/management-portal:0.7.1
+    image: radarbase/management-portal:0.8.0
     depends_on:
       - mp-postgresql
     environment:
@@ -75,7 +75,7 @@ services:
       - "traefik.http.services.appconfigfrontend.loadbalancer.server.port=8080"
 
   traefik:
-    image: traefik:2.4
+    image: traefik:2.5
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --api.insecure=true --providers.docker

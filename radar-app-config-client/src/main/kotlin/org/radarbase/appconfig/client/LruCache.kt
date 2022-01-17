@@ -5,7 +5,7 @@ import java.time.Instant
 import java.util.LinkedHashMap
 
 @Suppress("unused")
-class LruCache<K, V>(private val maxAge: Duration, private val capacity: Int) {
+class LruCache<K, V>(private val maxAge: Duration, private val capacity: Int): Iterable<Pair<K, V>> {
     private val map: MutableMap<K, Node> = LinkedHashMap<K, Node>(16, 0.75f, true)
 
     @Synchronized
@@ -16,6 +16,25 @@ class LruCache<K, V>(private val maxAge: Duration, private val capacity: Int) {
             return null
         }
         return value.value
+    }
+
+    @Synchronized
+    operator fun contains(key: K): Boolean = map.containsKey(key)
+
+    override operator fun iterator(): Iterator<Pair<K, V>> = object : AbstractIterator<Pair<K, V>>() {
+        val iterator = map.entries.iterator()
+        override fun computeNext() {
+            synchronized(this@LruCache) {
+                while (iterator.hasNext()) {
+                    val next = iterator.next()
+                    if (!next.value.isExpired) {
+                        setNext(next.key to next.value.value)
+                        return
+                    }
+                }
+                done()
+            }
+        }
     }
 
     fun computeIfAbsent(key: K, computation: () -> V): V = get(key)
