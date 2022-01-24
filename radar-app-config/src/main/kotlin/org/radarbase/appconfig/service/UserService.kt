@@ -7,7 +7,7 @@ import nl.thehyve.lang.expression.toVariable
 import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.service.ConfigService.Companion.userScope
-import org.radarbase.appconfig.service.MPProjectService.Companion.projectScope
+import org.radarbase.appconfig.service.ConfigProjectServiceImpl.Companion.projectScope
 import jakarta.ws.rs.core.Context
 
 class UserService(

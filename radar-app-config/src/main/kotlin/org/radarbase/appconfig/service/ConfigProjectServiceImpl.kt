@@ -5,7 +5,7 @@ import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import jakarta.ws.rs.core.Context
 
-class MPProjectService(
+class ConfigProjectServiceImpl(
     @Context private val resolver: ClientVariableResolver,
 ) : ConfigProjectService {
     override fun projectConfig(clientId: String, projectId: String): ClientConfig {

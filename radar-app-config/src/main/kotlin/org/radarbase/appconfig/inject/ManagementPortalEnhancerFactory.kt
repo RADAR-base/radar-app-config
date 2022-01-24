@@ -5,9 +5,10 @@ import nl.thehyve.lang.expression.*
 import nl.thehyve.lang.expression.Function
 import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
-import org.radarbase.jersey.config.ConfigLoader
-import org.radarbase.jersey.config.EnhancerFactory
-import org.radarbase.jersey.config.JerseyResourceEnhancer
+import org.radarbase.jersey.enhancer.EnhancerFactory
+import org.radarbase.jersey.enhancer.Enhancers
+import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
+import org.radarbase.jersey.enhancer.MapperResourceEnhancer
 import org.radarbase.jersey.hibernate.config.HibernateResourceEnhancer
 
 /** This binder needs to register all non-Jersey classes, otherwise initialization fails. */
@@ -24,31 +25,34 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
             )
             listOf(
                 HibernateResourceEnhancer(databaseConfig),
-                HibernatePersistenceResourceEnhancer(config.hazelcast)
+                HibernatePersistenceResourceEnhancer(config.hazelcast),
             )
         } else {
             listOf(InMemoryResourceEnhancer())
         }
 
-        val radarEnhancer = ConfigLoader.Enhancers.radar(config.auth)
-        radarEnhancer.mapper.registerModule(SimpleModule().apply {
-            val allowedFunctions = listOf<Function>(
-                SumFunction(),
-                ListVariablesFunction(),
-                CountFunction()
-            )
-            val deserializer = ExpressionDeserializer(ExpressionParser(allowedFunctions))
-
-            addDeserializer(Expression::class.java, deserializer)
-        })
+        val mapperEnhancer = MapperResourceEnhancer().apply {
+            mapper = MapperResourceEnhancer.createDefaultMapper()
+                .registerModule(SimpleModule().apply {
+                    val allowedFunctions = listOf<Function>(
+                        SumFunction(),
+                        ListVariablesFunction(),
+                        CountFunction(),
+                    )
+                    addDeserializer(
+                        Expression::class.java,
+                        ExpressionDeserializer(ExpressionParser(allowedFunctions)),
+                    )
+                })
+        }
 
         return listOf(
+            mapperEnhancer,
             AppConfigResourceEnhancer(config),
-            radarEnhancer,
-            ConfigLoader.Enhancers.managementPortal(config.auth),
-            ConfigLoader.Enhancers.health,
-            ConfigLoader.Enhancers.generalException,
-            ConfigLoader.Enhancers.httpException
+            Enhancers.radar(config.auth, includeMapper = false),
+            Enhancers.managementPortal(config.auth),
+            Enhancers.health,
+            Enhancers.exception,
         ) + resolverEnhancer
     }
 }

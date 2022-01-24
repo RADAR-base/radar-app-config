@@ -7,6 +7,7 @@ application {
     mainClass.set("org.radarbase.appconfig.MainKt")
     applicationDefaultJvmArgs = listOf(
         "-Djava.security.egd=file:/dev/./urandom",
+        "-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager",
         "--add-modules", "java.se",
         "--add-exports", "java.base/jdk.internal.ref=ALL-UNNAMED",
         "--add-opens", "java.base/java.lang=ALL-UNNAMED",
@@ -27,20 +28,28 @@ dependencies {
     implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
     implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
 
-    implementation("com.hazelcast:hazelcast-hibernate53:${project.property("hazelcastHibernateVersion")}")
-    implementation("com.hazelcast:hazelcast:${project.property("hazelcastVersion")}")
-    runtimeOnly("com.hazelcast:hazelcast-kubernetes:${project.property("hazelcastKubernetesVersion")}")
+    val hazelcastHibernateVersion: String by project
+    implementation("com.hazelcast:hazelcast-hibernate53:$hazelcastHibernateVersion")
+    val hazelcastVersion: String by project
+    implementation("com.hazelcast:hazelcast:$hazelcastVersion")
+    val hazelcastKubernetesVersion: String by project
+    runtimeOnly("com.hazelcast:hazelcast-kubernetes:$hazelcastKubernetesVersion")
 
     implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
     runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
-    val logbackVersion: String by project
-    runtimeOnly("ch.qos.logback:logback-classic:$logbackVersion")
+    val slf4jVersion: String by project
+    implementation("org.slf4j:slf4j-api:$slf4jVersion")
+    val log4j2Version: String by project
+    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
+    runtimeOnly("org.apache.logging.log4j:log4j-api:$log4j2Version")
+    runtimeOnly("org.apache.logging.log4j:log4j-jul:$log4j2Version")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.1")
-    testImplementation("org.hamcrest:hamcrest-all:1.3")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+    val junitVersion: String by project
+    testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+    testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 }
 
 tasks.withType<Test> {
@@ -59,8 +68,15 @@ tasks.withType<Tar> {
 
 tasks.register("downloadDependencies") {
     doLast {
-        configurations["runtimeClasspath"].files
-        configurations["compileClasspath"].files
-        println("Downloaded all dependencies")
+        configurations.compileClasspath.get().files
+        println("Downloaded compile-time dependencies")
+    }
+}
+
+tasks.register<Copy>("copyDependencies") {
+    from(configurations.runtimeClasspath.map { it.files })
+    into("$buildDir/third-party/")
+    doLast {
+        println("Copied third-party runtime dependencies")
     }
 }

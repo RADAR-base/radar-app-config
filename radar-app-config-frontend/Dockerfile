@@ -40,7 +40,7 @@ RUN find . -type f "(" \
     | xargs -0 -n 1 gzip -k
 
 # Stage 2, based on Nginx, to have only the compiled app, ready for production with Nginx
-FROM nginxinc/nginx-unprivileged:1.19-alpine
+FROM nginxinc/nginx-unprivileged:1.20-alpine
 
 ## Remove default Nginx website
 #RUN rm -rf /usr/share/nginx/html/*

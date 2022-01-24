@@ -17,6 +17,7 @@ import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
+import org.radarbase.jersey.cache.Cache
 import org.radarbase.management.client.MPProject
 
 @Path("projects")
@@ -31,6 +32,7 @@ class ProjectResource(
     @Context private val clientService: ClientService,
 ) {
     @GET
+    @Cache(maxAge = 300, isPrivate = true)
     @NeedsPermission(Entity.PROJECT, Operation.READ)
     fun listProjects(@Context auth: Auth) = ProjectList(
         radarProjectService.userProjects(auth)
@@ -40,6 +42,7 @@ class ProjectResource(
     @GET
     @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
     @Path("{projectId}")
+    @Cache(maxAge = 3600, isPrivate = true)
     fun get(@PathParam("projectId") projectId: String): Project =
         radarProjectService.project(projectId).toProject()
 

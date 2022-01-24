@@ -20,7 +20,7 @@ internal class UserServiceTest {
 
         val conditionService = ConditionService(resolver, ClientInterpreter(resolver))
         userService = UserService(conditionService, resolver)
-        projectService = MPProjectService(resolver)
+        projectService = ConfigProjectServiceImpl(resolver)
     }
 
     @Test
