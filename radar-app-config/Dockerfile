@@ -10,26 +10,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM gradle:7.0-jdk11 as builder
+FROM gradle:7.3-jdk17 as builder
 
 RUN mkdir /code
 WORKDIR /code
-ENV GRADLE_USER_HOME=/code/.gradlecache
+ENV GRADLE_USER_HOME=/code/.gradlecache \
+   GRADLE_OPTS=-Djdk.lang.Process.launchMechanism=vfork
 
 COPY build.gradle.kts settings.gradle.kts gradle.properties /code/
 COPY radar-app-config/build.gradle.kts  /code/radar-app-config/
 COPY radar-expression-lang/build.gradle.kts  /code/radar-expression-lang/
-RUN gradle :radar-app-config:downloadDependencies --no-watch-fs
+
+RUN gradle downloadDependencies copyDependencies startScripts --no-watch-fs
 
 COPY radar-expression-lang/src /code/radar-expression-lang/src
 COPY radar-app-config/src /code/radar-app-config/src
 
-RUN gradle :radar-app-config:distTar --no-watch-fs \
-    && cd radar-app-config/build/distributions \
-    && tar zxf *.tar.gz \
-    && rm *.tar.gz radar-app-config*/lib/radar-app-config*.jar
+RUN gradle jar --no-watch-fs
 
-FROM openjdk:11-jre-slim
+FROM azul/zulu-openjdk-alpine:17-jre-headless
 
 MAINTAINER @nivemaham @blootsvoets
 
@@ -39,16 +38,14 @@ LABEL description="RADAR-base radar app config container"
 ENV JAVA_OPTS="" \
     RADAR_APP_CONFIG_OPTS=""
 
+RUN apk add --no-cache curl
 RUN mkdir -p /var/lib/radar-app-config/data
 WORKDIR /var/lib/radar-app-config
 
-RUN apt-get update && apt-get install -y \
-  curl \
-  && rm -rf /var/lib/apt/lists/*
-
-COPY --from=builder /code/radar-app-config/build/distributions/radar-app-config*/bin/* /usr/bin/
-COPY --from=builder /code/radar-app-config/build/distributions/radar-app-config*/lib/* /usr/lib/
-COPY --from=builder /code/radar-app-config/build/libs/radar-app-config*.jar /usr/lib/
+COPY --from=builder /code/radar-app-config/build/third-party/* /usr/lib/
+COPY --from=builder /code/radar-app-config/build/scripts/* /usr/bin/
+COPY --from=builder /code/radar-expression-lang/build/libs/* /usr/lib/
+COPY --from=builder /code/radar-app-config/build/libs/* /usr/lib/
 
 USER 101
 

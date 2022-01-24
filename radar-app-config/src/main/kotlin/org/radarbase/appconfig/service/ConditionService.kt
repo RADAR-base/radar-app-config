@@ -7,7 +7,7 @@ import org.radarbase.appconfig.inject.ClientInterpreter
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.service.ConfigService.Companion.globalScope
 import org.radarbase.appconfig.service.ConfigService.Companion.userScope
-import org.radarbase.appconfig.service.MPProjectService.Companion.projectScope
+import org.radarbase.appconfig.service.ConfigProjectServiceImpl.Companion.projectScope
 import jakarta.ws.rs.core.Context
 
 

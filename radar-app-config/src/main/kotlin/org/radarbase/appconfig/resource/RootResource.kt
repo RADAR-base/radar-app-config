@@ -13,6 +13,7 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
+import org.radarbase.jersey.cache.Cache
 import org.radarbase.management.client.MPOAuthClient
 
 /** Root path, just forward requests without authentication. */
@@ -26,6 +27,7 @@ class RootResource(
 ) {
     @Path("clients")
     @GET
+    @Cache(maxAge = 3600, isPrivate = true)
     @NeedsPermission(Permission.Entity.OAUTHCLIENTS, Permission.Operation.READ)
     fun clients() = OAuthClientList(
         clientService.readClients()

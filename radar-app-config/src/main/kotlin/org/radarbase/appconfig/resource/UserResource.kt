@@ -15,6 +15,7 @@ import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
+import org.radarbase.jersey.cache.Cache
 import org.radarbase.management.client.MPSubject
 
 /** Root path, just forward requests without authentication. */
@@ -29,6 +30,7 @@ class UserResource(
     @Context private val radarProjectService: RadarProjectService,
 ) {
     @GET
+    @Cache(maxAge = 60, isPrivate = true)
     @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ, "projectId")
     fun userClientConfig(
         @PathParam("projectId") projectId: String,
@@ -41,6 +43,7 @@ class UserResource(
 
     @Path("/{userId}")
     @GET
+    @Cache(maxAge = 60, isPrivate = true)
     @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ, "projectId", "userId")
     fun userClientConfig(
         @PathParam("projectId") projectId: String,
