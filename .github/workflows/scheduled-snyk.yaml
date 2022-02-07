@@ -15,8 +15,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
-          cache: npm
-          cache-dependency-path: '**/package-lock.json'
 
       - uses: actions/setup-java@v2
         with:
