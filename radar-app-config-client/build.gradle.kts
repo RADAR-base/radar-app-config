@@ -2,6 +2,8 @@ plugins {
     kotlin("jvm")
 }
 
+description = "Kotlin Client SDK to the radar-app-config API"
+
 dependencies {
     api(project(":radar-app-config-core"))
     val okhttpVersion: String by project

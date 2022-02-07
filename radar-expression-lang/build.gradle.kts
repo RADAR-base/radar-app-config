@@ -4,6 +4,8 @@ plugins {
     id("org.jetbrains.gradle.plugin.idea-ext")
 }
 
+description = "RADAR app condition expression language"
+
 sourceSets {
     main {
         java.srcDir("$buildDir/generated-src/antlr/main")
