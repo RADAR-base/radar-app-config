@@ -3,7 +3,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     kotlin("jvm") apply false
-    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.1"
+    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.3"
     id("com.github.ben-manes.versions")
     id("org.jetbrains.dokka") apply false
     `maven-publish`
