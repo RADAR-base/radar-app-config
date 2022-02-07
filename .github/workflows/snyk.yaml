@@ -8,16 +8,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Run Snyk to check for Kotlin vulnerabilities
-      uses: snyk/actions/gradle-jdk11@master
+    - uses: snyk/actions/setup@master
+
+    - name: Use Node.js 14
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+        cache: npm
+        cache-dependency-path: '**/package-lock.json'
+
+    - uses: actions/setup-java@v2
+      with:
+        distribution: zulu
+        java-version: 17
+
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+
+    - name: Run Snyk to check for vulnerabilities
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        args: --severity-threshold=high --all-sub-projects --policy-path=.snyk
-    - name: Run Snyk to check for Node vulnerabilities
-      uses: snyk/actions/node@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        args: radar-app-config-frontend --severity-threshold=high --policy-path=.snyk
-      if: ${{ !cancelled() }}
+      run: snyk test --all-projects --org=radar-base  --fail-on=upgradable --configuration-matching='^runtimeClasspath$'

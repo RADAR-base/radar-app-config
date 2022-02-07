@@ -6,9 +6,9 @@ import {UserService} from '@app/pages/services/user.service';
 import {ConfigService} from '@app/pages/services/config.service';
 import {Project} from '@app/pages/models/project';
 import {Client} from '@app/pages/models/client';
-import {ToastService} from '@app/shared/services/toast.service';
 import {User} from "@app/pages/models/user";
 import {TranslateService} from "@app/shared/services/translate.service";
+import {ConfigElement} from "@app/pages/models/config";
 
 @Component({
   selector: 'app-configs',
@@ -20,11 +20,12 @@ export class ConfigsComponent implements OnInit {
   projectId;
   clientId;
   userId;
-  configs;
+  configs: ConfigElement[];
+  user: User | null;
 
-  projects: [Project] | null;
-  clients: [Client] | null;
-  users: [User] | null;
+  projects: Project[] | null;
+  clients: Client[] | null;
+  users: User[] | null;
   loading = true;
 
   constructor(
@@ -34,8 +35,7 @@ export class ConfigsComponent implements OnInit {
     private userService: UserService,
     private configService: ConfigService,
     private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private toastService: ToastService) {}
+    private router: Router) {}
 
   async ngOnInit() {
     this.activatedRoute.queryParams.subscribe(() => {
@@ -52,6 +52,7 @@ export class ConfigsComponent implements OnInit {
     this.clients = await this.getClients();
     this.users = await this.getUsers();
 
+    this.updateUser();
     this.updateConfigs();
   }
 
@@ -74,11 +75,16 @@ export class ConfigsComponent implements OnInit {
   }
 
   onProjectChange(event) {
-    this.projectId = event.name;
-    const tempObject = {...this.activatedRoute.snapshot.queryParams};
-    tempObject.project = this.projectId;
-    this.updateConfigs();
-    this.router.navigate(['/configs'], {queryParams: tempObject});
+    if (this.projectId === event.name) {
+      return;
+    } else {
+      const queryParams: any = {
+        ...this.activatedRoute.snapshot.queryParams,
+        project: event.name,
+      };
+      delete queryParams.user;
+      this.router.navigate(['/users'], {queryParams});
+    }
   }
 
   onClientChange(event) {
@@ -90,11 +96,20 @@ export class ConfigsComponent implements OnInit {
   }
 
   onUserChange(event) {
-    this.clientId = event.id;
+    this.userId = event.id;
     const tempObject = {...this.activatedRoute.snapshot.queryParams};
-    tempObject.client = this.clientId;
+    tempObject.user = this.userId;
+    this.updateUser();
     this.updateConfigs();
     this.router.navigate(['/configs'], {queryParams: tempObject});
+  }
+
+  private updateUser() {
+    if (this.userId) {
+      this.user = this.users.find(u => u.id === this.userId) || {id: this.userId, name: this.userId};
+    } else {
+      this.user = null;
+    }
   }
 
   async updateConfigs() {
@@ -103,24 +118,17 @@ export class ConfigsComponent implements OnInit {
       this.configs = await this.configService.getConfigByProjectIdUserIdClientId(this.projectId, this.userId, this.clientId);
     } else if (this.projectId && this.clientId && !this.userId) {
       this.configs = await this.configService.getConfigByProjectIdClientId(this.projectId, this.clientId);
-
     }
     this.loading = false;
   }
 
   onSave(event) {
-    const newConfigArray = event.config.filter(c => c.value !== c.default).map(c => ({name: c.name, value: c.value}));
     if (this.projectId && this.clientId && this.userId) {
-      this.configService.postConfigByProjectIdAndClientIdAndUserId(this.projectId, this.clientId, this.userId, {config: newConfigArray})
-        .subscribe(() => {
-          // tslint:disable-next-line:max-line-length
-          this.toastService.showSuccess(`Configurations of Project: ${this.projectId} - Application: ${this.clientId} - User: ${this.userId} changed.`);
-        });
+      this.configService.postConfigByProjectIdAndClientIdAndUserId(this.projectId, this.clientId, this.userId, event.config)
+        .subscribe((config) => this.configs = config);
     } else if (this.projectId && this.clientId && !this.userId) {
-        this.configService.postConfigByProjectIdAndClientId(this.projectId, this.clientId, {config: newConfigArray})
-        .subscribe(() => {
-          this.toastService.showSuccess(`Configurations of Project: ${this.projectId} - Application: ${this.clientId} changed.`);
-        });
+        this.configService.postConfigByProjectIdAndClientId(this.projectId, this.clientId, event.config)
+        .subscribe((config) => this.configs = config);
     }
   }
 

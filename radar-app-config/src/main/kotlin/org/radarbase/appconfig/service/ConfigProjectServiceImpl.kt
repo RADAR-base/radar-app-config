@@ -1,9 +1,9 @@
 package org.radarbase.appconfig.service
 
-import nl.thehyve.lang.expression.*
-import org.radarbase.appconfig.domain.ClientConfig
+import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import jakarta.ws.rs.core.Context
+import org.radarbase.lang.expression.*
 
 class ConfigProjectServiceImpl(
     @Context private val resolver: ClientVariableResolver,
@@ -20,7 +20,7 @@ class ConfigProjectServiceImpl(
         resolver[clientId].replace(
             projectScope(projectId),
             null,
-            clientConfig.config.stream()
+            clientConfig.config.asSequence()
                 .map { (innerId, value, _) ->
                     Pair(QualifiedId(innerId), value?.toVariable() ?: NullLiteral())
                 })

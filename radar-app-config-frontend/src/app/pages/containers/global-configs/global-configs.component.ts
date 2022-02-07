@@ -5,6 +5,7 @@ import {ConfigService} from '@app/pages/services/config.service';
 import {ToastService} from '@app/shared/services/toast.service';
 import {ClientService} from '@app/pages/services/client.service';
 import {TranslateService} from "@app/shared/services/translate.service";
+import {ConfigElement} from "@app/pages/models/config";
 
 @Component({
   selector: 'app-global-configs',
@@ -14,7 +15,7 @@ import {TranslateService} from "@app/shared/services/translate.service";
 export class GlobalConfigsComponent implements OnInit {
 
   clientId: string;
-  configs;
+  configs: ConfigElement[];
   clients: [Client] | null;
   loading = true;
 
@@ -52,9 +53,8 @@ export class GlobalConfigsComponent implements OnInit {
   }
 
   onSave(event) {
-    const newConfigArray = event.config.map(c => ({name: c.name, value: c.value}));
-    this.configService.postGlobalConfigByClientId(this.clientId, {config: newConfigArray}).subscribe(() => {
-      this.toastService.showSuccess(`Global Configurations of App: ${this.clientId} changed.`);
+    this.configService.postGlobalConfigByClientId(this.clientId, event.config).subscribe((config) => {
+      this.configs = config;
     });
   }
 

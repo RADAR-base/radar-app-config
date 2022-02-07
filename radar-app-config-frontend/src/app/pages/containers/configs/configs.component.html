@@ -18,14 +18,14 @@
            [routerLink]="['/configs']"
            [queryParams]="makeQueryParams()"
            [state]="makeState()">
-          {{'client.allGroupsAndUsers' | translate}}
+          {{'client.project' | translate}}
         </a>
-        <a class="btn btn-secondary btn tab-button"
-           [ngClass]="{'active': isActive('group')}"
-           [routerLink]="['/groups']"
-           [queryParams]="makeQueryParams()"
-           [state]="makeState()">{{'group.groups' | translate}}
-        </a>
+<!--        <a class="btn btn-secondary btn tab-button"-->
+<!--           [ngClass]="{'active': isActive('group')}"-->
+<!--           [routerLink]="['/groups']"-->
+<!--           [queryParams]="makeQueryParams()"-->
+<!--           [state]="makeState()">{{'group.groups' | translate}}-->
+<!--        </a>-->
         <a class="btn btn-secondary btn tab-button"
            [ngClass]="{'active': isActive('user')}"
            [routerLink]="['/users']"
@@ -87,9 +87,9 @@
           <div class="row mb-3">
             <app-dropdown class="col-md-6"
                           [data]="users"
-                          [field]="'id'"
+                          [field]="'name'"
                           [label]="'user.user' | translate"
-                          [selected]="userId"
+                          [selected]="user ? user.name : userId"
                           (change)="onUserChange($event)"></app-dropdown>
           </div>
         </div>

@@ -1,7 +1,7 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.domain.Condition
-import org.radarbase.appconfig.domain.ConditionList
+import org.radarbase.appconfig.api.Condition
+import org.radarbase.appconfig.api.ConditionList
 import org.radarbase.appconfig.service.ConditionService
 import org.radarbase.appconfig.service.ConfigProjectService
 import org.radarbase.auth.authorization.Permission

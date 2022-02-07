@@ -20,9 +20,14 @@ ENV GRADLE_USER_HOME=/code/.gradlecache \
 COPY build.gradle.kts settings.gradle.kts gradle.properties /code/
 COPY radar-app-config/build.gradle.kts  /code/radar-app-config/
 COPY radar-expression-lang/build.gradle.kts  /code/radar-expression-lang/
+COPY radar-expression-lang-antlr/build.gradle.kts  /code/radar-expression-lang-antlr/
+COPY radar-app-config-core/build.gradle.kts  /code/radar-app-config-core/
+COPY radar-app-config-client/build.gradle.kts  /code/radar-app-config-client/
 
 RUN gradle downloadDependencies copyDependencies startScripts --no-watch-fs
 
+COPY radar-expression-lang-antlr/src  /code/radar-expression-lang-antlr/src
+COPY radar-app-config-core/src  /code/radar-app-config-core/src
 COPY radar-expression-lang/src /code/radar-expression-lang/src
 COPY radar-app-config/src /code/radar-app-config/src
 

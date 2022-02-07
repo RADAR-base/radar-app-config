@@ -1,17 +1,15 @@
-package nl.thehyve.lang.expression
+package org.radarbase.lang.expression
 
 import java.math.BigDecimal
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 data class ResolvedVariable(val scope: Scope, val id: QualifiedId, val variable: Variable)
 
 interface VariableResolver {
-    fun replace(scope: Scope, prefix: QualifiedId? = null, variables: Stream<Pair<QualifiedId, Variable>>)
+    fun replace(scope: Scope, prefix: QualifiedId? = null, variables: Sequence<Pair<QualifiedId, Variable>>)
     fun register(scope: Scope, id: QualifiedId, variable: Variable)
     fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable
-    fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Stream<ResolvedVariable>
-    fun list(scopes: List<Scope>, prefix: QualifiedId?): Stream<QualifiedId>
+    fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Sequence<ResolvedVariable>
+    fun list(scopes: List<Scope>, prefix: QualifiedId?): Sequence<QualifiedId>
 }
 
 fun VariableResolver.register(functions: List<Function>) {
@@ -45,9 +43,9 @@ fun Boolean.toVariable(): BooleanLiteral = BooleanLiteral(this)
 class DirectVariableResolver : VariableResolver {
     private val variables = mutableMapOf<Scope, MutableMap<QualifiedId, Variable>>()
 
-    override fun list(scopes: List<Scope>, prefix: QualifiedId?): Stream<QualifiedId> {
-        var refStream = scopes.stream()
-            .flatMap { variables[it]?.keys?.stream() ?: Stream.empty() }
+    override fun list(scopes: List<Scope>, prefix: QualifiedId?): Sequence<QualifiedId> {
+        var refStream = scopes.asSequence()
+            .flatMap { variables[it]?.keys?.asSequence() ?: emptySequence() }
             .distinct()
 
         val usePrefix = prefix?.names ?: listOf()
@@ -62,9 +60,8 @@ class DirectVariableResolver : VariableResolver {
         return refStream
     }
 
-    override fun replace(scope: Scope, prefix: QualifiedId?, variables: Stream<Pair<QualifiedId, Variable>>) {
-        val newVariables = variables
-            .collect(Collectors.toMap({ it.first }, { it.second }))
+    override fun replace(scope: Scope, prefix: QualifiedId?, variables: Sequence<Pair<QualifiedId, Variable>>) {
+        val newVariables = variables.toMap()
         this.variables[scope] = if (prefix == null) {
             newVariables
         } else {
@@ -80,21 +77,17 @@ class DirectVariableResolver : VariableResolver {
         root[id] = variable
     }
 
-    override fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Stream<ResolvedVariable> {
+    override fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Sequence<ResolvedVariable> {
         val usePrefix = QualifiedId(prefix?.names ?: listOf())
 
-        return scopes.stream()
-            .flatMap { scope ->
-                var variableStream = variables[scope]?.entries?.stream()
-
+        return scopes.asSequence()
+            .mapNotNull { scope -> variables[scope]?.let { scope to it } }
+            .flatMap { (scope, scopeVariables) ->
+                var variableStream = scopeVariables.entries.asSequence()
                 if (!usePrefix.isEmpty()) {
-                    variableStream = variableStream
-                        ?.filter { it.key.isPrefixedBy(usePrefix) }
+                    variableStream = variableStream.filter { (k) -> k.isPrefixedBy(usePrefix) }
                 }
-
-                variableStream
-                    ?.map { ResolvedVariable(scope, it.key, it.value) }
-                    ?: Stream.empty()
+                variableStream.map { (k, v) -> ResolvedVariable(scope, k, v) }
             }
     }
 

@@ -1,9 +1,9 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.domain.User
-import org.radarbase.appconfig.domain.UserList
-import org.radarbase.appconfig.domain.toUser
+import org.radarbase.appconfig.api.ClientConfig
+import org.radarbase.appconfig.api.User
+import org.radarbase.appconfig.api.UserList
+import org.radarbase.appconfig.api.toUser
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.UserService
 import org.radarbase.auth.authorization.Permission

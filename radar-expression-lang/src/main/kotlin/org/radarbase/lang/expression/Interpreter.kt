@@ -1,4 +1,4 @@
-package nl.thehyve.lang.expression
+package org.radarbase.lang.expression
 
 class InterpreterException(val expression: Expression, cause: Throwable) : RuntimeException(cause.message, cause)
 
