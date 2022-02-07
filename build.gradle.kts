@@ -114,42 +114,44 @@ configure(listOf(
         artifact(sourcesJar)
         artifact(dokkaJar)
 
-        pom {
-            name.set(myProject.name)
-            description.set(myProject.description)
-            url.set(githubUrl)
-            licenses {
-                license {
-                    name.set("The Apache Software License, Version 2.0")
-                    url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                    distribution.set("repo")
-                }
-            }
-            developers {
-                developer {
-                    id.set("blootsvoets")
-                    name.set("Joris Borgdorff")
-                    email.set("joris@thehyve.nl")
-                    organization.set("The Hyve")
-                }
-                developer {
-                    id.set("nivemaham")
-                    name.set("Nivethika Mahasivam")
-                    email.set("nivethika@thehyve.nl")
-                    organization.set("The Hyve")
-                }
-            }
-            issueManagement {
-                system.set("GitHub")
-                url.set(githubIssueUrl)
-            }
-            organization {
-                name.set("RADAR-base")
-                url.set("https://radar-base.org")
-            }
-            scm {
-                connection.set("scm:git:$githubUrl")
+        afterEvaluate {
+            pom {
+                name.set(myProject.name)
+                description.set(myProject.description)
                 url.set(githubUrl)
+                licenses {
+                    license {
+                        name.set("The Apache Software License, Version 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                        distribution.set("repo")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("blootsvoets")
+                        name.set("Joris Borgdorff")
+                        email.set("joris@thehyve.nl")
+                        organization.set("The Hyve")
+                    }
+                    developer {
+                        id.set("nivemaham")
+                        name.set("Nivethika Mahasivam")
+                        email.set("nivethika@thehyve.nl")
+                        organization.set("The Hyve")
+                    }
+                }
+                issueManagement {
+                    system.set("GitHub")
+                    url.set(githubIssueUrl)
+                }
+                organization {
+                    name.set("RADAR-base")
+                    url.set("https://radar-base.org")
+                }
+                scm {
+                    connection.set("scm:git:$githubUrl")
+                    url.set(githubUrl)
+                }
             }
         }
     }
