@@ -1,9 +1,8 @@
-package nl.thehyve.lang.expression
+package org.radarbase.lang.expression
 
 import java.util.*
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
-import kotlin.NoSuchElementException
 import kotlin.math.min
 
 internal fun <A, B> Stream<A>.zipOrNull(other: Stream<out B>): Stream<Pair<A?, B?>> {

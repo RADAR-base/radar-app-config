@@ -1,9 +1,9 @@
 package org.radarbase.appconfig.service
 
-import nl.thehyve.lang.expression.*
-import org.radarbase.appconfig.domain.ClientConfig
+import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import jakarta.ws.rs.core.Context
+import org.radarbase.lang.expression.*
 
 class ConfigService(
     @Context private val resolver: ClientVariableResolver,
@@ -18,7 +18,7 @@ class ConfigService(
     }
 
     fun putGlobalConfig(config: ClientConfig, clientId: String) {
-        resolver[clientId].replace(globalScope, null, config.config.stream()
+        resolver[clientId].replace(globalScope, null, config.config.asSequence()
             .map { (innerId, variable, _) ->
                 QualifiedId(innerId) to
                         (variable?.toVariable() ?: NullLiteral())

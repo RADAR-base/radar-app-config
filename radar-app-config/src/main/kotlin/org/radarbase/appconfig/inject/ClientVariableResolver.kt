@@ -1,6 +1,6 @@
 package org.radarbase.appconfig.inject
 
-import nl.thehyve.lang.expression.VariableResolver
+import org.radarbase.lang.expression.VariableResolver
 
 interface ClientVariableResolver {
     operator fun get(clientId: String): VariableResolver

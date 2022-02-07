@@ -1,9 +1,9 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.domain.Project
-import org.radarbase.appconfig.domain.ProjectList
-import org.radarbase.appconfig.domain.toProject
+import org.radarbase.appconfig.api.ClientConfig
+import org.radarbase.appconfig.api.Project
+import org.radarbase.appconfig.api.ProjectList
+import org.radarbase.appconfig.api.toProject
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigProjectService
 import org.radarbase.appconfig.service.ConfigService
@@ -28,7 +28,6 @@ import org.radarbase.management.client.MPProject
 class ProjectResource(
     @Context private val radarProjectService: RadarProjectService,
     @Context private val projectService: ConfigProjectService,
-    @Context private val configService: ConfigService,
     @Context private val clientService: ClientService,
 ) {
     @GET

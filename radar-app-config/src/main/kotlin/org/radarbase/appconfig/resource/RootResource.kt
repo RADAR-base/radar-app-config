@@ -1,7 +1,7 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.domain.OAuthClientList
-import org.radarbase.appconfig.domain.toOAuthClient
+import org.radarbase.appconfig.api.OAuthClientList
+import org.radarbase.appconfig.api.toOAuthClient
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated

@@ -1,10 +1,10 @@
 package org.radarbase.appconfig.service
 
-import nl.thehyve.lang.expression.NullLiteral
-import nl.thehyve.lang.expression.QualifiedId
-import nl.thehyve.lang.expression.Scope
-import nl.thehyve.lang.expression.toVariable
-import org.radarbase.appconfig.domain.ClientConfig
+import org.radarbase.lang.expression.NullLiteral
+import org.radarbase.lang.expression.QualifiedId
+import org.radarbase.lang.expression.Scope
+import org.radarbase.lang.expression.toVariable
+import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.service.ConfigService.Companion.userScope
 import org.radarbase.appconfig.service.ConfigProjectServiceImpl.Companion.projectScope
@@ -18,7 +18,7 @@ class UserService(
         resolver[clientId].replace(
             userScope(userId),
             null,
-            clientConfig.config.stream()
+            clientConfig.config.asSequence()
                 .map { (innerId, value, _) ->
                     Pair(QualifiedId(innerId), value?.toVariable() ?: NullLiteral())
                 })

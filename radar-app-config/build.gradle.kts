@@ -14,7 +14,9 @@ application {
         "--add-opens", "java.base/java.nio=ALL-UNNAMED",
         "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
         "--add-opens", "java.management/sun.management=ALL-UNNAMED",
-        "--add-opens", "jdk.management/com.sun.management.internal=ALL-UNNAMED"
+        "--add-opens", "jdk.management/com.sun.management.internal=ALL-UNNAMED",
+        "-Dhazelcast.security.recommendations",
+        "-Dhazelcast.socket.server.bind.any=false",
     )
 }
 
@@ -22,11 +24,19 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    implementation(project(":radar-expression-lang"))
+    implementation(project(":radar-app-config-core"))
+
+    val jacksonVersion: String by project
+    implementation(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
 
     val radarJerseyVersion: String by project
-    implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
-    implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
+    implementation("org.radarbase:radar-jersey:$radarJerseyVersion") {
+        exclude(group="com.fasterxml.jackson.jaxrs", module="jackson-jaxrs-json-provider")
+        runtimeOnly("com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider")
+    }
+    implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion") {
+        exclude(group="com.fasterxml.jackson.jaxrs", module="jackson-jaxrs-json-provider")
+    }
 
     val hazelcastHibernateVersion: String by project
     implementation("com.hazelcast:hazelcast-hibernate53:$hazelcastHibernateVersion")
@@ -34,9 +44,6 @@ dependencies {
     implementation("com.hazelcast:hazelcast:$hazelcastVersion")
     val hazelcastKubernetesVersion: String by project
     runtimeOnly("com.hazelcast:hazelcast-kubernetes:$hazelcastKubernetesVersion")
-
-    implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
-    runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
 
     val slf4jVersion: String by project
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
