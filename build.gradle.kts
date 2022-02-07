@@ -16,7 +16,7 @@ allprojects {
     version = "0.4.1-SNAPSHOT"
 }
 
-val githubRepoName = "RADAR-base/radar-jersey"
+val githubRepoName = "RADAR-base/radar-app-config"
 val githubUrl = "https://github.com/$githubRepoName.git"
 val githubIssueUrl = "https://github.com/$githubRepoName/issues"
 
