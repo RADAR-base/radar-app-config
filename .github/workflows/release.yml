@@ -93,7 +93,6 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
 
       # Setup docker build environment
       - name: Set up QEMU
@@ -151,7 +150,6 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
 
       # Setup docker build environment
       - name: Set up QEMU
