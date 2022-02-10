@@ -4,13 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.radarbase.oauth.OAuth2Client
-import com.fasterxml.jackson.databind.DeserializationFeature
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.net.MalformedURLException
 import java.lang.IllegalArgumentException
 import java.net.URL
-import java.util.*
+import java.time.Duration
 
 @Suppress("unused")
 class AppConfigClientConfig<T>(val type: TypeReference<T>) {
@@ -24,6 +22,7 @@ class AppConfigClientConfig<T>(val type: TypeReference<T>) {
         }
     var mapper: ObjectMapper? = null
     var configPrefix: String? = null
+    var cacheMaxAge: Duration = Duration.ofHours(1)
     var cacheSize = 10_000
 
     fun tokenUrl(url: String?) {
@@ -41,4 +40,14 @@ class AppConfigClientConfig<T>(val type: TypeReference<T>) {
     fun appConfigUrl(url: String?) {
         appConfigUrl = url?.toHttpUrl()
     }
+
+    override fun toString(): String = "AppConfigClientConfig(" +
+        "type=$type, " +
+        "appConfigUrl=$appConfigUrl, " +
+        "tokenUrl=$tokenUrl, " +
+        "clientId=$clientId, " +
+        "clientSecret=$clientSecret, " +
+        "configPrefix=$configPrefix, " +
+        "cacheMaxAge=$cacheMaxAge, " +
+        "cacheSize=$cacheSize)"
 }

@@ -13,27 +13,34 @@ import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.exception.TokenException
 import org.radarbase.oauth.OAuth2Client
 import java.io.IOException
-import java.time.Duration
 
 @Suppress("unused")
 class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
-    private val client: OkHttpClient = config.httpClient ?: OkHttpClient()
+    private val oauth2ClientId: String
+    private val oauth2Client: OAuth2Client
 
-    private val oauth2ClientId: String = requireNotNull(config.clientId)
-    private val oauth2Client: OAuth2Client = OAuth2Client.Builder().apply {
-        httpClient(client)
-        endpoint(requireNotNull(config.tokenUrl))
-        credentials(oauth2ClientId, requireNotNull(config.clientSecret))
-    }.build()
-
-    private val baseUrl: HttpUrl = requireNotNull(config.appConfigUrl)
+    private val baseUrl: HttpUrl
     private val configPrefix: String? = config.configPrefix
     private val type: TypeReference<T> = config.type
-    private val cache: LruCache<String, T> = LruCache(Duration.ofHours(1), config.cacheSize)
-    private val objectMappers = ObjectMapperCache(config.mapper ?: ObjectMapper())
 
-    constructor(type: TypeReference<T>, builder: AppConfigClientConfig<T>.() -> Unit)
-        : this(AppConfigClientConfig(type).apply(builder))
+    private val cache: LruCache<String, T> = LruCache(config.cacheMaxAge, config.cacheSize)
+    private val objectMappers = ObjectMapperCache(config.mapper ?: ObjectMapper())
+    private val client: OkHttpClient = config.httpClient ?: OkHttpClient()
+
+    init {
+        oauth2ClientId = requireNotNull(config.clientId) { "App config client ID missing in $config" }
+        oauth2Client = OAuth2Client.Builder().apply {
+            httpClient(client)
+            endpoint(requireNotNull(config.tokenUrl) { "App config client token URL missing in $config" })
+            credentials(oauth2ClientId, requireNotNull(config.clientSecret) { "App config client secret missing in $config" })
+        }.build()
+        baseUrl = requireNotNull(config.appConfigUrl) { "App config client URL missing in $config" }
+    }
+
+    constructor(
+        type: TypeReference<T>,
+        builder: AppConfigClientConfig<T>.() -> Unit
+    ) : this(AppConfigClientConfig(type).apply(builder))
 
     @Throws(TokenException::class, IOException::class)
     fun getUserConfig(projectId: String, userId: String): T = cache.computeIfAbsent(userId) {
@@ -93,7 +100,8 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
                     }
                     throw IOException("Unknown response from AppConfig: $responseString")
                 }
-                return objectMappers.readerFor(ClientConfig::class.java).readValue(body.byteStream())
+                return objectMappers.readerFor(ClientConfig::class.java)
+                    .readValue(body.byteStream())
             }
         }
     }
