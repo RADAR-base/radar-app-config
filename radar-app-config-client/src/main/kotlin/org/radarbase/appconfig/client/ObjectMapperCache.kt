@@ -18,4 +18,7 @@ class ObjectMapperCache(val mapper: ObjectMapper) {
 
     fun writerFor(type: Class<*>): ObjectWriter =
         writerCache.computeIfAbsent(type) { mapper.writerFor(type) }
+
+    fun writerFor(type: TypeReference<*>): ObjectWriter =
+        writerCache.computeIfAbsent(type) { mapper.writerFor(type) }
 }

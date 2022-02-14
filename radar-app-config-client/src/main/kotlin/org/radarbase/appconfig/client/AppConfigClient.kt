@@ -3,6 +3,7 @@ package org.radarbase.appconfig.client
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.ObjectReader
 import okhttp3.HttpUrl
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
@@ -26,6 +27,9 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     private val cache: LruCache<String, T> = LruCache(config.cacheMaxAge, config.cacheSize)
     private val objectMappers = ObjectMapperCache(config.mapper ?: ObjectMapper())
     private val client: OkHttpClient = config.httpClient ?: OkHttpClient()
+    private val mapReader: ObjectReader by lazy {
+        objectMappers.readerFor(object : TypeReference<Map<String, Any>>() {})
+    }
 
     init {
         oauth2ClientId = requireNotNull(config.clientId) { "App config client ID missing in $config" }
@@ -43,8 +47,8 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     ) : this(AppConfigClientConfig(type).apply(builder))
 
     @Throws(TokenException::class, IOException::class)
-    fun getUserConfig(projectId: String, userId: String): T = cache.computeIfAbsent(userId) {
-        fetchConfig(projectId, userId)
+    fun getUserConfig(projectId: String, userId: String, clientId: String = oauth2ClientId): T = cache.computeIfAbsent(userId) {
+        fetchConfig(projectId, userId, clientId)
             .convertToLocalConfig()
     }
 
@@ -52,12 +56,20 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     fun setUserConfig(
         projectId: String,
         userId: String,
-        config: Map<String, String>
+        config: T,
+        includeKeys: Set<String>? = null,
+        clientId: String = oauth2ClientId,
     ): T {
-        val newConfig: ClientConfig = fetchConfig(projectId, userId)
-            .copyWithConfig(config)
+        val stringValue = objectMappers.writerFor(type).writeValueAsString(config)
+        var result: Map<String, Any> = mapReader.readValue(stringValue)
 
-        return putConfig(projectId, userId, newConfig)
+        if (includeKeys != null) {
+            result = result.filterKeys { it in includeKeys }
+        }
+        val newConfig: ClientConfig = fetchConfig(projectId, userId, clientId)
+            .copyWithConfig(result.mapValues { it.toString() })
+
+        return putConfig(projectId, userId, clientId, newConfig)
             .convertToLocalConfig()
             .also { cache[userId] = it }
     }
@@ -65,9 +77,10 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     @Throws(IOException::class, TokenException::class)
     private fun fetchConfig(
         projectId: String,
-        userId: String
+        userId: String,
+        clientId: String,
     ): ClientConfig {
-        val request: Request = buildConfigRequest(projectId, userId) {
+        val request: Request = buildConfigRequest(projectId, userId, clientId) {
             get()
         }
         return executeConfigRequest(request)
@@ -77,9 +90,10 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     private fun putConfig(
         projectId: String,
         userId: String,
+        clientId: String,
         config: ClientConfig
     ): ClientConfig {
-        val request: Request = buildConfigRequest(projectId, userId) {
+        val request: Request = buildConfigRequest(projectId, userId, clientId) {
             post(
                 objectMappers.writerFor(ClientConfig::class.java)
                     .writeValueAsString(config)
@@ -110,6 +124,7 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     private fun buildConfigRequest(
         projectId: String,
         userId: String,
+        clientId: String,
         builder: (Request.Builder.() -> Unit) = {}
     ): Request {
         val token = oauth2Client.validToken.accessToken
@@ -121,7 +136,7 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
                     addEncodedPathSegment("users")
                     addPathSegment(userId)
                     addEncodedPathSegment("config")
-                    addPathSegment(oauth2ClientId)
+                    addPathSegment(clientId)
                 }.build()
             )
             header("Authorization", "Bearer $token")
