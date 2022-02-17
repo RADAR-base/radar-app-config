@@ -67,7 +67,7 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
             result = result.filterKeys { it in includeKeys }
         }
         val newConfig: ClientConfig = fetchConfig(projectId, userId, clientId)
-            .copyWithConfig(result.mapValues { it.toString() })
+            .copyWithConfig(result.mapValues { (_, v) -> v.toString() })
 
         return putConfig(projectId, userId, clientId, newConfig)
             .convertToLocalConfig()
