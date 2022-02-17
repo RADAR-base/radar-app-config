@@ -2,7 +2,6 @@ package org.radarbase.appconfig.api
 
 import org.radarbase.lang.expression.ResolvedVariable
 import org.radarbase.lang.expression.Scope
-import java.util.stream.Collectors
 
 data class ClientConfig(
     val clientId: String?,
@@ -10,6 +9,16 @@ data class ClientConfig(
     val config: List<SingleVariable>,
     val defaults: List<SingleVariable>? = null
 ) {
+    fun with(other: ClientConfig): ClientConfig = ClientConfig(
+        clientId = clientId,
+        scope = scope,
+        config = (config.asSequence() + other.config.asSequence())
+            .associateBy { (k) -> k }
+            .values
+            .toList(),
+        defaults = defaults
+    )
+
     companion object {
         fun fromStream(
             clientId: String,
@@ -31,18 +40,5 @@ data class ClientConfig(
                     },
             )
         }
-    }
-
-    fun copyWithConfig(config: Map<String, String>): ClientConfig {
-        val existingConfig = this.config.asSequence()
-        val configUpdate = config.entries.asSequence()
-            .map { (k, v) -> SingleVariable(k, v, null) }
-
-        val newConfig = (existingConfig + configUpdate)
-            .associateBy { (k) -> k }
-            .values
-            .toList()
-
-        return ClientConfig(clientId, scope, newConfig, defaults);
     }
 }

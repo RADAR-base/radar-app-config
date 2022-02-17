@@ -3,7 +3,6 @@ package org.radarbase.appconfig.client
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.ObjectReader
 import okhttp3.HttpUrl
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
@@ -11,6 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.radarbase.appconfig.api.ClientConfig
+import org.radarbase.appconfig.api.SingleVariable
 import org.radarbase.exception.TokenException
 import org.radarbase.oauth.OAuth2Client
 import java.io.IOException
@@ -25,11 +25,14 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     private val type: TypeReference<T> = config.type
 
     private val cache: LruCache<String, T> = LruCache(config.cacheMaxAge, config.cacheSize)
-    private val objectMappers = ObjectMapperCache(config.mapper ?: ObjectMapper())
+    private val objectMapper = config.mapper ?: ObjectMapper()
     private val client: OkHttpClient = config.httpClient ?: OkHttpClient()
-    private val mapReader: ObjectReader by lazy {
-        objectMappers.readerFor(object : TypeReference<Map<String, Any>>() {})
-    }
+
+    private val mapReader by objectMapper.lazyReaderFor(object : TypeReference<Map<String, Any>>() {})
+    private val typedConfigReader by objectMapper.lazyReaderFor(config.type)
+    private val typedConfigWriter by objectMapper.lazyWriterFor(config.type)
+    private val clientConfigWriter by objectMapper.lazyWriterFor(ClientConfig::class.java)
+    private val clientConfigReader by objectMapper.lazyReaderFor(ClientConfig::class.java)
 
     init {
         oauth2ClientId = requireNotNull(config.clientId) { "App config client ID missing in $config" }
@@ -49,7 +52,7 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     @Throws(TokenException::class, IOException::class)
     fun getUserConfig(projectId: String, userId: String, clientId: String = oauth2ClientId): T = cache.computeIfAbsent(userId) {
         fetchConfig(projectId, userId, clientId)
-            .convertToLocalConfig()
+            .toTypedConfig()
     }
 
     @Throws(TokenException::class, IOException::class)
@@ -60,17 +63,15 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
         includeKeys: Set<String>? = null,
         clientId: String = oauth2ClientId,
     ): T {
-        val stringValue = objectMappers.writerFor(type).writeValueAsString(config)
-        var result: Map<String, Any> = mapReader.readValue(stringValue)
-
+        var clientConfig = config.toClientConfig()
         if (includeKeys != null) {
-            result = result.filterKeys { it in includeKeys }
+            clientConfig = clientConfig.copy(config = clientConfig.config.filter { it.name in includeKeys })
         }
         val newConfig: ClientConfig = fetchConfig(projectId, userId, clientId)
-            .copyWithConfig(result.mapValues { (_, v) -> v.toString() })
+            .with(clientConfig)
 
         return putConfig(projectId, userId, clientId, newConfig)
-            .convertToLocalConfig()
+            .toTypedConfig()
             .also { cache[userId] = it }
     }
 
@@ -95,7 +96,7 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     ): ClientConfig {
         val request: Request = buildConfigRequest(projectId, userId, clientId) {
             post(
-                objectMappers.writerFor(ClientConfig::class.java)
+                clientConfigWriter
                     .writeValueAsString(config)
                     .toRequestBody(APPLICATION_JSON)
             )
@@ -114,8 +115,7 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
                     }
                     throw IOException("Unknown response from AppConfig: $responseString")
                 }
-                return objectMappers.readerFor(ClientConfig::class.java)
-                    .readValue(body.byteStream())
+                return clientConfigReader.readValue(body.byteStream())
             }
         }
     }
@@ -145,8 +145,8 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     }
 
     @Throws(JsonProcessingException::class)
-    private fun ClientConfig.convertToLocalConfig(): T {
-        val node = objectMappers.mapper.createObjectNode().apply {
+    private fun ClientConfig.toTypedConfig(): T {
+        val node = objectMapper.createObjectNode().apply {
             val values = (defaults?.asSequence() ?: emptySequence()) + config.asSequence()
             if (configPrefix == null) {
                 values.forEach { (name, value) -> put(name, value) }
@@ -156,10 +156,28 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
                     .forEach { (name, value) -> put(name.substring(configPrefix.length), value) }
             }
         }
-        return objectMappers.readerFor(type).readValue(node.toString())
+        return typedConfigReader.readValue(node.toString())
+    }
+
+
+    @Throws(JsonProcessingException::class)
+    private fun T.toClientConfig(): ClientConfig {
+        val stringValue = typedConfigWriter.writeValueAsString(this)
+        val result: Map<String, Any> = mapReader.readValue(stringValue)
+        return ClientConfig(
+            clientId = null,
+            scope = null,
+            config = result.map { (k, v) -> SingleVariable(k, v.toString()) },
+        )
     }
 
     companion object {
         private val APPLICATION_JSON: MediaType = "application/json".toMediaType()
+
+        private fun <T> ObjectMapper.lazyWriterFor(type: TypeReference<T>) = lazy { writerFor(type) }
+        private fun <T> ObjectMapper.lazyWriterFor(type: Class<T>) = lazy { writerFor(type) }
+
+        private fun <T> ObjectMapper.lazyReaderFor(type: TypeReference<T>) = lazy { readerFor(type) }
+        private fun <T> ObjectMapper.lazyReaderFor(type: Class<T>) = lazy { readerFor(type) }
     }
 }
