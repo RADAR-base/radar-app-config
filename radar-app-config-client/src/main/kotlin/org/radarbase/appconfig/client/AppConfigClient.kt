@@ -15,13 +15,20 @@ import org.radarbase.exception.TokenException
 import org.radarbase.oauth.OAuth2Client
 import java.io.IOException
 
+/**
+ * App config client. The type to serialize with can be constructed in Kotlin as
+ * `object : TypeReference<MyType>() {}`. It can be any type as long as a Jackson Object Mapper can serialize and
+ * deserialize it from a JSON object with contents `{"key1": "value1", ...}`.
+ *
+ * @param config configuration to use.
+ */
 @Suppress("unused")
 class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     private val oauth2ClientId: String
     private val oauth2Client: OAuth2Client
 
     private val baseUrl: HttpUrl
-    private val configPrefix: String? = config.configPrefix
+    private val configPrefix: String = config.configPrefix ?: ""
     private val type: TypeReference<T> = config.type
 
     private val cache: LruCache<String, T> = LruCache(config.cacheMaxAge, config.cacheSize)
@@ -44,17 +51,39 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
         baseUrl = requireNotNull(config.appConfigUrl) { "App config client URL missing in $config" }
     }
 
+    /**
+     * App config client. Configure it inside a code block.
+     *
+     * @param type deserialization type.
+     */
     constructor(
         type: TypeReference<T>,
         builder: AppConfigClientConfig<T>.() -> Unit
     ) : this(AppConfigClientConfig(type).apply(builder))
 
+    /**
+     * Get the config of given user. This will respond with a cached value if the cache is valid.
+     *
+     * @param projectId the project of the user.
+     * @param userId the ID of the user
+     * @param clientId the OAuth client ID that config should be fetched for. Defaults to the current client ID.
+     */
     @Throws(TokenException::class, IOException::class)
     fun getUserConfig(projectId: String, userId: String, clientId: String = oauth2ClientId): T = cache.computeIfAbsent(userId) {
         fetchConfig(projectId, userId, clientId)
             .toTypedConfig()
     }
 
+    /**
+     * Set the config of given user. This will not remove any values on the service but only update ones provided by
+     * the config.
+     *
+     * @param projectId the project of the user.
+     * @param userId the ID of the user
+     * @param config new configuration values.
+     * @param includeKeys if given, only update that subset of keys provided in the config.
+     * @param clientId the OAuth client ID that config should be fetched for. Defaults to the current client ID.
+     */
     @Throws(TokenException::class, IOException::class)
     fun setUserConfig(
         projectId: String,
@@ -147,18 +176,12 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     @Throws(JsonProcessingException::class)
     private fun ClientConfig.toTypedConfig(): T {
         val node = objectMapper.createObjectNode().apply {
-            val values = (defaults?.asSequence() ?: emptySequence()) + config.asSequence()
-            if (configPrefix == null) {
-                values.forEach { (name, value) -> put(name, value) }
-            } else {
-                values
-                    .filter { it.name.startsWith(configPrefix) && it.name.length > configPrefix.length }
-                    .forEach { (name, value) -> put(name.substring(configPrefix.length), value) }
-            }
+            ((defaults?.asSequence() ?: emptySequence()) + config.asSequence())
+                .filter { it.name.length > configPrefix.length && it.name.startsWith(configPrefix) }
+                .forEach { (name, value) -> put(name.substring(configPrefix.length), value) }
         }
         return typedConfigReader.readValue(node.toString())
     }
-
 
     @Throws(JsonProcessingException::class)
     private fun T.toClientConfig(): ClientConfig {
@@ -167,7 +190,7 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
         return ClientConfig(
             clientId = null,
             scope = null,
-            config = result.map { (k, v) -> SingleVariable(k, v.toString()) },
+            config = result.map { (k, v) -> SingleVariable(configPrefix + k, v.toString()) },
         )
     }
 
