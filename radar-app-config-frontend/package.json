@@ -1,10 +1,11 @@
 {
   "name": "appconfig",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port=4200 --base-href=/",
     "build": "ng build --prod",
+    "postbuild": "gzipper compress -e ico,png --gzip dist",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
@@ -42,6 +43,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
     "codelyzer": "^6.0.0",
+    "gzipper": "^7.0.0",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~6.1.1",

@@ -31,7 +31,7 @@ COPY radar-app-config-core/src  /code/radar-app-config-core/src
 COPY radar-expression-lang/src /code/radar-expression-lang/src
 COPY radar-app-config/src /code/radar-app-config/src
 
-RUN gradle jar --no-watch-fs
+RUN gradle :radar-app-config:jar --no-watch-fs
 
 FROM azul/zulu-openjdk-alpine:17-jre-headless
 
@@ -49,8 +49,7 @@ WORKDIR /var/lib/radar-app-config
 
 COPY --from=builder /code/radar-app-config/build/third-party/* /usr/lib/
 COPY --from=builder /code/radar-app-config/build/scripts/* /usr/bin/
-COPY --from=builder /code/radar-expression-lang/build/libs/* /usr/lib/
-COPY --from=builder /code/radar-app-config/build/libs/* /usr/lib/
+COPY --from=builder /code/*/build/libs/* /usr/lib/
 
 USER 101
 
