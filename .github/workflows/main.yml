@@ -45,10 +45,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Use Node.js 14
+      - name: Use Node.js 16
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
           cache: npm
           cache-dependency-path: '**/package-lock.json'
 
@@ -62,9 +62,12 @@ jobs:
         working-directory: ./radar-app-config-frontend
         run: npm run build
 
-  docker:
+  dockerFrontend:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+
+    env:
+      DOCKER_IMAGE: radarbase/radar-app-config-frontend
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -77,11 +80,109 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Kotlin docker
-        run: docker build -t radarbase/radar-app-config:SNAPSHOT -f radar-app-config/Dockerfile .
+      # Add Docker labels and tags
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v2
+        with:
+          images: ${{ env.DOCKER_IMAGE }}
 
-      - name: Build Node docker
-        run: docker build -t radarbase/radar-app-config-frontend:SNAPSHOT radar-app-config-frontend
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-      - name: Test curl availability
-        run: docker run --rm radarbase/radar-app-config:SNAPSHOT curl --help
+      - name: Cache Docker layers
+        id: cache-buildx
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-frontend-${{ hashFiles('radar-app-config-frontend/**') }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-frontend-
+
+      - name: Cache parameters
+        id: cache-parameters
+        run: |
+          if [ "${{ steps.cache-buildx.outputs.cache-hit }}" = "true" ]; then
+            echo "::set-output name=cache-to::"
+          else
+            echo "::set-output name=cache-to::type=local,dest=/tmp/.buildx-cache-new,mode=max"
+          fi
+
+      - name: Build docker
+        uses: docker/build-push-action@v2
+        with:
+          context: ./radar-app-config-frontend
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: ${{ steps.cache-parameters.outputs.cache-to }}
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          # Use runtime labels from docker_meta as well as fixed labels
+          labels: |
+            ${{ steps.docker_meta.outputs.labels }}
+            maintainer=Peyman Mohtashami <peyman@thehyve.nl>, Joris Borgdorff <joris@thehyve.nl>
+            org.opencontainers.image.description=RADAR-base app-config frontend
+            org.opencontainers.image.authors=Peyman Mohtashami <peyman@thehyve.nl>, Joris Borgdorff <joris@thehyve.nl>
+            org.opencontainers.image.vendor=RADAR-base
+            org.opencontainers.image.licenses=Apache-2.0
+
+      - name: Inspect docker image
+        run: |
+          docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
+          docker image inspect ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
+
+  dockerBackend:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_IMAGE: radarbase/radar-app-config
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Add Docker labels and tags
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v2
+        with:
+          images: ${{ env.DOCKER_IMAGE }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build frontend docker
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: radar-app-config/Dockerfile
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: ${{ steps.cache-parameters.outputs.cache-to }}
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          # Use runtime labels from docker_meta as well as fixed labels
+          labels: |
+            ${{ steps.docker_meta.outputs.labels }}
+            maintainer=Joris Borgdorff <joris@thehyve.nl>
+            org.opencontainers.image.description=RADAR-base app-config backend
+            org.opencontainers.image.authors=Joris Borgdorff <joris@thehyve.nl>
+            org.opencontainers.image.vendor=RADAR-base
+            org.opencontainers.image.licenses=Apache-2.0
+
+      - name: Load docker image
+        run: docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
+
+      - name: Inspect docker image
+        run: |
+          docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
+          docker image inspect ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
+          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }} curl --version
