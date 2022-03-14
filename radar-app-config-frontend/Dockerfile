@@ -11,7 +11,7 @@
 # limitations under the License.
 
 # Stage 1, "build-stage", based on Node.js, to build and compile Angular
-FROM node:14 as builder
+FROM --platform=$BUILDPLATFORM node:16 as builder
 
 WORKDIR /code
 
@@ -30,9 +30,6 @@ WORKDIR /code/dist/out
 
 # Stage 2, based on Nginx, to have only the compiled app, ready for production with Nginx
 FROM nginxinc/nginx-unprivileged:1.20-alpine
-
-## Remove default Nginx website
-#RUN rm -rf /usr/share/nginx/html/*
 
 ENV BASE_HREF=/appconfig/
 ENV AUTH_URL=http://localhost:8080/managementportal/oauth
