@@ -13,7 +13,7 @@ plugins {
 
 allprojects {
     group = "org.radarbase"
-    version = "0.4.1"
+    version = "0.4.2-SNAPSHOT"
 }
 
 val githubRepoName = "RADAR-base/radar-app-config"
