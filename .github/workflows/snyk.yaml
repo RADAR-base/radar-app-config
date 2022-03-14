@@ -26,4 +26,9 @@ jobs:
     - name: Run Snyk to check for vulnerabilities
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      run: snyk test --all-projects --org=radar-base --fail-on=upgradable --configuration-matching='^runtimeClasspath$'
+      run: >
+        snyk test
+        --all-projects
+        --configuration-matching='^runtimeClasspath$'
+        --fail-on=upgradable
+        --org=radar-base
