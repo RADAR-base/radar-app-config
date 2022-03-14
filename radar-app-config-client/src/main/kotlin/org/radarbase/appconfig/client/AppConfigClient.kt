@@ -28,7 +28,7 @@ class AppConfigClient<T>(config: AppConfigClientConfig<T>) {
     private val oauth2Client: OAuth2Client
 
     private val baseUrl: HttpUrl
-    private val configPrefix: String = config.configPrefix ?: ""
+    private val configPrefix: String = config.configPrefix
     private val type: TypeReference<T> = config.type
 
     private val cache: LruCache<String, T> = LruCache(config.cacheMaxAge, config.cacheSize)

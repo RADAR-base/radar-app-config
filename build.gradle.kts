@@ -33,6 +33,15 @@ subprojects {
             apiVersion = "1.6"
         }
     }
+
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "com.fasterxml.jackson.module" && requested.name == "jackson-module-kotlin" && requested.version == "2.13.2") {
+                useVersion("2.13.1")
+                because("Fixes missing dependency")
+            }
+        }
+    }
 }
 
 project(":radar-expression-lang-antlr") {
@@ -54,15 +63,18 @@ configure(listOf(
 
     dependencies {
         val dokkaVersion: String by project
-        configurations["dokkaHtmlPlugin"]("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
+        val dokkaHtmlPlugin by configurations
+        dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
 
         val jacksonVersion: String by project
-        configurations["dokkaPlugin"](platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
-        configurations["dokkaRuntime"](platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+        val dokkaPlugin by configurations
+        dokkaPlugin(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+        val dokkaRuntime by configurations
+        dokkaRuntime(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
 
         val jsoupVersion: String by project
-        configurations["dokkaPlugin"]("org.jsoup:jsoup:$jsoupVersion")
-        configurations["dokkaRuntime"]("org.jsoup:jsoup:$jsoupVersion")
+        dokkaPlugin("org.jsoup:jsoup:$jsoupVersion")
+        dokkaRuntime("org.jsoup:jsoup:$jsoupVersion")
     }
 
     tasks.withType<JavaCompile> {
@@ -199,5 +211,5 @@ nexusPublishing {
 }
 
 tasks.wrapper {
-    gradleVersion = "7.3.3"
+    gradleVersion = "7.4.1"
 }
