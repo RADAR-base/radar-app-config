@@ -164,9 +164,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-frontend-${{ hashFiles('radar-app-config-frontend/**') }}
+          key: ${{ runner.os }}-buildx-backend-${{ hashFiles('radar-app-config-frontend/**') }}
           restore-keys: |
-            ${{ runner.os }}-buildx-frontend-
+            ${{ runner.os }}-buildx-backend-
 
       - name: Cache parameters
         id: cache-parameters
