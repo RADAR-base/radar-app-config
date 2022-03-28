@@ -30,13 +30,8 @@ dependencies {
     implementation(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
 
     val radarJerseyVersion: String by project
-    implementation("org.radarbase:radar-jersey:$radarJerseyVersion") {
-        exclude(group="com.fasterxml.jackson.jaxrs", module="jackson-jaxrs-json-provider")
-        runtimeOnly("com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider")
-    }
-    implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion") {
-        exclude(group="com.fasterxml.jackson.jaxrs", module="jackson-jaxrs-json-provider")
-    }
+    implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
+    implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
 
     val hazelcastHibernateVersion: String by project
     implementation("com.hazelcast:hazelcast-hibernate53:$hazelcastHibernateVersion")

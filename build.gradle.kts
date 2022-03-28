@@ -33,15 +33,6 @@ subprojects {
             apiVersion = "1.6"
         }
     }
-
-    configurations.all {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "com.fasterxml.jackson.module" && requested.name == "jackson-module-kotlin" && requested.version == "2.13.2") {
-                useVersion("2.13.1")
-                because("Fixes missing dependency")
-            }
-        }
-    }
 }
 
 project(":radar-expression-lang-antlr") {
