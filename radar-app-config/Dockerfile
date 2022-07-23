@@ -33,7 +33,7 @@ COPY radar-app-config/src /code/radar-app-config/src
 
 RUN gradle :radar-app-config:jar --no-watch-fs
 
-FROM azul/zulu-openjdk-alpine:17-jre-headless
+FROM azul/zulu-openjdk-alpine:17.0.3-17.34.19-x86
 
 MAINTAINER @nivemaham @blootsvoets
 
