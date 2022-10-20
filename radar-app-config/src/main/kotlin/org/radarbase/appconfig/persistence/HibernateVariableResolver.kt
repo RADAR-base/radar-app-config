@@ -1,15 +1,14 @@
 package org.radarbase.appconfig.persistence
 
 import com.hazelcast.map.IMap
-import org.hibernate.criterion.MatchMode
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.jersey.hibernate.HibernateRepository
 import java.util.stream.Stream
 import jakarta.inject.Provider
 import org.radarbase.lang.expression.*
-import javax.persistence.EntityManager
-import javax.persistence.Query
-import javax.persistence.TypedQuery
+import jakarta.persistence.EntityManager
+import jakarta.persistence.Query
+import jakarta.persistence.TypedQuery
 import kotlin.streams.asSequence
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
@@ -124,7 +123,7 @@ class HibernateVariableResolver(
         createQuery("DELETE FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix")
             .setParameter("scope", scope.asString())
             .setParameter("clientId", clientId)
-            .setParameter("prefix", MatchMode.START.toMatchString(prefix))
+            .setParameter("prefix", "$prefix%")
 
     private fun EntityManager.selectConfig(
         scope: Scope,
@@ -166,7 +165,7 @@ class HibernateVariableResolver(
     )
         .setParameter("scope", scope.asString())
         .setParameter("clientId", clientId)
-        .setParameter("prefix", MatchMode.START.toMatchString(prefix))
+        .setParameter("prefix", "$prefix%")
 
     private fun EntityManager.selectConfigName(
         scopes: List<Scope>,
@@ -206,7 +205,7 @@ class HibernateVariableResolver(
     )
         .setParameter("scopes", scopes.map { it.asString() })
         .setParameter("clientId", clientId)
-        .setParameter("prefix", MatchMode.START.toMatchString(prefix))
+        .setParameter("prefix", "$prefix%")
 
     companion object {
         private fun ConfigEntity.toResolvedVariable() = ResolvedVariable(

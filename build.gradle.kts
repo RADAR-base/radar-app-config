@@ -3,7 +3,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     kotlin("jvm") apply false
-    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.3"
+    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.6"
     id("com.github.ben-manes.versions")
     id("org.jetbrains.dokka") apply false
     `maven-publish`
@@ -25,12 +25,17 @@ subprojects {
         mavenCentral()
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
-
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "17"
             languageVersion = "1.6"
             apiVersion = "1.6"
+        }
+    }
+    afterEvaluate {
+        configurations.all {
+            resolutionStrategy.cacheChangingModulesFor(0, TimeUnit.SECONDS)
+            resolutionStrategy.cacheDynamicVersionsFor(0, TimeUnit.SECONDS)
         }
     }
 }
@@ -202,5 +207,5 @@ nexusPublishing {
 }
 
 tasks.wrapper {
-    gradleVersion = "7.4.1"
+    gradleVersion = "7.5.1"
 }
