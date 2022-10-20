@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 import {ProjectService} from '@app/pages/services/project.service';
 import {ClientService} from '@app/pages/services/client.service';
 import {UserService} from '@app/pages/services/user.service';
@@ -38,22 +38,22 @@ export class ConfigsComponent implements OnInit {
     private router: Router) {}
 
   async ngOnInit() {
-    this.activatedRoute.queryParams.subscribe(() => {
-      this.init();
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.init(params);
     });
   }
 
-  async init(){
-    this.projectId = this.activatedRoute.snapshot.queryParams.project;
-    this.clientId = this.activatedRoute.snapshot.queryParams.client;
-    this.userId = this.activatedRoute.snapshot.queryParams.user;
+  async init(params: Params){
+    this.projectId = params.project;
+    this.clientId = params.client;
+    this.userId = params.user;
 
     this.projects = await this.getProjects();
     this.clients = await this.getClients();
     this.users = await this.getUsers();
 
     this.updateUser();
-    this.updateConfigs();
+    await this.updateConfigs();
   }
 
   getProjects() {

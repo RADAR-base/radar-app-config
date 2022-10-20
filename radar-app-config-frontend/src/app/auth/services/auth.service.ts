@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {map} from 'rxjs/operators';
+import {tap} from 'rxjs/operators';
 import jwt_decode from 'jwt-decode';
 import {AuthResponse, MPJWT} from '@app/auth/models/auth';
 import {Roles} from '@app/auth/enums/roles.enum';
@@ -56,13 +56,14 @@ export class AuthService {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
-    }).pipe(map((user: AuthResponse) => {
-      if (user && user.access_token) {
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        this.currentUserSubject.next(user);
-      }
-      return user;
-    }));
+    }).pipe(
+        tap((user: AuthResponse) => {
+          if (user && user.access_token) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.currentUserSubject.next(user);
+          }
+        }),
+    );
   }
 
   authorize() {
