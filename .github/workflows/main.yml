@@ -107,9 +107,9 @@ jobs:
         id: cache-parameters
         run: |
           if [ "${{ steps.cache-buildx.outputs.cache-hit }}" = "true" ]; then
-            echo "::set-output name=cache-to::"
+            echo "cache_to=" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=cache-to::type=local,dest=/tmp/.buildx-cache-new,mode=max"
+            echo "cache_to=type=local,dest=/tmp/.buildx-cache-new,mode=max" >> $GITHUB_OUTPUT
           fi
 
       - name: Build docker
@@ -117,7 +117,7 @@ jobs:
         with:
           context: ./radar-app-config-frontend
           cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: ${{ steps.cache-parameters.outputs.cache-to }}
+          cache-to: ${{ steps.cache-parameters.outputs.cache_to }}
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.docker_meta.outputs.tags }}
@@ -180,9 +180,9 @@ jobs:
         id: cache-parameters
         run: |
           if [ "${{ steps.cache-buildx.outputs.cache-hit }}" = "true" ]; then
-            echo "::set-output name=cache-to::"
+            echo "cache_to=" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=cache-to::type=local,dest=/tmp/.buildx-cache-new,mode=max"
+            echo "cache_to=type=local,dest=/tmp/.buildx-cache-new,mode=max" >> $GITHUB_OUTPUT
           fi
 
       - name: Build docker
@@ -191,7 +191,7 @@ jobs:
           context: .
           file: radar-app-config/Dockerfile
           cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: ${{ steps.cache-parameters.outputs.cache-to }}
+          cache-to: ${{ steps.cache-parameters.outputs.cache_to }}
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.docker_meta.outputs.tags }}
