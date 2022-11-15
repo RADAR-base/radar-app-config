@@ -11,6 +11,7 @@ import jakarta.persistence.*
 class ConfigEntity {
     @Id
     @GeneratedValue(generator = "config_id_sequence")
+    @SequenceGenerator(name = "config_id_sequence", allocationSize = 1)
     var id: Long? = null
         private set
 
