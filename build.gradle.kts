@@ -3,7 +3,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     kotlin("jvm") apply false
-    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.3"
+    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.6"
     id("com.github.ben-manes.versions")
     id("org.jetbrains.dokka") apply false
     `maven-publish`
@@ -13,7 +13,7 @@ plugins {
 
 allprojects {
     group = "org.radarbase"
-    version = "0.4.1"
+    version = "0.4.2"
 }
 
 val githubRepoName = "RADAR-base/radar-app-config"
@@ -25,12 +25,17 @@ subprojects {
         mavenCentral()
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
-
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "17"
             languageVersion = "1.6"
             apiVersion = "1.6"
+        }
+    }
+    afterEvaluate {
+        configurations.all {
+            resolutionStrategy.cacheChangingModulesFor(0, TimeUnit.SECONDS)
+            resolutionStrategy.cacheDynamicVersionsFor(0, TimeUnit.SECONDS)
         }
     }
 }
@@ -54,15 +59,18 @@ configure(listOf(
 
     dependencies {
         val dokkaVersion: String by project
-        configurations["dokkaHtmlPlugin"]("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
+        val dokkaHtmlPlugin by configurations
+        dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
 
         val jacksonVersion: String by project
-        configurations["dokkaPlugin"](platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
-        configurations["dokkaRuntime"](platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+        val dokkaPlugin by configurations
+        dokkaPlugin(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+        val dokkaRuntime by configurations
+        dokkaRuntime(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
 
         val jsoupVersion: String by project
-        configurations["dokkaPlugin"]("org.jsoup:jsoup:$jsoupVersion")
-        configurations["dokkaRuntime"]("org.jsoup:jsoup:$jsoupVersion")
+        dokkaPlugin("org.jsoup:jsoup:$jsoupVersion")
+        dokkaRuntime("org.jsoup:jsoup:$jsoupVersion")
     }
 
     tasks.withType<JavaCompile> {
@@ -199,5 +207,5 @@ nexusPublishing {
 }
 
 tasks.wrapper {
-    gradleVersion = "7.3.3"
+    gradleVersion = "7.5.1"
 }

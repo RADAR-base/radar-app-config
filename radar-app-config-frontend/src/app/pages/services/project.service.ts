@@ -12,15 +12,17 @@ import {environment} from "@environments/environment";
   providedIn: 'root'
 })
 export class ProjectService {
-
-  constructor(private http: HttpClient, private toastService: ToastService) {}
+  constructor(
+    private http: HttpClient,
+    private toastService: ToastService,
+  ) {}
 
   private getAllProjectsObservable(): Observable<[Project]> {
     return this.http.get<any>(`${environment.backendUrl}/projects`);
   }
 
   async getAllProjects(): Promise<[Project] | void> {
-    return await this.getAllProjectsObservable().toPromise()
+    return this.getAllProjectsObservable().toPromise()
       .then((data: any) => {
         const projects: [Project] = data.projects;
         projects.forEach(p => p.name = p.projectName);
@@ -30,7 +32,6 @@ export class ProjectService {
       .catch(e => {
         this.toastService.showError(e);
         console.log(e);
-      })
-      .finally(() => {});
+      });
   }
 }

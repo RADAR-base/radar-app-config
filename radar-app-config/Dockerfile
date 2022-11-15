@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM gradle:7.3-jdk17 as builder
+FROM --platform=$BUILDPLATFORM gradle:7.5-jdk17 as builder
 
 RUN mkdir /code
 WORKDIR /code
@@ -33,7 +33,7 @@ COPY radar-app-config/src /code/radar-app-config/src
 
 RUN gradle :radar-app-config:jar --no-watch-fs
 
-FROM azul/zulu-openjdk-alpine:17-jre-headless
+FROM eclipse-temurin:17-jre
 
 MAINTAINER @nivemaham @blootsvoets
 
@@ -43,7 +43,6 @@ LABEL description="RADAR-base radar app config container"
 ENV JAVA_OPTS="" \
     RADAR_APP_CONFIG_OPTS=""
 
-RUN apk add --no-cache curl
 RUN mkdir -p /var/lib/radar-app-config/data
 WORKDIR /var/lib/radar-app-config
 

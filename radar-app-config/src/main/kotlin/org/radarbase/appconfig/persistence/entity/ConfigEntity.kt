@@ -2,7 +2,7 @@ package org.radarbase.appconfig.persistence.entity
 
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity(name = "Config")
 @Table(name = "config")
