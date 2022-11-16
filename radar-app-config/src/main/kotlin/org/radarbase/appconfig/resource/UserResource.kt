@@ -62,7 +62,6 @@ class UserResource(
         @PathParam("clientId") clientId: String,
     ): ClientConfig {
         clientService.ensureClient(clientId)
-        radarProjectService.ensureSubject(projectId, userId)
         return userService.userConfig(clientId, projectId, userId)
     }
 
@@ -76,7 +75,6 @@ class UserResource(
         clientConfig: ClientConfig,
     ): ClientConfig {
         clientService.ensureClient(clientId)
-        radarProjectService.ensureSubject(projectId, userId)
         userService.putUserConfig(clientId, userId, clientConfig)
         return userService.userConfig(clientId, projectId, userId)
     }
