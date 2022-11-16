@@ -24,11 +24,10 @@ import jakarta.ws.rs.core.UriInfo
 @Consumes(MediaType.APPLICATION_JSON)
 class ConditionResource(
     @Context private val conditionService: ConditionService,
-    @Context private val projectService: ConfigProjectService,
     @Context private val uriInfo: UriInfo,
 ) {
     @POST
-    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
+    @NeedsPermission(Permission.PROJECT_UPDATE, "projectId")
     fun createCondition(
         @PathParam("projectId") projectId: String,
         condition: Condition,
@@ -43,13 +42,13 @@ class ConditionResource(
     }
 
     @GET
-    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.READ, "projectId")
+    @NeedsPermission(Permission.PROJECT_READ, "projectId")
     fun listConditions(@PathParam("projectId") projectId: String): ConditionList {
         return ConditionList(conditionService.list(projectId))
     }
 
     @PUT
-    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
+    @NeedsPermission(Permission.PROJECT_UPDATE, "projectId")
     fun orderConditions(@PathParam("projectId") projectId: String, conditions: ConditionList): Response {
         conditionService.order(projectId, conditions.conditions)
         return Response.noContent().build()
@@ -57,7 +56,7 @@ class ConditionResource(
 
     @POST
     @Path("{conditionId}")
-    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
+    @NeedsPermission(Permission.PROJECT_UPDATE, "projectId")
     fun updateCondition(
         @PathParam("projectId") projectId: String,
         @PathParam("conditionId") conditionId: Long,
@@ -68,7 +67,7 @@ class ConditionResource(
 
     @GET
     @Path("{conditionId}")
-    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.READ, "projectId")
+    @NeedsPermission(Permission.PROJECT_READ, "projectId")
     fun condition(
         @PathParam("projectId") projectId: String,
         @PathParam("conditionId") conditionId: Long,
@@ -78,7 +77,7 @@ class ConditionResource(
 
     @DELETE
     @Path("{conditionId}")
-    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.UPDATE, "projectId")
+    @NeedsPermission(Permission.PROJECT_UPDATE, "projectId")
     fun deleteCondition(
         @PathParam("projectId") projectId: String,
         @PathParam("conditionId") conditionId: Long,

@@ -17,6 +17,7 @@ import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
+import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.cache.Cache
 import org.radarbase.management.client.MPProject
 
@@ -32,14 +33,14 @@ class ProjectResource(
 ) {
     @GET
     @Cache(maxAge = 300, isPrivate = true)
-    @NeedsPermission(Entity.PROJECT, Operation.READ)
+    @NeedsPermission(Permission.PROJECT_READ)
     fun listProjects(@Context auth: Auth) = ProjectList(
         radarProjectService.userProjects(auth)
             .map(MPProject::toProject)
     )
 
     @GET
-    @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
+    @NeedsPermission(Permission.PROJECT_READ, "projectId")
     @Path("{projectId}")
     @Cache(maxAge = 3600, isPrivate = true)
     fun get(@PathParam("projectId") projectId: String): Project =
@@ -47,7 +48,7 @@ class ProjectResource(
 
     @Path("{projectId}/config/{clientId}")
     @GET
-    @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
+    @NeedsPermission(Permission.PROJECT_READ, "projectId")
     fun projectConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
@@ -58,7 +59,7 @@ class ProjectResource(
 
     @Path("{projectId}/config/{clientId}")
     @POST
-    @NeedsPermission(Entity.PROJECT, Operation.UPDATE, "projectId")
+    @NeedsPermission(Permission.PROJECT_UPDATE, "projectId")
     fun putProjectConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,

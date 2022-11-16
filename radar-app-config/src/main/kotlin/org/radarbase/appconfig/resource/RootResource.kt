@@ -28,7 +28,7 @@ class RootResource(
     @Path("clients")
     @GET
     @Cache(maxAge = 3600, isPrivate = true)
-    @NeedsPermission(Permission.Entity.OAUTHCLIENTS, Permission.Operation.READ)
+    @NeedsPermission(Permission.OAUTHCLIENTS_READ)
     fun clients() = OAuthClientList(
         clientService.readClients()
             .map(MPOAuthClient::toOAuthClient)

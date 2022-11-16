@@ -31,12 +31,12 @@ class UserResource(
 ) {
     @GET
     @Cache(maxAge = 60, isPrivate = true)
-    @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ, "projectId")
+    @NeedsPermission(Permission.SUBJECT_READ, "projectId")
     fun userClientConfig(
         @PathParam("projectId") projectId: String,
     ): UserList {
         return UserList(
-            radarProjectService.projectUsers(projectId)
+            radarProjectService.projectSubjects(projectId)
                 .map(MPSubject::toUser)
         )
     }
@@ -44,31 +44,31 @@ class UserResource(
     @Path("/{userId}")
     @GET
     @Cache(maxAge = 60, isPrivate = true)
-    @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ, "projectId", "userId")
+    @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
     fun userClientConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
     ): User {
-        return radarProjectService.getUser(projectId, userId)?.toUser()
+        return radarProjectService.subject(projectId, userId)?.toUser()
             ?: throw HttpNotFoundException("user_missing", "User not found")
     }
 
     @Path("/{userId}/config/{clientId}")
     @GET
-    @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ, "projectId", "userId")
+    @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
     fun userClientConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
         @PathParam("clientId") clientId: String,
     ): ClientConfig {
         clientService.ensureClient(clientId)
-        radarProjectService.ensureUser(projectId, userId)
+        radarProjectService.ensureSubject(projectId, userId)
         return userService.userConfig(clientId, projectId, userId)
     }
 
     @Path("/{userId}/config/{clientId}")
     @POST
-    @NeedsPermission(Permission.Entity.SUBJECT, Permission.Operation.READ, "projectId", "userId")
+    @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
     fun putUserClientConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
@@ -76,7 +76,7 @@ class UserResource(
         clientConfig: ClientConfig,
     ): ClientConfig {
         clientService.ensureClient(clientId)
-        radarProjectService.ensureUser(projectId, userId)
+        radarProjectService.ensureSubject(projectId, userId)
         userService.putUserConfig(clientId, userId, clientConfig)
         return userService.userConfig(clientId, projectId, userId)
     }

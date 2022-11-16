@@ -23,6 +23,7 @@ val githubIssueUrl = "https://github.com/$githubRepoName/issues"
 subprojects {
     repositories {
         mavenCentral()
+        mavenLocal()
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
     tasks.withType<KotlinCompile> {

@@ -22,7 +22,7 @@ class GlobalResource(
 ) {
     @POST
     @Path("config/{clientId}")
-    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.CREATE)
+    @NeedsPermission(Permission.PROJECT_CREATE)
     fun updateConfig(
         @PathParam("clientId") clientId: String,
         config: ClientConfig,
