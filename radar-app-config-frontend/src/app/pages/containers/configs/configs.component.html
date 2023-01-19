@@ -76,13 +76,13 @@
                           [field]="'projectName'"
                           [label]="'project.project' | translate"
                           [selected]="projectId"
-                          (change)="onProjectChange($event)"></app-dropdown>
+                          (selectionUpdates)="onProjectChange($event)"></app-dropdown>
             <app-dropdown class="col-md-6"
                           [data]="clients"
                           [field]="'id'"
                           [label]="'client.application' | translate"
                           [selected]="clientId"
-                          (change)="onClientChange($event)"></app-dropdown>
+                          (selectionUpdates)="onClientChange($event)"></app-dropdown>
           </div>
           <div class="row mb-3">
             <app-dropdown class="col-md-6"
@@ -90,7 +90,7 @@
                           [field]="'name'"
                           [label]="'user.user' | translate"
                           [selected]="user ? user.name : userId"
-                          (change)="onUserChange($event)"></app-dropdown>
+                          (selectionUpdates)="onUserChange($event)"></app-dropdown>
           </div>
         </div>
         <div class="col-md-2"></div>

@@ -11,7 +11,7 @@ import {TranslateService} from "@app/shared/services/translate.service";
 export class GlobalClientsComponent implements OnInit {
 
   loading = false;
-  clients: [Client] | void;
+  clients: Client[];
 
   constructor(public translate: TranslateService, private clientService: ClientService) {}
 

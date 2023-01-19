@@ -14,7 +14,7 @@ export class AppComponent {
       private domSanitizer: DomSanitizer
   ) {
     matIconRegistry.addSvgIconResolver((name, namespace) =>
-      domSanitizer.bypassSecurityTrustResourceUrl(`${environment.baseURL}/assets/icons/${name}.svg`);
+      domSanitizer.bypassSecurityTrustResourceUrl(`${environment.baseURL}/assets/icons/${name}.svg`)
     );
   }
 }

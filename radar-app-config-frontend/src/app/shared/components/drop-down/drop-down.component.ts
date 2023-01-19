@@ -33,13 +33,13 @@ export class DropDownComponent{
   /**
    * change event emitter
    */
-  @Output() change: EventEmitter<string> = new EventEmitter<string>();
+  @Output() selectionUpdates: EventEmitter<string> = new EventEmitter<string>();
 
   /**
    * On dropdown item click, emit an event to parent
    * @param item: dropdown item
    */
   onChange(item: any) {
-      this.change.emit(item);
+      this.selectionUpdates.emit(item);
   }
 }

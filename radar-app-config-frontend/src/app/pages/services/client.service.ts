@@ -1,9 +1,10 @@
-import { Observable } from 'rxjs';
+import {firstValueFrom, Observable, of} from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpResponse} from '@angular/common/http';
 import {Client} from '@app/pages/models/client';
 import {ToastService} from '@app/shared/services/toast.service';
 import {environment} from "@environments/environment";
+import {catchError, map} from "rxjs/operators";
 
 /**
  * Client Service
@@ -25,26 +26,29 @@ export class ClientService {
    * getAllClientsObservable
    * @returns clients observable
    */
-  private getAllClientsObservable(): Observable<[Client]> {
-    return this.http.get<any>(`${environment.backendUrl}/clients`);
+  private getAllClientsObservable(): Observable<{clients: Client[]}> {
+    return this.http.get<{clients: Client[]}>(`${environment.backendUrl}/clients`);
   }
 
   /**
    * getAllClients
    * @returns clients
    */
-  async getAllClients(): Promise<[Client] | void> {
-    return await this.getAllClientsObservable().toPromise()
-      .then((data: any) => {
-        const clients: [Client] = data.clients;
-        clients.forEach(c => c.id = c.name = c.clientId);
-        this.toastService.showSuccess('Clients loaded.');
-        return clients;
-      })
-      .catch(e => {
-        this.toastService.showError(e);
-        console.log(e);
-      })
-      .finally(() => {});
+  async getAllClients(): Promise<Client[]> {
+    return firstValueFrom(
+        this.getAllClientsObservable().pipe(
+          map(data => {
+            const clients: Client[] = data.clients;
+            clients.forEach(c => c.id = c.name = c.clientId);
+            this.toastService.showSuccess('Clients loaded.');
+            return clients;
+          }),
+          catchError((e) => {
+            this.toastService.showError(e);
+            console.log(e);
+            return of([]);
+          })
+        )
+    );
   }
 }

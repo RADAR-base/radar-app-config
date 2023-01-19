@@ -28,13 +28,13 @@
                               [field]="'projectName'"
                               [label]="'project.project' | translate"
                               [selected]="projectId"
-                              (change)="onProjectChange($event)"></app-dropdown>
+                              (selectionUpdates)="onProjectChange($event)"></app-dropdown>
                 <app-dropdown class="col-md-6"
                               [data]="clients"
                               [field]="'id'"
                               [label]="'client.application' | translate"
                               [selected]="clientId"
-                              (change)="onClientChange($event)"></app-dropdown>
+                              (selectionUpdates)="onClientChange($event)"></app-dropdown>
             </div>
                     <h2>{{'user.selectAUser' | translate}}</h2>
             <div class="row my-5" *ngIf="loading"><h2>{{'common.loading' | translate}}</h2></div>

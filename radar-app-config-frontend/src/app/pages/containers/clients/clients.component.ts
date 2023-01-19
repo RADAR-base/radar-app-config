@@ -4,7 +4,7 @@ import {Project} from '@app/pages/models/project';
 import {ProjectService} from '@app/pages/services/project.service';
 import {Client} from '@app/pages/models/client';
 import {ClientService} from '@app/pages/services/client.service';
-import {TranslateService} from "@app/shared/services/translate.service";
+import {TranslateService} from '@app/shared/services/translate.service';
 
 @Component({
   selector: 'app-clients',
@@ -15,8 +15,8 @@ export class ClientsComponent implements OnInit {
 
   loading = false;
   projectId;
-  clients: [Client] | void;
-  projects: [Project];
+  clients: Client[];
+  projects: Project[];
 
   constructor(
     public translate: TranslateService,
