@@ -10,12 +10,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM --platform=$BUILDPLATFORM gradle:7.5-jdk17 as builder
+FROM --platform=$BUILDPLATFORM gradle:7.6-jdk17 as builder
 
 RUN mkdir /code
 WORKDIR /code
 ENV GRADLE_USER_HOME=/code/.gradlecache \
-   GRADLE_OPTS=-Djdk.lang.Process.launchMechanism=vfork
+   GRADLE_OPTS="-Djdk.lang.Process.launchMechanism=vfork -Dorg.gradle.vfs.watch=false"
 
 COPY build.gradle.kts settings.gradle.kts gradle.properties /code/
 COPY radar-app-config/build.gradle.kts  /code/radar-app-config/
@@ -24,14 +24,14 @@ COPY radar-expression-lang-antlr/build.gradle.kts  /code/radar-expression-lang-a
 COPY radar-app-config-core/build.gradle.kts  /code/radar-app-config-core/
 COPY radar-app-config-client/build.gradle.kts  /code/radar-app-config-client/
 
-RUN gradle downloadDependencies copyDependencies startScripts --no-watch-fs
+RUN gradle downloadDependencies copyDependencies startScripts
 
 COPY radar-expression-lang-antlr/src  /code/radar-expression-lang-antlr/src
 COPY radar-app-config-core/src  /code/radar-app-config-core/src
 COPY radar-expression-lang/src /code/radar-expression-lang/src
 COPY radar-app-config/src /code/radar-app-config/src
 
-RUN gradle :radar-app-config:jar --no-watch-fs
+RUN gradle :radar-app-config:jar
 
 FROM eclipse-temurin:17-jre
 

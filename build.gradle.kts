@@ -3,7 +3,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     kotlin("jvm") apply false
-    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.6"
+    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
     id("com.github.ben-manes.versions")
     id("org.jetbrains.dokka") apply false
     `maven-publish`
@@ -208,5 +208,5 @@ nexusPublishing {
 }
 
 tasks.wrapper {
-    gradleVersion = "7.5.1"
+    gradleVersion = "7.6"
 }
