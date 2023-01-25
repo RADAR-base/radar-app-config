@@ -13,7 +13,7 @@ plugins {
 
 allprojects {
     group = "org.radarbase"
-    version = "0.4.3-SNAPSHOT"
+    version = "0.4.3"
 }
 
 val githubRepoName = "RADAR-base/radar-app-config"
@@ -25,6 +25,9 @@ subprojects {
         mavenCentral()
         mavenLocal()
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
+    }
+    tasks.withType<JavaCompile> {
+        options.release.set(17)
     }
     tasks.withType<KotlinCompile> {
         kotlinOptions {

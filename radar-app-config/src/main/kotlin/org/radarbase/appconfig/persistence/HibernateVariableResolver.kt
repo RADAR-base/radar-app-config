@@ -74,7 +74,8 @@ class HibernateVariableResolver(
         prefix: QualifiedId?,
     ): Sequence<ResolvedVariable> = transact {
         scopes.asSequence()
-            .flatMap { selectConfig(it, prefix) }
+            .flatMap { selectConfig(it, prefix).asSequence() }
+            .distinct()
             .map { find(ConfigEntity::class.java, it).toResolvedVariable() }
             .groupBy {
                 if (it.scope == scopes[0]) ActualVariableKey(it.id)
@@ -82,10 +83,7 @@ class HibernateVariableResolver(
             }
             .values
             .asSequence()
-            .map { v -> v.maxByOrNull {
-                scopes.indexOf(it.scope)
-            }}
-            .filterNotNull()
+            .mapNotNull { v -> v.minByOrNull { scopes.indexOf(it.scope) } }
     }
 
     override fun list(
@@ -128,44 +126,41 @@ class HibernateVariableResolver(
     private fun EntityManager.selectConfig(
         scope: Scope,
         prefix: QualifiedId?,
-    ): Sequence<Long> {
+    ): LongArray {
         return if (prefix == null || prefix.isEmpty()) {
-            var cachedValue = cache[scope.asString()]
-            if (cachedValue == null) {
-                cachedValue = selectConfig(scope)
-                    .resultList
-                    .map { it.toLong() }
-                    .toLongArray()
-                cache[scope.asString()] = cachedValue
+            cache.computeIfAbsent(scope.asString()) {
+                selectConfig(scope)
             }
-            cachedValue.asSequence()
         } else {
             selectConfigPrefix(scope, prefix.asString())
-                .resultStream
-                .map { it.toLong() }
-                .asSequence()
         }
     }
 
     private fun EntityManager.selectConfig(
         scope: Scope,
-    ): TypedQuery<java.lang.Long> = createQuery(
+    ): LongArray = createQuery(
         "SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId",
         java.lang.Long::class.java
     )
         .setParameter("scope", scope.asString())
         .setParameter("clientId", clientId)
+        .resultStream
+        .mapToLong { it.toLong() }
+        .toArray()
 
     private fun EntityManager.selectConfigPrefix(
         scope: Scope,
         prefix: String,
-    ): TypedQuery<java.lang.Long> = createQuery(
+    ): LongArray = createQuery(
         "SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix",
         java.lang.Long::class.java
     )
         .setParameter("scope", scope.asString())
         .setParameter("clientId", clientId)
         .setParameter("prefix", "$prefix%")
+        .resultStream
+        .mapToLong { it.toLong() }
+        .toArray()
 
     private fun EntityManager.selectConfigName(
         scopes: List<Scope>,

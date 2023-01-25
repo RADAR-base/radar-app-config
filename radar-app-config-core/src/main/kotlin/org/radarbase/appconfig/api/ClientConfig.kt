@@ -33,7 +33,7 @@ data class ClientConfig(
                     ?.map { (_, id, variable) ->
                         SingleVariable(id.asString(), variable.asOptString())
                     }
-                    ?: listOf(),
+                    ?: emptyList(),
                 configs[false]
                     ?.map { (scope, id, variable) ->
                         SingleVariable(id.asString(), variable.asOptString(), scope.asString())
