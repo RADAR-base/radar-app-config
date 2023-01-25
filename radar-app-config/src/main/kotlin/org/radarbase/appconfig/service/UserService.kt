@@ -9,6 +9,7 @@ import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.service.ConfigService.Companion.userScope
 import org.radarbase.appconfig.service.ConfigProjectServiceImpl.Companion.projectScope
 import jakarta.ws.rs.core.Context
+import org.radarbase.appconfig.service.ConditionService.Companion.conditionScope
 import org.radarbase.appconfig.service.ConfigService.Companion.globalScope
 
 class UserService(
@@ -44,7 +45,7 @@ class UserService(
     ): List<Scope> = buildList {
         add(userScope(userId))
         conditionService.matchingConditions(clientId, projectId, userId)
-            .forEach { add(ConditionService.conditionScope(it)) }
+            .forEach { add(conditionScope(it)) }
         add(projectScope(projectId))
         add(globalScope)
     }
