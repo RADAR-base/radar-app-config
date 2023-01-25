@@ -39,7 +39,7 @@ export class DropDownComponent{
    * On dropdown item click, emit an event to parent
    * @param item: dropdown item
    */
-  onChange(item: any) {
-      this.selectionUpdates.emit(item);
+  onChange(item: Event) {
+      this.selectionUpdates.emit((item.target as HTMLInputElement).value);
   }
 }

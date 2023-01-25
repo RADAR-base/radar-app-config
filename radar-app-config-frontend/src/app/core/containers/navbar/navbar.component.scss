@@ -1,22 +1,50 @@
-//@import '../../../../styles.scss';
+mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  overflow: hidden;
+}
 
-.site-branding{
+.navbar-brand {
+  height: 100%;
   display: flex;
   align-items: center;
-  text-transform: uppercase;
-  .logo{
-    img{height:3em;}
+
+  .logo-wrapper {
+    height: 75%;
+    margin-right: 0.4em;
   }
+
+  .logo {
+    height: 100%;
+  }
+
   .site-text-wrapper {
     font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1;
     line-height: 1.25rem;
+    align-items: center;
+
     .site-description {
     }
 
     .site-title {
-      //font-size: 1.1rem;
+      font-size: 1.1rem;
       font-weight: bold;
     }
   }
 }
 
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-icon + span {
+  margin: 0 8px;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}

@@ -20,6 +20,7 @@ services:
       MANAGEMENTPORTAL_OAUTH_CLIENTS_FILE: /mp-includes/config/oauth_client_details.csv
       MANAGEMENTPORTAL_CATALOGUE_SERVER_ENABLE_AUTO_IMPORT: 'false'
       MANAGEMENTPORTAL_OAUTH_SIGNING_KEY_ALIAS: 'radarbase-managementportal-ec'
+      SERVER_SERVLET_SESSION_COOKIE_SECURE: "false"
       JAVA_OPTS: -Xmx256m  # maximum heap size for the JVM running ManagementPortal, increase this as necessary
     volumes:
       - ./etc/mp-config/:/mp-includes/config

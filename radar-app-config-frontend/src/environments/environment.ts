@@ -5,7 +5,7 @@
 export const environment = {
   envName: 'dev',
   production: false,
-  baseURL: 'http://localhost:4200/',
+  baseURL: 'http://localhost:4200',
   authAPI: 'http://localhost:8080/managementportal/oauth',
   authCallback: 'http://localhost:4200/login',
   clientId: 'appconfig_frontend',
