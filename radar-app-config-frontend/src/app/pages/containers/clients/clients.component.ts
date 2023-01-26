@@ -1,10 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Project} from '@app/pages/models/project';
+import {Project, projectsToDropDown} from '@app/pages/models/project';
 import {ProjectService} from '@app/pages/services/project.service';
 import {Client} from '@app/pages/models/client';
 import {ClientService} from '@app/pages/services/client.service';
 import {TranslateService} from '@app/shared/services/translate.service';
+import {DropDownItem} from "@app/shared/components/drop-down/drop-down.component";
+import {BackButtonOptions} from "@app/core/containers/left-sidebar/left-sidebar.component";
 
 @Component({
   selector: 'app-clients',
@@ -17,6 +19,7 @@ export class ClientsComponent implements OnInit {
   projectId;
   clients: Client[];
   projects: Project[];
+  projectOptions: DropDownItem[] | null = null;
 
   constructor(
     public translate: TranslateService,
@@ -27,20 +30,22 @@ export class ClientsComponent implements OnInit {
 
   async ngOnInit() {
     this.projectId = this.activatedRoute.snapshot.queryParams.project;
+
     this.projects = await this.getProjects();
-    this.updateClients();
+    this.projectOptions = projectsToDropDown(this.projects)
+    await this.updateClients();
   }
 
-  getProjects() {
-    if (!this.projectId) { return; }
+  async getProjects() {
+    if (!this.projectId) return null;
     const {projects} = history.state;
-    return (projects ? projects : this.projectService.getAllProjects());
+    return (projects ? projects : await this.projectService.getAllProjects());
   }
 
-  onProjectChange(d) {
+  onProjectChange(d: string) {
     console.log(d);
     this.updateClients();
-    this.projectId = d.name;
+    this.projectId = d;
     this.router.navigate(['/clients'], {queryParams: {project: this.projectId}});
   }
 
@@ -58,8 +63,8 @@ export class ClientsComponent implements OnInit {
     return {project: this.projectId, client: clientId};
   }
 
-  makeBackButton() {
-    if (!this.projectId) { return; }
+  makeBackButton(): BackButtonOptions | null {
+    if (!this.projectId) { return null; }
     return {routerLink: ['/projects'], queryParams: '', name: 'Projects'};
   }
 }

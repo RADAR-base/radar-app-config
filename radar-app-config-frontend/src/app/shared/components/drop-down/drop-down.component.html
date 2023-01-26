@@ -1,20 +1,8 @@
 <ng-container class="col-md-6" *ngIf="data">
   <mat-form-field class="form-field" appearance="outline" floatLabel="always" subscriptSizing="dynamic">
-    <mat-label>{{label}}:</mat-label>
-    <mat-select *ngIf="data.length > 1" (selectionChange)="onChange($event)" [value]="selected">
-      <mat-option *ngFor="let item of data">{{item[field]}}</mat-option>
+    <mat-label *ngIf="label">{{label}}:</mat-label>
+    <mat-select (selectionChange)="onChange($event)" [value]="selected">
+      <mat-option *ngFor="let item of data" [value]="item.id">{{item.value}}</mat-option>
     </mat-select>
-    <input *ngIf="data.length === 1" matInput [value]="data[0]" disabled>
-    <input *ngIf="data.length === 0" matInput value="" disabled>
   </mat-form-field>
-
-  <div class="btn-group mr-3 w-100 align-items-center">
-    <span class="flex-shrink-0 mr-3">{{label}}:</span>
-    <div class="btn-group w-100" ngbDropdown role="group" aria-label="Button group">
-      <button class="btn btn-primary" ngbDropdownToggle>{{selected}}</button>
-      <div ngbDropdownMenu class="dropdown-menu w-100">
-        <button ngbDropdownItem class="dropdown-item" *ngFor="let item of data" (click)="onChange(item)" >{{item[field]}}</button>
-      </div>
-    </div>
-  </div>
 </ng-container>

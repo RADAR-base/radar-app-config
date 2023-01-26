@@ -10,8 +10,14 @@ import {Component, HostBinding, Input} from '@angular/core';
 
 export class LeftSidebarComponent{
   // __ = strings;
-  @Input() backButton: {routerLink: any, queryParams: any, name: string};
+  @Input() backButton: BackButtonOptions | null;
   @HostBinding('class') class = 'container-left';
 
   constructor() {}
+}
+
+export interface BackButtonOptions {
+  routerLink: any;
+  queryParams: any;
+  name: string;
 }

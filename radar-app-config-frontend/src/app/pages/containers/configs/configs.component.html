@@ -12,8 +12,8 @@
 <!--          {{'project.projects' | translate}}-->
 <!--        </a>-->
 <!--      </div>-->
-      <div class="btn-group-vertical w-100 mb-3 mb-md-3" role="group" aria-label="Button group">
-        <a class="btn btn-secondary btn tab-button"
+      <mat-nav-list>
+        <a mat-list-item color="accent"
            [ngClass]="{'active': isActive('config')}"
            [routerLink]="['/configs']"
            [queryParams]="makeQueryParams()"
@@ -26,14 +26,14 @@
 <!--           [queryParams]="makeQueryParams()"-->
 <!--           [state]="makeState()">{{'group.groups' | translate}}-->
 <!--        </a>-->
-        <a class="btn btn-secondary btn tab-button"
+        <a mat-list-item  color="accent"
            [ngClass]="{'active': isActive('user')}"
            [routerLink]="['/users']"
            [queryParams]="makeQueryParams()"
            [state]="makeState()">
           {{'user.users' | translate}}
         </a>
-      </div>
+      </mat-nav-list>
     </div>
     <div class="col-md-10">
       <div class="row">
@@ -72,24 +72,21 @@
           </nav>
           <div class="row mb-3">
             <app-dropdown class="col-md-6"
-                          [data]="projects"
-                          [field]="'projectName'"
+                          [data]="projectOptions"
                           [label]="'project.project' | translate"
                           [selected]="projectId"
                           (selectionUpdates)="onProjectChange($event)"></app-dropdown>
             <app-dropdown class="col-md-6"
-                          [data]="clients"
-                          [field]="'id'"
+                          [data]="clientOptions"
                           [label]="'client.application' | translate"
                           [selected]="clientId"
                           (selectionUpdates)="onClientChange($event)"></app-dropdown>
           </div>
           <div class="row mb-3">
             <app-dropdown class="col-md-6"
-                          [data]="users"
-                          [field]="'name'"
+                          [data]="userOptions"
                           [label]="'user.user' | translate"
-                          [selected]="user ? user.name : userId"
+                          [selected]="user ? user.id : userId"
                           (selectionUpdates)="onUserChange($event)"></app-dropdown>
           </div>
         </div>

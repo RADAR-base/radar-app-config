@@ -2,18 +2,16 @@
     <div class="row">
         <div class="col-md-2">
             <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
-            <div class="btn-group-vertical w-100 mb-3 mb-md-0"
-                 role="group"
-                 aria-label="Button group with nested dropdown">
-                <a class="btn btn-secondary btn-block tab-button"
+            <mat-nav-list>
+                <a mat-list-item
                    [routerLink]="['/configs']"
                    [queryParams]="makeQueryParams(null)"
                    [state]="makeState()">{{'client.project' | translate}}</a>
-                <a class="btn btn-secondary btn-block tab-button active"
+                <a mat-list-item
                    [routerLink]="['/users']"
                    [queryParams]="makeQueryParams(null)"
                    [state]="makeState()">{{'user.users' | translate}}</a>
-            </div>
+            </mat-nav-list>
         </div>
         <div class="col-md-8">
             <nav aria-label="breadcrumb">
@@ -24,14 +22,12 @@
             </nav>
             <div class="row mb-3">
                 <app-dropdown class="col-md-6"
-                              [data]="projects"
-                              [field]="'projectName'"
+                              [data]="projectOptions"
                               [label]="'project.project' | translate"
                               [selected]="projectId"
                               (selectionUpdates)="onProjectChange($event)"></app-dropdown>
                 <app-dropdown class="col-md-6"
-                              [data]="clients"
-                              [field]="'id'"
+                              [data]="clientOptions"
                               [label]="'client.application' | translate"
                               [selected]="clientId"
                               (selectionUpdates)="onClientChange($event)"></app-dropdown>

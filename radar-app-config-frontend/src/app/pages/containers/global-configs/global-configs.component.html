@@ -20,10 +20,9 @@
           </nav>
           <div class="row mb-3">
             <app-dropdown class="col-md-6"
-                          [data]="clients"
+                          [data]="clientOptions"
                           [selected]="clientId"
                           [label]="'client.application' | translate"
-                          [field]="'id'"
                           (selectionUpdates)="onClientChange($event)"></app-dropdown>
           </div>
         </div>

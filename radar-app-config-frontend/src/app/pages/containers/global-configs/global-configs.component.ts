@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {Client} from '@app/pages/models/client';
+import {Client, clientsToDropDown} from '@app/pages/models/client';
 import {ConfigService} from '@app/pages/services/config.service';
 import {ToastService} from '@app/shared/services/toast.service';
 import {ClientService} from '@app/pages/services/client.service';
 import {TranslateService} from "@app/shared/services/translate.service";
 import {ConfigElement} from "@app/pages/models/config";
+import {DropDownItem} from "@app/shared/components/drop-down/drop-down.component";
+import {BackButtonOptions} from "@app/core/containers/left-sidebar/left-sidebar.component";
 
 @Component({
   selector: 'app-global-configs',
@@ -16,7 +18,8 @@ export class GlobalConfigsComponent implements OnInit {
 
   clientId: string;
   configs: ConfigElement[];
-  clients: [Client] | null;
+  clients: Client[] | null;
+  clientOptions: DropDownItem[]
   loading = true;
 
   constructor(
@@ -30,20 +33,21 @@ export class GlobalConfigsComponent implements OnInit {
   async ngOnInit() {
     this.clientId = this.activatedRoute.snapshot.queryParams.client;
     this.clients = await this.getClients();
-    this.updateConfigs();
+    this.clientOptions = clientsToDropDown(this.clients);
+    await this.updateConfigs();
   }
 
-  getClients() {
-    if (!this.clientId) { return; }
+  async getClients() {
+    if (!this.clientId) return null;
     const {clients} = history.state;
-    return (clients ? clients : this.clientService.getAllClients());
+    return (clients ? clients : await this.clientService.getAllClients());
   }
 
-  onClientChange(event) {
-    console.log("change", event);
-    this.clientId = event.id;
+  onClientChange(event: string) {
+    this.clientId = event;
     this.updateConfigs();
-    this.router.navigate(['/global-configs'], {queryParams: {client: this.clientId}}).then(() => {});
+    const queryParams =  {client: this.clientId}
+    this.router.navigate(['/global-configs'], { queryParams });
   }
 
   async updateConfigs() {
@@ -58,8 +62,8 @@ export class GlobalConfigsComponent implements OnInit {
     });
   }
 
-  makeBackButton() {
-    if (!this.clientId) { return; }
+  makeBackButton(): BackButtonOptions | null {
+    if (!this.clientId) { return null; }
     return {routerLink: ['/global-clients'], queryParams: {}, name: 'Applications'};
   }
 }

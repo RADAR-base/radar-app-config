@@ -1,9 +1,9 @@
-<div class="btn-group-vertical w-100 mb-3"
+<div class="w-100 mb-3"
      role="group" aria-label="Button group"
      *ngIf="backButton">
-  <a mat-button class="btn btn-primary btn-block"
+  <button mat-stroked-button
      [routerLink]="backButton.routerLink"
      [queryParams]="backButton.queryParams">
     <mat-icon svgIcon="keyboard_arrow_left"></mat-icon>{{'common.backTo' | translate}}{{backButton.name}}
-  </a>
+  </button>
 </div>

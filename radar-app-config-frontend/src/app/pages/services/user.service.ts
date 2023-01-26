@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {User} from '@app/pages/models/user';
 import {ToastService} from '@app/shared/services/toast.service';
-import {Observable} from 'rxjs';
+import {firstValueFrom, Observable} from 'rxjs';
 import {environment} from "@environments/environment";
 
 /**
@@ -15,13 +15,16 @@ export class UserService {
 
   constructor(private http: HttpClient, private toastService: ToastService) {}
 
-  private getUsersByProjectIdObservable(projectId): Observable<User[]> {
-    return this.http.get<any>(`${environment.backendUrl}/projects/${encodeURIComponent(projectId)}/users/`);
+  private getUsersByProjectIdObservable(projectId): Observable<{users: User[]}> {
+    return this.http.get<{users: User[]}>(`${environment.backendUrl}/projects/${encodeURIComponent(projectId)}/users/`);
   }
 
   async getUsersByProjectId(projectId): Promise<User[]> {
-    return this.getUsersByProjectIdObservable(projectId).toPromise()
+    return firstValueFrom(this.getUsersByProjectIdObservable(projectId))
       .then((data: any) => {
+        if (!data.users) {
+          throw Error("Cannot load users: " + data['error_description'])
+        }
         const results: User[] = data.users;
         results.forEach(d => {
             if (d.externalUserId) {

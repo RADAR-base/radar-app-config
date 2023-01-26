@@ -3,10 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {ProjectService} from '@app/pages/services/project.service';
 import {ClientService} from '@app/pages/services/client.service';
 import {UserService} from '@app/pages/services/user.service';
-import {Project} from '@app/pages/models/project';
-import {Client} from '@app/pages/models/client';
+import {Project, projectsToDropDown} from '@app/pages/models/project';
+import {Client, clientsToDropDown} from '@app/pages/models/client';
 import {User} from '@app/pages/models/user';
 import {TranslateService} from "@app/shared/services/translate.service";
+import {DropDownItem} from "@app/shared/components/drop-down/drop-down.component";
+import {BackButtonOptions} from "@app/core/containers/left-sidebar/left-sidebar.component";
 
 /**
  * Users Component
@@ -21,7 +23,9 @@ export class UsersComponent implements OnInit {
   clientId;
 
   projects: Project[];
+  projectOptions: DropDownItem[] = []
   clients: Client[];
+  clientOptions: DropDownItem[] = []
   users: User[];
 
   loading = true;
@@ -41,37 +45,42 @@ export class UsersComponent implements OnInit {
     this.clientId = this.activatedRoute.snapshot.queryParams.client;
 
     this.projects = await this.getProjects();
+    this.projectOptions = projectsToDropDown(this.projects)
     this.clients = await this.getClients();
-
-    this.updateUsers();
+    this.clientOptions = clientsToDropDown(this.clients)
+    await this.updateUsers()
   }
 
-  getProjects() {
-    if (!this.projectId) { return; }
+  async getProjects() {
+    if (!this.projectId) return null;
     const {projects} = history.state;
-    return (projects ? projects : this.projectService.getAllProjects());
+    return (projects ? projects : await this.projectService.getAllProjects());
   }
 
-  getClients() {
-    if (!this.clientId) { return; }
+  async getClients() {
+    if (!this.clientId) return null;
     const {clients} = history.state;
-    return (clients ? clients : this.clientService.getAllClients());
+    return (clients ? clients : await this.clientService.getAllClients());
   }
 
-  onProjectChange(event) {
-    this.projectId = event.name;
-    const tempObject = {...this.activatedRoute.snapshot.queryParams};
-    tempObject.project = this.projectId;
+  onProjectChange(event: string) {
+    this.projectId = event;
+    const queryParams = {
+      ...this.activatedRoute.snapshot.queryParams,
+      project: this.projectId,
+    };
     this.updateUsers();
-    this.router.navigate(['/users'], {queryParams: tempObject});
+    this.router.navigate(['/users'], { queryParams });
   }
 
-  onClientChange(event) {
-    this.clientId = event.id;
-    const tempObject = {...this.activatedRoute.snapshot.queryParams};
-    tempObject.client = this.clientId;
+  onClientChange(event: string) {
+    this.clientId = event;
+    const queryParams = {
+      ...this.activatedRoute.snapshot.queryParams,
+      client: this.clientId,
+    };
     this.updateUsers();
-    this.router.navigate(['/users'], {queryParams: tempObject});
+    this.router.navigate(['/users'], { queryParams });
   }
 
   async updateUsers() {
@@ -88,8 +97,8 @@ export class UsersComponent implements OnInit {
     return {project: this.projectId, client: this.clientId, user: userId};
   }
 
-  makeBackButton() {
-    if (!this.clientId || !this.projectId) { return; }
+  makeBackButton(): BackButtonOptions | null {
+    if (!this.clientId || !this.projectId) { return null; }
     return {routerLink: ['/clients'], queryParams: {project: this.projectId}, name: 'Applications'};
   }
 }

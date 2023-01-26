@@ -21,8 +21,7 @@
       </nav>
       <div class="row mb-3">
         <app-dropdown class="col-md-6"
-                      [data]="projects"
-                      [field]="'projectName'"
+                      [data]="projectOptions"
                       [label]="'project.project' | translate"
                       [selected]="projectId"
                       (selectionUpdates)="onProjectChange($event)"></app-dropdown>

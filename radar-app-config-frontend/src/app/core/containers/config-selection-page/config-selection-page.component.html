@@ -4,11 +4,11 @@
     <div aria-label="breadcrumb" class="breadcrumb">
       <div class="breadcrumb-item">
         <div class="breadcrumb-item-label">{{'project.project' | translate}}:</div>
-        <app-dropdown *ngIf="projects" [data]="projects" [selected]="projectId" (selectionUpdates)="onProjectChange($event)"></app-dropdown>
+        <app-dropdown [data]="projectOptions" [selected]="projectId" (selectionUpdates)="onProjectChange($event)"></app-dropdown>
       </div>
       <div class="breadcrumb-item">
         <div class="breadcrumb-item-label">{{'client.application' | translate}}:</div>
-        <app-dropdown *ngIf="clients" [data]="clients" [selected]="clientId" (selectionUpdates)="onClientChange($event)"></app-dropdown>
+        <app-dropdown [data]="clientOptions" [selected]="clientId" (selectionUpdates)="onClientChange($event)"></app-dropdown>
       </div>
     </div>
     <div class="container-content center">

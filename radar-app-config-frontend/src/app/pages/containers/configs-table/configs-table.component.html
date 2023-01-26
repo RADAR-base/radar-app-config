@@ -39,41 +39,39 @@
               </td>
               <td style="width: 16px;">
                 <button *ngIf="!group.value.scope" (click)="remove(i)"
-                        class="btn btn-primary" ngbTooltip="Delete">
-                  <mat-icon style="font-size: 16px;width: 16px; height:16px">delete</mat-icon>
+                        mat-icon-button matTooltip="Delete">
+                  <mat-icon svgIcon="delete"></mat-icon>
                 </button>
                 <button *ngIf="group.value.scope" (click)="backToDefault(i)"
                         class="btn btn-primary disabled"
                         [ngClass]="{'disabled' : group.value.value === group.value.default}"
                         [disabled]="group.value.value === group.value.default"
-                        ngbTooltip="Reset to default">
-                  <mat-icon style="font-size: 16px;width: 16px; height:16px">replay</mat-icon>
+                        matTooltip="Reset to default">
+                  <mat-icon svgIcon="replay"></mat-icon>
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
       </form>
-      <button mat-button (click)="addConfig()"
-              class="btn btn-primary btn-block add-config">
-        <mat-icon class="mr-1">add_circle</mat-icon>{{'config.addANameValueConfiguration' | translate}}</button>
+      <button mat-icon-button (click)="addConfig()"><mat-icon class="mr-1" svgIcon="add_circle"></mat-icon></button>
     </div>
     <div class="col-md-2 sidebar-config mt-5 mt-md-0">
-      <button class="btn btn-primary btn-block"
+      <button mat-raised-button color="primary"
               [ngClass]="{'disabled' : !updateEnabled}"
               [disabled]="!updateEnabled"
               (click)="onPublish(modalContent)">{{'config.publish' | translate}}</button>
-      <button class="btn btn-primary btn-block"
+      <button mat-button
               [ngClass]="{'disabled' : !updateEnabled}"
               [disabled]="!updateEnabled"
               (click)="onReset(modalContent)">{{'config.reset' | translate}}</button>
-      <button class="btn btn-primary btn-block mt-3" (click)="onCancel(modalContent)">{{'config.cancel' | translate}}</button>
+      <button mat-button (click)="onCancel(modalContent)">{{'config.cancel' | translate}}</button>
       <hr class="my-2" style="border-top-width: 2px;">
-      <a [href]="downloadJsonHref" download="app-config-export.json" class="btn btn-primary btn-block">{{'config.export' | translate}}</a>
-        <div (click)="importFile.click()" class="btn btn-primary btn-block">
-            {{'config.import' | translate}}
-            <input style="display: none" type="file" #importFile (change)="onImport($event, modalContent)">
-        </div>
+      <a mat-stroked-button [href]="downloadJsonHref" download="app-config-export.json">{{'config.export' | translate}}</a>
+      <button mat-stroked-button (click)="importFile.click()">
+          {{'config.import' | translate}}
+          <input style="display: none" type="file" #importFile (change)="onImport($event, modalContent)">
+      </button>
     </div>
   </div>
 </div>

@@ -47,7 +47,6 @@ export class ConfigsTableComponent implements OnInit, OnChanges {
         (this.configForm.get('config') as FormArray).clear();
         this.createConfigForm();
       }
-      console.log(this.configObject);
     }
   }
 

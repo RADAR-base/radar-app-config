@@ -34,14 +34,15 @@ export class ClientService {
    * getAllClients
    * @returns clients
    */
-  async getAllClients(): Promise<Client[]> {
+  getAllClients(): Promise<Client[]> {
     return firstValueFrom(
         this.getAllClientsObservable().pipe(
           map(data => {
-            const clients: Client[] = data.clients;
-            clients.forEach(c => c.id = c.name = c.clientId);
+            if (!data.clients) {
+              throw Error("Cannot load clients: " + data['error_description'])
+            }
             this.toastService.showSuccess('Clients loaded.');
-            return clients;
+            return data.clients;
           }),
           catchError((e) => {
             this.toastService.showError(e);
