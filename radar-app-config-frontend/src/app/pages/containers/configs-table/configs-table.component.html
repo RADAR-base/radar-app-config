@@ -56,23 +56,29 @@
       </form>
       <button mat-icon-button (click)="addConfig()"><mat-icon class="mr-1" svgIcon="add_circle"></mat-icon></button>
     </div>
-    <div class="col-md-2 sidebar-config mt-5 mt-md-0">
+    <mat-action-list class="col-md-2 sidebar-config mt-5 mt-md-0">
+      <mat-list-item>
       <button mat-raised-button color="primary"
               [ngClass]="{'disabled' : !updateEnabled}"
               [disabled]="!updateEnabled"
               (click)="onPublish(modalContent)">{{'config.publish' | translate}}</button>
+      </mat-list-item>
+      <mat-list-item>
       <button mat-button
               [ngClass]="{'disabled' : !updateEnabled}"
               [disabled]="!updateEnabled"
               (click)="onReset(modalContent)">{{'config.reset' | translate}}</button>
+      </mat-list-item>
+      <mat-list-item>
       <button mat-button (click)="onCancel(modalContent)">{{'config.cancel' | translate}}</button>
+      </mat-list-item>
       <hr class="my-2" style="border-top-width: 2px;">
-      <a mat-stroked-button [href]="downloadJsonHref" download="app-config-export.json">{{'config.export' | translate}}</a>
-      <button mat-stroked-button (click)="importFile.click()">
+      <mat-list-item><a mat-stroked-button [href]="downloadJsonHref" download="app-config-export.json">{{'config.export' | translate}}</a></mat-list-item>
+      <mat-list-item><button mat-stroked-button (click)="importFile.click()">
           {{'config.import' | translate}}
           <input style="display: none" type="file" #importFile (change)="onImport($event, modalContent)">
-      </button>
-    </div>
+      </button></mat-list-item>
+    </mat-action-list>
   </div>
 </div>
 
