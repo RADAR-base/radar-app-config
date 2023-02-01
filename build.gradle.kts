@@ -3,7 +3,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     kotlin("jvm") apply false
-    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.6"
+    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
     id("com.github.ben-manes.versions")
     id("org.jetbrains.dokka") apply false
     `maven-publish`
@@ -13,7 +13,7 @@ plugins {
 
 allprojects {
     group = "org.radarbase"
-    version = "0.4.2"
+    version = "0.4.3"
 }
 
 val githubRepoName = "RADAR-base/radar-app-config"
@@ -24,6 +24,9 @@ subprojects {
     repositories {
         mavenCentral()
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
+    }
+    tasks.withType<JavaCompile> {
+        options.release.set(17)
     }
     tasks.withType<KotlinCompile> {
         kotlinOptions {
@@ -207,5 +210,5 @@ nexusPublishing {
 }
 
 tasks.wrapper {
-    gradleVersion = "7.5.1"
+    gradleVersion = "7.6"
 }

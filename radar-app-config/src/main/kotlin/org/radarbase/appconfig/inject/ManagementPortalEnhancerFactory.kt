@@ -13,8 +13,8 @@ import org.radarbase.lang.expression.Function
 
 /** This binder needs to register all non-Jersey classes, otherwise initialization fails. */
 class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : EnhancerFactory {
-    override fun createEnhancers(): List<JerseyResourceEnhancer> {
-        val resolverEnhancer = if (config.database != null) {
+    override fun createEnhancers(): List<JerseyResourceEnhancer> = buildList {
+        if (config.database != null) {
             val databaseConfig = config.database.copy(
                 managedClasses = listOf(ConfigEntity::class.qualifiedName!!),
                 properties = mapOf(
@@ -23,36 +23,31 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
                     "hibernate.cache.hazelcast.instance_name" to config.hazelcast.instanceName,
                 ) + config.database.properties,
             )
-            listOf(
-                HibernateResourceEnhancer(databaseConfig),
-                HibernatePersistenceResourceEnhancer(config.hazelcast),
-            )
+            add(HibernateResourceEnhancer(databaseConfig))
+            add(HibernatePersistenceResourceEnhancer(config.hazelcast))
         } else {
-            listOf(InMemoryResourceEnhancer())
+            add(InMemoryResourceEnhancer())
         }
 
-        val mapperEnhancer = MapperResourceEnhancer().apply {
+        add(MapperResourceEnhancer().apply {
             mapper = MapperResourceEnhancer.createDefaultMapper()
                 .registerModule(SimpleModule().apply {
                     val allowedFunctions = listOf<Function>(
-                        org.radarbase.lang.expression.SumFunction(),
-                        org.radarbase.lang.expression.ListVariablesFunction(),
-                        org.radarbase.lang.expression.CountFunction(),
+                        SumFunction(),
+                        ListVariablesFunction(),
+                        CountFunction(),
                     )
                     addDeserializer(
                         Expression::class.java,
                         ExpressionDeserializer(ExpressionParser(allowedFunctions)),
                     )
                 })
-        }
+        })
 
-        return listOf(
-            mapperEnhancer,
-            AppConfigResourceEnhancer(config),
-            Enhancers.radar(config.auth, includeMapper = false),
-            Enhancers.managementPortal(config.auth),
-            Enhancers.health,
-            Enhancers.exception,
-        ) + resolverEnhancer
+        add(AppConfigResourceEnhancer(config))
+        add(Enhancers.radar(config.auth, includeMapper = false))
+        add(Enhancers.managementPortal(config.auth))
+        add(Enhancers.health)
+        add(Enhancers.exception)
     }
 }
