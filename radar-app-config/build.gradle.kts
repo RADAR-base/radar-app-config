@@ -56,6 +56,9 @@ dependencies {
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:$log4j2Version")
     runtimeOnly("org.apache.logging.log4j:log4j-jul:$log4j2Version")
 
+    implementation("io.swagger.core.v3:swagger-annotations-jakarta:2.2.8")
+    implementation("io.swagger.core.v3:swagger-models-jakarta:2.2.8")
+
     val junitVersion: String by project
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")

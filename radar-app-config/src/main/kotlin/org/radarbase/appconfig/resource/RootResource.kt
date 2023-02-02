@@ -1,5 +1,8 @@
 package org.radarbase.appconfig.resource
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.parameters.RequestBody
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.inject.Singleton
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
@@ -29,6 +32,12 @@ class RootResource(
     @GET
     @Cache(maxAge = 3600, isPrivate = true)
     @NeedsPermission(Permission.Entity.OAUTHCLIENTS, Permission.Operation.READ)
+    @Operation(
+        description = "List the supported clients.",
+        responses = [
+            ApiResponse(description = "List of supported OAuth clients", responseCode = "200"),
+        ],
+    )
     fun clients() = OAuthClientList(
         clientService.readClients()
             .map(MPOAuthClient::toOAuthClient)

@@ -1,5 +1,7 @@
 package org.radarbase.appconfig.resource
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
@@ -19,6 +21,10 @@ class ProtocolResource(
 ) {
     @Path("protocol/{protocolId}")
     @GET
+    @Operation(
+        description = "Get a protocol by ID.",
+        responses = [ApiResponse(description = "Single protocol with client configuration", responseCode = "200"), ],
+    )
     fun getProtocol(
         @PathParam("protocolId") protocolId: Long,
         @Context auth: Auth,

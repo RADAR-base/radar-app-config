@@ -1,6 +1,10 @@
 package org.radarbase.appconfig.resource
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.headers.Header
+import io.swagger.v3.oas.annotations.parameters.RequestBody
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
@@ -13,8 +17,8 @@ import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.appconfig.service.ProtocolService
 import org.radarbase.appconfig.service.ProtocolService.Companion.toResponse
-import org.radarbase.auth.authorization.Permission.Entity
-import org.radarbase.auth.authorization.Permission.Operation
+import org.radarbase.auth.authorization.Permission.Entity.*
+import org.radarbase.auth.authorization.Permission.Operation.*
 import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
@@ -35,22 +39,34 @@ class ProjectResource(
 ) {
     @GET
     @Cache(maxAge = 300, isPrivate = true)
-    @NeedsPermission(Entity.PROJECT, Operation.READ)
+    @NeedsPermission(PROJECT, READ)
+    @Operation(
+        description = "List projects",
+        responses = [ApiResponse(description = "List of projects", responseCode = "200")],
+    )
     fun listProjects(@Context auth: Auth) = ProjectList(
         projectService.userProjects(auth)
             .map(MPProject::toProject)
     )
 
     @GET
-    @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
+    @NeedsPermission(PROJECT, READ, "projectId")
     @Path("{projectId}")
     @Cache(maxAge = 3600, isPrivate = true)
+    @Operation(
+        description = "Get a projects",
+        responses = [ApiResponse(description = "Project description", responseCode = "200"), ],
+    )
     fun get(@PathParam("projectId") projectId: String): Project =
         projectService.project(projectId).toProject()
 
     @Path("{projectId}/config/{clientId}")
     @GET
-    @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
+    @NeedsPermission(PROJECT, READ, "projectId")
+    @Operation(
+        description = "Get the configuration for a given project and client",
+        responses = [ApiResponse(description = "Project configuration", responseCode = "200")],
+    )
     fun projectConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
@@ -61,7 +77,12 @@ class ProjectResource(
 
     @Path("{projectId}/config/{clientId}")
     @POST
-    @NeedsPermission(Entity.PROJECT, Operation.UPDATE, "projectId")
+    @NeedsPermission(PROJECT, UPDATE, "projectId")
+    @Operation(
+        description = "Update the configuration for a given project and client",
+        responses = [ApiResponse(description = "Configuration", responseCode = "200")],
+        requestBody = RequestBody(description = "Valid configuration object, containing at least a config field with a list of variables.")
+    )
     fun putProjectConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
@@ -75,7 +96,11 @@ class ProjectResource(
     @Path("{projectId}/protocols/{clientId}")
     @GET
     @Cache(maxAge = 300, isPrivate = true)
-    @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
+    @NeedsPermission(PROJECT, READ, "projectId")
+    @Operation(
+        description = "Get the protocol for a given project and client",
+        responses = [ApiResponse(description = "Protocol", responseCode = "200")],
+    )
     fun protocol(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
@@ -88,7 +113,11 @@ class ProjectResource(
     @Path("{projectId}/protocols/{clientId}/contents")
     @GET
     @Cache(maxAge = 300, isPrivate = true)
-    @NeedsPermission(Entity.PROJECT, Operation.READ, "projectId")
+    @NeedsPermission(PROJECT, READ, "projectId")
+    @Operation(
+        description = "Get the protocol contents for a given project and client",
+        responses = [ApiResponse(description = "Protocol contents", responseCode = "200")],
+    )
     fun protocolContents(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
@@ -100,7 +129,20 @@ class ProjectResource(
 
     @Path("{projectId}/protocols")
     @POST
-    @NeedsPermission(Entity.PROJECT, Operation.UPDATE, "projectId")
+    @NeedsPermission(PROJECT, UPDATE, "projectId")
+    @Operation(
+        description = "Set the protocol for a given project and client",
+        responses = [
+            ApiResponse(description = "Location of the newly created protocol", responseCode = "201", headers = [
+                Header(name = "Location", description = "Location of the created protocol"),
+            ]),
+            ApiResponse(description = "Location of the existing identical protocol", responseCode = "304", headers = [
+                Header(name = "Location", description = "Location of the existing protocol"),
+            ]),
+            ApiResponse(description = "The protocol did not match the schema.", responseCode = "400"),
+        ],
+        requestBody = RequestBody(description = "A client protocol, including client ID and contents.")
+    )
     fun setProtocol(
         @PathParam("projectId") projectId: String,
         @Context uriInfo: UriInfo,
@@ -114,7 +156,15 @@ class ProjectResource(
 
     @Path("{projectId}/protocols/{clientId}/contents")
     @PUT
-    @NeedsPermission(Entity.PROJECT, Operation.UPDATE, "projectId")
+    @NeedsPermission(PROJECT, UPDATE, "projectId")
+    @Operation(
+        description = "Update only the protocol contents for a given project and client",
+        responses = [
+            ApiResponse(description = "The contents were updated", responseCode = "204"),
+            ApiResponse(description = "The protocol did not match the schema.", responseCode = "400"),
+        ],
+        requestBody = RequestBody(description = "Protocol contents matching the JSON schema.")
+    )
     fun setProtocol(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,

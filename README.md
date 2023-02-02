@@ -50,9 +50,8 @@ The current iteration of this project has a subset of the intended functionality
 
 1. `global`
 2. `project.{projectId}`
-3. `group.{groupId}` (not implemented yet)
-4. `condition.{conditionId}` (not implemented yet)
-5. `user.{userId}`
+3. `condition.{conditionId}`
+4. `user.{userId}`
 
 Settings in the global scope can be seen as the platform defaults. They can only be updated by the system administrator. Project and user configs can only be updated by project admins.
 
@@ -187,6 +186,27 @@ HTTP 200 OK
   "scope": "user.userA",
   "config": [
     {"name": "rate", "value": "1"}
+  ],
+  "defaults": [
+    {"name": "plugins", "value": "A B", "scope": "project.projectA"},
+    {"name": "rate", "value": "1", "scope": "project.projectA"}
+  ]
+}
+```
+
+### Conditions
+
+With conditions, the service can take more intricate variables into account. The expression language is shown in the `radar-expression-lang` module README. The API is as follows:
+
+```
+GET /projects/{projectId}/conditions
+---
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "scope": "user.userA",
+  "config": [
+    {"name": "plugins", "value": "A B"}
   ],
   "defaults": [
     {"name": "plugins", "value": "A B", "scope": "project.projectA"},

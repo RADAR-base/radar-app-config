@@ -8,6 +8,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.info.License
 import kotlin.reflect.jvm.jvmName
 import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.persistence.entity.ConditionEntity
@@ -45,6 +48,10 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
         val allowedFunctions = listOf(
             SumFunction(),
             CountFunction(),
+            IncludesFunction(),
+            ContainsFunction(),
+            StartsWithFunction(),
+            EndsWithFunction(),
         )
         add(
             Enhancers.mapper.apply {
@@ -85,5 +92,14 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
         add(AppConfigResourceEnhancer(config, allowedFunctions))
         add(Enhancers.health)
         add(Enhancers.exception)
+        add(Enhancers.swagger(openApi = OpenAPI().apply {
+            info = Info().apply {
+                title = "radar-app-config"
+                description = "App configuration service for the RADAR-base platform."
+                license = License().apply {
+                    name = "Apache-2.0"
+                }
+            }
+        }))
     }
 }
