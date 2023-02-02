@@ -30,20 +30,20 @@ class AppConfigClient(
     }
 
     suspend fun fetchConfig(scope: Scope): AppConfigConfig {
-        val response: HttpResponse = client.get(scope.toUrl())
+        val response: HttpResponse = client.get(scope.toConfigUrl())
         return response.processAppConfig()
     }
 
     suspend fun updateConfig(config: AppConfigConfig, scope: Scope): AppConfigConfig {
-        val response: HttpResponse = client.post(scope.toUrl()) {
+        val response: HttpResponse = client.post(scope.toConfigUrl()) {
             setBody(config)
             contentType(Json)
         }
         return response.processAppConfig()
     }
 
-    private fun Scope.toUrl(): Url = URLBuilder(baseUrl).run {
-        when (this@toUrl) {
+    private fun Scope.toConfigUrl(): Url = URLBuilder(baseUrl).run {
+        when (this@toConfigUrl) {
             Scope.Global -> appendPathSegments("global")
             is Scope.Condition -> appendPathSegments("project", projectId, "conditions", conditionId)
             is Scope.User -> appendPathSegments("projects", projectId, "users", userId)
