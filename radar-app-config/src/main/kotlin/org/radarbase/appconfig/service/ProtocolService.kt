@@ -8,14 +8,14 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriBuilder
 import java.time.Instant
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
+import org.radarbase.appconfig.api.ClientProtocol
+import org.radarbase.appconfig.api.ProtocolMapper
 import org.radarbase.appconfig.config.*
 import org.radarbase.appconfig.config.Scopes.GLOBAL_PROTOCOL_SCOPE
 import org.radarbase.appconfig.config.Scopes.protocol
-import org.radarbase.appconfig.api.ClientProtocol
-import org.radarbase.appconfig.api.ProtocolMapper
+import org.radarbase.appconfig.config.Scopes.toAppConfigScope
 import org.radarbase.appconfig.persistence.ConfigRepository
 import org.radarbase.auth.authorization.Permission.PROJECT_READ
 import org.radarbase.auth.authorization.Permission.SUBJECT_READ
@@ -36,7 +36,7 @@ class ProtocolService(
     @Context private val mapper: ObjectMapper,
     @Context private val conditionService: ConditionService,
 ) {
-    private val schemaValidators: ConcurrentMap<String, Optional<JsonSchema>> = ConcurrentHashMap()
+    private val schemaValidators: ConcurrentMap<String, Result<JsonSchema>> = ConcurrentHashMap()
 
     fun globalProtocol(clientId: String): ClientProtocol {
         val scopes = listOf(GLOBAL_PROTOCOL_SCOPE)
@@ -50,25 +50,27 @@ class ProtocolService(
         val protocol = configRepository.get(protocolId)
             ?: throw HttpNotFoundException("protocol_not_found", "Protocol $protocolId not found")
         val (clientId, variableSet) = protocol
-        val (type, scope) = variableSet.scope.splitHead()
-        if (type != "protocol") {
+
+        val appScope = variableSet.scope.toAppConfigScope()
+        if (appScope !is ProtocolScope) {
             throw HttpNotFoundException("protocol_not_found", "Protocol $protocolId not found")
         }
-
-        when {
-            scope == null -> Unit
-            scope.isPrefixedBy("global") -> Unit
-            scope.isPrefixedBy("project") -> {
-                val projectId = scope.id.names[1]
-                projectService.ensureProject(projectId)
-                auth.checkPermissionOnProject(PROJECT_READ, projectId, "getProtocol")
-            }
-            scope.isPrefixedBy("user") -> {
-                val userId = scope.id.names[1]
-                val user = projectService.userProjects(auth, SUBJECT_READ)
-                    .firstNotNullOfOrNull { project -> projectService.getUser(project.id, userId) }
-                    ?: throw HttpNotFoundException("user_not_found", "User $userId not found.")
-                auth.checkPermissionOnSubject(SUBJECT_READ, user.projectId, user.id)
+        appScope.scopes().firstOrNull { scope ->
+            when (scope) {
+                is ProjectScope -> {
+                    projectService.ensureProject(scope.projectId)
+                    auth.checkPermissionOnProject(PROJECT_READ, scope.projectId, "getProtocol")
+                    true
+                }
+                is UserScope -> {
+                    val userId = scope.userId
+                    val user = projectService.userProjects(auth, SUBJECT_READ)
+                        .firstNotNullOfOrNull { project -> projectService.getUser(project.id, userId) }
+                        ?: throw HttpNotFoundException("user_not_found", "User $userId not found.")
+                    auth.checkPermissionOnSubject(SUBJECT_READ, user.projectId, user.id)
+                    true
+                }
+                else -> false
             }
         }
 
@@ -77,7 +79,10 @@ class ProtocolService(
     }
 
     fun projectProtocol(clientId: String, projectId: String): ClientProtocol {
-        val scopes = listOf(ProjectScope(projectId).protocol, GLOBAL_PROTOCOL_SCOPE)
+        val scopes = listOf(
+            ProjectScope(projectId).protocol,
+            GLOBAL_PROTOCOL_SCOPE
+        )
         return firstProtocol(clientId, scopes) { "Client $clientId protocol not found for project $projectId" }
     }
 
@@ -87,10 +92,13 @@ class ProtocolService(
     ): UpdateResult = updateProtocol(clientProtocol, ProjectScope(projectId))
 
     fun userProtocol(clientId: String, projectId: String, userId: String): ClientProtocol {
-        val scopes = mutableListOf(UserScope(userId).protocol)
-        scopes += conditionService.matchingScopes(clientId, projectId, userId).map { it.protocol }
-        scopes += ProjectScope(projectId).protocol
-        scopes += GLOBAL_PROTOCOL_SCOPE
+        val scopes = buildList {
+            add(UserScope(userId).protocol)
+            conditionService.matchingScopes(clientId, projectId, userId)
+                .mapTo(this) { it.protocol }
+            add(ProjectScope(projectId).protocol)
+            add(GLOBAL_PROTOCOL_SCOPE)
+        }
 
         return firstProtocol(clientId, scopes) { "Client $clientId protocol not found for user $userId in project $projectId" }
     }
@@ -138,27 +146,24 @@ class ProtocolService(
 
     private fun verifyProtocol(protocol: ClientProtocol) {
         val validator = schemaValidators.computeIfAbsent(protocol.clientId) { clientId ->
+            val fileName = "protocol-schema-$clientId.json"
             try {
-                val schema = ProtocolService::class.java
-                    .getResourceAsStream("protocol-schema-$clientId.json")
-                    ?.use {
-                        mapper.readTree(it)
-                    }
-                if (schema == null) {
-                    logger.error("Cannot retrieve protocol schema. Will not verify protocols.")
-                    Optional.empty()
-                } else {
-                    val jsonSchemaFactory = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(schema))
-                    Optional.of(
-                        jsonSchemaFactory.getSchema(schema)
-                            .also { it.initializeValidators() }
-                    )
+                val schema = ProtocolService::class.java.getResourceAsStream(fileName)?.use {
+                    mapper.readTree(it)
+                } ?: run {
+                    logger.error("Cannot retrieve protocol schema {}. Will not verify protocols.", fileName)
+                    return@computeIfAbsent Result.failure(IllegalStateException("Cannot retrieve protocol schema. Will not verify protocols."))
                 }
+
+                val jsonSchemaFactory = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(schema))
+                val parsedSchema = jsonSchemaFactory.getSchema(schema)
+                parsedSchema.initializeValidators()
+                Result.success(parsedSchema)
             } catch (ex: Exception) {
-                Optional.empty()
+                Result.failure(ex)
             }
-        }.orElseThrow {
-            HttpBadRequestException("protocol_not_allowed", "Protocol not allowed for client ${protocol.clientId}")
+        }.getOrElse {
+            throw HttpBadRequestException("protocol_not_allowed", "Protocol not allowed for client ${protocol.clientId}")
         }
 
         val validation = validator.validateAndCollect(protocol.contents).validationMessages

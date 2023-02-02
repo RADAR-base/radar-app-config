@@ -31,3 +31,43 @@ class CountFunction : AbstractFunction() {
         }
         .toVariable()
 }
+
+class ContainsFunction : AbstractFunction() {
+    override val name: String = "contains"
+    override val numberOfArguments: IntRange = 2 .. 2
+
+    override fun apply(interpreter: Interpreter, scope: List<Scope>, parameters: List<Expression>): Variable =
+        interpreter.interpret(scope, parameters[0]).asString()
+            .contains(interpreter.interpret(scope, parameters[1]).asString(), ignoreCase = true)
+            .toVariable()
+}
+
+class StartsWithFunction : AbstractFunction() {
+    override val name: String = "startsWith"
+    override val numberOfArguments: IntRange = 2 .. 2
+
+    override fun apply(interpreter: Interpreter, scope: List<Scope>, parameters: List<Expression>): Variable =
+        interpreter.interpret(scope, parameters[0]).asString()
+            .startsWith(interpreter.interpret(scope, parameters[1]).asString(), ignoreCase = true)
+            .toVariable()
+}
+
+class EndsWithFunction : AbstractFunction() {
+    override val name: String = "endsWith"
+    override val numberOfArguments: IntRange = 2 .. 2
+
+    override fun apply(interpreter: Interpreter, scope: List<Scope>, parameters: List<Expression>): Variable =
+        interpreter.interpret(scope, parameters[0]).asString()
+            .endsWith(interpreter.interpret(scope, parameters[1]).asString(), ignoreCase = true)
+            .toVariable()
+}
+
+class IncludesFunction : AbstractFunction() {
+    override val name: String = "includes"
+    override val numberOfArguments: IntRange = 2 .. 2
+
+    override fun apply(interpreter: Interpreter, scope: List<Scope>, parameters: List<Expression>): Variable =
+        interpreter.interpret(scope, parameters[0]).asSequence()
+            .any { v -> interpreter.interpret(scope, parameters[1]).compareTo(v) == 0 }
+            .toVariable()
+}

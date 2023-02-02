@@ -2,7 +2,7 @@ package org.radarbase.lang.expression
 
 class InterpreterException(val expression: Expression, cause: Throwable) : RuntimeException(cause.message, cause)
 
-class Interpreter(val variables: VariableResolver) {
+class Interpreter(private val variables: VariableResolver) {
     fun interpret(scope: List<Scope>, expression: Expression): Variable = expression.evaluate(scope)
 
     private fun Expression.evaluate(scope: List<Scope>): Variable {
@@ -41,28 +41,16 @@ class Interpreter(val variables: VariableResolver) {
 
 interface Scope {
     val id: QualifiedId
-    fun splitHead(): Pair<String?, Scope?>
     fun asString(): String = id.asString()
     operator fun plus(part: String): Scope
-    fun prefixWith(prefix: String): Scope
-    fun isPrefixedBy(prefix: String): Boolean
 }
 
 data class SimpleScope(override val id: QualifiedId) : Scope {
     constructor(string: String) : this(QualifiedId(string))
 
-    override fun splitHead(): Pair<String?, Scope?> = id.splitHead()
-        .let { (name, tailId) ->
-            Pair(name, tailId?.let { SimpleScope(it) })
-        }
-
     override fun toString() = id.toString()
 
     override fun plus(part: String): Scope = SimpleScope(id + part)
-
-    override fun prefixWith(prefix: String): Scope = SimpleScope(id.prefixWith(prefix))
-
-    override fun isPrefixedBy(prefix: String): Boolean = id.isPrefixedBy(QualifiedId(prefix))
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -72,8 +60,4 @@ data class SimpleScope(override val id: QualifiedId) : Scope {
     }
 
     override fun hashCode(): Int = id.hashCode()
-
-    companion object {
-        val root = SimpleScope(QualifiedId(listOf()))
-    }
 }

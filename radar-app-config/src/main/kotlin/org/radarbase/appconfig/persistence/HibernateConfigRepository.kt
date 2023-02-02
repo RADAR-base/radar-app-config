@@ -51,7 +51,7 @@ class HibernateConfigRepository(
             persist(configState)
             configState.values = variableSet.variables
                 .asSequence()
-                .filter { (id, _) -> !id.isEmpty() }
+                .filter { (id, _) -> id.isNotEmpty() }
                 .mapIndexed { i, (id, value) -> save(configState, id, value, i.toFloat()) }
                 .associateBy { config -> config.name }
 
@@ -105,7 +105,7 @@ class HibernateConfigRepository(
         variable: Variable,
         rank: Float,
     ): ConfigEntity {
-        require(!id.isEmpty()) { "Cannot save variable without variable name" }
+        require(id.isNotEmpty()) { "Cannot save variable without variable name" }
 
         return ConfigEntity(
             name = id.asString(),

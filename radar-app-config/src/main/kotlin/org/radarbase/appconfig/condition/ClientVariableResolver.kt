@@ -38,30 +38,23 @@ class ClientVariableResolver(
         }
 
         private fun resolveDynamicVariables(scopes: List<DynamicScope>, id: QualifiedId): ResolvedVariable? {
-            val userScopes = scopes
-                .map { it.subScope }
-                .filterIsInstance<UserScope>()
-                .filter { it.projectScope != null }
+            if (id.size < 3 || id.names[0] != "user") return null
+            val userId = id[1]
+            val attribute = id.tail(2)
 
-            val (type, idSecond) = id.splitHead()
-            if (type == "user" && idSecond != null) {
-                val (userId, attribute) = idSecond.splitHead()
-                if (userId != null && attribute != null) {
-                    userScopes
-                        .firstNotNullOfOrNull { userScope ->
-                            projectService.getUser(userScope.projectScope!!.projectId, userId)
-                                ?.let { subject -> userScope.dynamic to subject }
-                        }
-                        ?.let { (scope, subject) ->
-                            return ResolvedVariable(
-                                scope,
-                                id,
-                                subject.attributes[attribute.asString()].toVariable(),
-                            )
-                        }
+            return scopes
+                .asSequence()
+                .flatMap { it.scopes() }
+                .filterIsInstance<UserScope>()
+                .firstNotNullOfOrNull { userScope ->
+                    val projectScope = userScope.projectScope ?: return@firstNotNullOfOrNull null
+                    val subject = projectService.getUser(projectScope.projectId, userId) ?: return@firstNotNullOfOrNull null
+                    ResolvedVariable(
+                        userScope.dynamic,
+                        id,
+                        subject.attributes[attribute.asString()].toVariable(),
+                    )
                 }
-            }
-            return null
         }
     }
 }

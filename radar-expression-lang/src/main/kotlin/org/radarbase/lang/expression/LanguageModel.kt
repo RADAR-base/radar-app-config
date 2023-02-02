@@ -95,31 +95,18 @@ data class QualifiedId(val names: List<String>) : Expression {
         get() = names.size
 
     fun head(): String = names.first()
-    fun headOrNull(): String? = names.firstOrNull()
 
-    fun splitHead(): Pair<String?, QualifiedId?> = when {
-        names.size > 1 -> Pair(names[0], QualifiedId(names.subList(1, names.count())))
-        names.size == 1 -> Pair(names[0], null)
-        else -> Pair(null, null)
+    fun tail(startIndex: Int = 1): QualifiedId {
+        require(size > startIndex) { "Cannot get suffix of single id $this" }
+        return QualifiedId(names.subList(startIndex, size))
     }
-
-    fun tail(): QualifiedId = QualifiedId(names.subList(1, names.count()))
 
     operator fun plus(name: String) = QualifiedId(names + name)
     operator fun plus(id: QualifiedId) = QualifiedId(names + id.names)
 
-    fun prefixWith(prefix: String) = QualifiedId(listOf(prefix) + names)
-
     fun asString() = names.joinToString(separator = "#")
 
-    fun isPrefixedBy(id: QualifiedId): Boolean {
-        return names.size >= id.names.size && names.subList(0, id.names.size) == id.names
-    }
-
-    fun isPrefixedBy(id: String): Boolean = isPrefixedBy(QualifiedId(id))
-
-    fun isEmpty(): Boolean = names.all { it.isEmpty() }
-    fun hasTail(): Boolean = names.size > 1
+    fun isNotEmpty(): Boolean = names.any { it.isNotEmpty() }
 
     override fun toString() = asString()
 }
@@ -200,7 +187,7 @@ data class StringLiteral(val value: String) : AbstractVariable() {
 
     override fun asNumber(): BigDecimal = BigDecimal(value)
 
-    override fun asSequence(): Sequence<Variable> = value.split(" ")
+    override fun asSequence(): Sequence<Variable> = value.split(' ', '\t', ',', ';')
         .asSequence()
         .filter { it.isNotEmpty() }
         .map { it.toVariable() }
@@ -246,9 +233,8 @@ data class CollectionLiteral(val values: Collection<Variable>) : Variable {
     override fun compareTo(other: Variable): Int {
         val comparisonSequence = if (other is CollectionLiteral) {
             val terminator = Any()
-            val seq = asSequence() + terminator
-            val seqOther = other.asSequence() + terminator
-            seq.zip(seqOther)
+            (asSequence() + terminator)
+                .zip(other.asSequence() + terminator)
                 .map { (a, b) ->
                     when {
                         a === b -> 0

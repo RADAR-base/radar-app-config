@@ -6,8 +6,8 @@ import jakarta.inject.Provider
 import jakarta.persistence.EntityManager
 import jakarta.ws.rs.core.Context
 import java.time.Instant
-import org.radarbase.appconfig.config.CONDITION_TOKEN
 import org.radarbase.appconfig.config.ConditionScope.Companion.conditionScopeString
+import org.radarbase.appconfig.config.Scopes.CONDITION_TOKEN
 import org.radarbase.appconfig.persistence.entity.ConditionEntity
 import org.radarbase.appconfig.persistence.entity.EntityStatus
 import org.radarbase.jersey.exception.HttpNotFoundException

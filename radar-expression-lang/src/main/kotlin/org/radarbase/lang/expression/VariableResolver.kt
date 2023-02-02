@@ -54,13 +54,12 @@ class DirectVariableRepository : VariableRepository {
     }
 
     override fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable {
-        return scopes.asSequence()
-            .mapNotNull { s ->
-                val variableSet = variables[s] ?: return@mapNotNull null
-                val variable = variableSet.variables[id] ?: return@mapNotNull null
+        return scopes
+            .firstNotNullOfOrNull { s ->
+                val variableSet = variables[s] ?: return@firstNotNullOfOrNull null
+                val variable = variableSet.variables[id] ?: return@firstNotNullOfOrNull null
                 ResolvedVariable(s, id, variable)
             }
-            .firstOrNull()
             ?: throw UnsupportedOperationException("Unknown variable $id in scopes $scopes.")
     }
 
