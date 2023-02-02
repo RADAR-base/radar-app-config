@@ -18,7 +18,9 @@ application {
         "--add-opens", "java.base/java.nio=ALL-UNNAMED",
         "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
         "--add-opens", "java.management/sun.management=ALL-UNNAMED",
-        "--add-opens", "jdk.management/com.sun.management.internal=ALL-UNNAMED"
+        "--add-opens", "jdk.management/com.sun.management.internal=ALL-UNNAMED",
+        "-Dhazelcast.security.recommendations",
+        "-Dhazelcast.socket.server.bind.any=false",
     )
 }
 
@@ -26,18 +28,17 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    implementation(project(":radar-expression-lang"))
+    implementation(project(":radar-app-config-core"))
+
+    val jacksonVersion: String by project
+    implementation(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     val radarJerseyVersion: String by project
     implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
     implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
 
-    val jacksonVersion: String by project
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-
-    val liquibaseVersion: String by project
-    implementation("org.liquibase:liquibase-core:$liquibaseVersion")
     val hazelcastHibernateVersion: String by project
     implementation("com.hazelcast:hazelcast-hibernate53:$hazelcastHibernateVersion")
     val hazelcastVersion: String by project
@@ -45,24 +46,21 @@ dependencies {
     val hazelcastKubernetesVersion: String by project
     runtimeOnly("com.hazelcast:hazelcast-kubernetes:$hazelcastKubernetesVersion")
 
-    implementation("commons-codec:commons-codec:${project.property("commonsCodecVersion")}")
-    runtimeOnly("com.h2database:h2:${project.property("h2Version")}")
-
     val jsonSchemaVersion: String by project
     implementation("com.networknt:json-schema-validator:$jsonSchemaVersion")
 
     val slf4jVersion: String by project
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     val log4j2Version: String by project
-    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
-    runtimeOnly("org.apache.logging.log4j:log4j-api:$log4j2Version")
+    runtimeOnly("org.apache.logging.log4j:log4j-core:$log4j2Version")
+    runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:$log4j2Version")
     runtimeOnly("org.apache.logging.log4j:log4j-jul:$log4j2Version")
 
     val junitVersion: String by project
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
-    testImplementation("org.hamcrest:hamcrest-all:1.3")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+    testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 }
 
 allOpen {

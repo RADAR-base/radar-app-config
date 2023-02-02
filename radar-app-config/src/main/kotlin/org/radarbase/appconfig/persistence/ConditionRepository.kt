@@ -3,9 +3,9 @@ package org.radarbase.appconfig.persistence
 import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.map.IMap
 import jakarta.inject.Provider
+import jakarta.persistence.EntityManager
 import jakarta.ws.rs.core.Context
 import java.time.Instant
-import javax.persistence.EntityManager
 import org.radarbase.appconfig.config.CONDITION_TOKEN
 import org.radarbase.appconfig.config.ConditionScope.Companion.conditionScopeString
 import org.radarbase.appconfig.persistence.entity.ConditionEntity

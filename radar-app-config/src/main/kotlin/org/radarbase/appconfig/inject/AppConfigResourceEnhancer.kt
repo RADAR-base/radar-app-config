@@ -2,14 +2,14 @@ package org.radarbase.appconfig.inject
 
 import jakarta.inject.Singleton
 import org.glassfish.jersey.internal.inject.AbstractBinder
+import org.radarbase.appconfig.api.ProtocolMapper
 import org.radarbase.appconfig.condition.ClientInterpreter
 import org.radarbase.appconfig.condition.ClientVariableResolver
 import org.radarbase.appconfig.config.ApplicationConfig
-import org.radarbase.appconfig.domain.ProtocolMapper
 import org.radarbase.appconfig.persistence.ConditionRepository
 import org.radarbase.appconfig.service.*
-import org.radarbase.jersey.config.ConfigLoader
-import org.radarbase.jersey.config.JerseyResourceEnhancer
+import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
+import org.radarbase.jersey.filter.Filters
 import org.radarbase.jersey.service.ProjectService
 import org.radarbase.jersey.service.managementportal.ProjectServiceWrapper
 import org.radarbase.jersey.service.managementportal.RadarProjectService
@@ -21,15 +21,13 @@ class AppConfigResourceEnhancer(
     private val config: ApplicationConfig,
     private val allowedFunctions: List<Function>,
 ) : JerseyResourceEnhancer {
-    override val classes: Array<Class<*>> = if (config.isCorsEnabled) arrayOf(
-        ConfigLoader.Filters.cors,
-        ConfigLoader.Filters.logResponse,
-        ConfigLoader.Filters.cache,
-    )
-    else arrayOf(
-        ConfigLoader.Filters.logResponse,
-        ConfigLoader.Filters.cache,
-    )
+    override val classes: Array<Class<*>> = buildList {
+        add(Filters.logResponse)
+        add(Filters.cache)
+        if (config.isCorsEnabled) {
+            add(Filters.cors)
+        }
+    }.toTypedArray()
 
     override val packages: Array<String> = arrayOf(
         "org.radarbase.appconfig.resource",

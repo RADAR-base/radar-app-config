@@ -8,13 +8,16 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 import org.radarbase.appconfig.client.api.AppConfigConfig
 
 class AppConfigClient(
-    private val baseUrl: String,
+    baseUrl: String,
     private val authClient: AuthClient,
     configure: (HttpClientConfig<JavaHttpConfig>.() -> Unit)? = null,
 ) {
+    private val baseUrl: Url = Url(baseUrl)
+
     private val client = HttpClient(Java) {
         install(JsonFeature) {
             serializer = KotlinxSerializer()
@@ -25,25 +28,27 @@ class AppConfigClient(
         if (configure != null) configure()
     }
 
-    suspend fun fetchConfig(projectId: String? = null, userId: String? = null): AppConfigConfig {
-        val response: HttpResponse = client.get(configUrl(projectId, userId))
+    suspend fun fetchConfig(scope: Scope): AppConfigConfig {
+        val response: HttpResponse = client.get(scope.toUrl())
         return response.processAppConfig()
     }
 
-    suspend fun updateConfig(config: AppConfigConfig, projectId: String? = null, userId: String? = null): AppConfigConfig {
-        val response: HttpResponse = client.post(configUrl(projectId, userId)) {
+    suspend fun updateConfig(config: AppConfigConfig, scope: Scope): AppConfigConfig {
+        val response: HttpResponse = client.post(scope.toUrl()) {
             body = config
         }
         return response.processAppConfig()
     }
 
-    private fun configUrl(projectId: String?, userId: String?): String {
-        val refUrl = when {
-            projectId == null -> "global"
-            userId == null -> "projects/$projectId"
-            else -> "projects/$projectId/users/$userId"
+    private fun Scope.toUrl(): Url = URLBuilder(baseUrl).run {
+        when (this@toUrl) {
+            GlobalScope -> pathComponents("global")
+            is ConditionScope -> pathComponents("project", projectId, "conditions", conditionId)
+            is UserScope -> pathComponents("projects", projectId, "users", userId)
+            is ProjectScope -> pathComponents("projects", projectId)
         }
-        return "$baseUrl/$refUrl/config/${authClient.clientId}"
+        pathComponents("config", authClient.clientId)
+        build()
     }
 
     companion object {
@@ -56,4 +61,19 @@ class AppConfigClient(
             return receive()
         }
     }
+}
+
+sealed interface Scope
+
+object GlobalScope : Scope {
+    override fun toString(): String = "\$g"
+}
+class UserScope(val projectId: String, val userId: String) : Scope {
+    override fun toString(): String = "\$u.$userId.\$p.$projectId"
+}
+class ConditionScope(val projectId: String, val conditionId: String) : Scope {
+    override fun toString(): String = "\$c.$conditionId.\$p.$projectId"
+}
+class ProjectScope(val projectId: String) : Scope {
+    override fun toString(): String = "\$p.$projectId"
 }

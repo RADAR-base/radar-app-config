@@ -21,10 +21,16 @@
 <databaseChangeLog
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+<<<<<<< HEAD
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
     <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle,mssql"/>
+=======
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <property name="autoIncrement" value="true" dbms="mysql,postgresql,oracle,mssql"/>
+>>>>>>> dev
 
-    <changeSet id="0" author="joris" dbms="h2,postgresql">
+    <changeSet id="0" author="joris" dbms="postgresql">
         <createSequence sequenceName="hibernate_sequence" startValue="1" incrementBy="1"/>
     </changeSet>
 

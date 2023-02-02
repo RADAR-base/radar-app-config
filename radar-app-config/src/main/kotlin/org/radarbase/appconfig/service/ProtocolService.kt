@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentMap
 import org.radarbase.appconfig.config.*
 import org.radarbase.appconfig.config.Scopes.GLOBAL_PROTOCOL_SCOPE
 import org.radarbase.appconfig.config.Scopes.protocol
-import org.radarbase.appconfig.domain.ClientProtocol
-import org.radarbase.appconfig.domain.ProtocolMapper
+import org.radarbase.appconfig.api.ClientProtocol
+import org.radarbase.appconfig.api.ProtocolMapper
 import org.radarbase.appconfig.persistence.ConfigRepository
 import org.radarbase.auth.authorization.Permission.PROJECT_READ
 import org.radarbase.auth.authorization.Permission.SUBJECT_READ

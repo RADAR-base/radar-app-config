@@ -1,4 +1,4 @@
-package org.radarbase.appconfig.domain
+package org.radarbase.appconfig.api
 
 data class User(
     val id: String,

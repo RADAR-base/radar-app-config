@@ -11,14 +11,13 @@
 # limitations under the License.
 
 # Stage 1, "build-stage", based on Node.js, to build and compile Angular
-FROM node:14 as builder
+FROM --platform=$BUILDPLATFORM node:16 as builder
 
 WORKDIR /code
 
 COPY package*.json /code/
 
-RUN echo "==> Installing dependencies" \
-    && npm i --silent
+RUN npm install
 
 COPY .browserslistrc angular.json karma.conf.js ts* /code/
 COPY src /code/src
@@ -29,21 +28,8 @@ RUN npm run build -- --output-path=./dist/out --configuration ${configuration}
 
 WORKDIR /code/dist/out
 
-RUN find . -type f "(" \
-    -name "*.html" \
-    -o -name "*.js" \
-    -o -name "*.css" \
-    -o -name "*.xml" \
-    -o -name "*.svg" \
-    -o -name "*.json" \
-    ")" -print0 \
-    | xargs -0 -n 1 gzip -k
-
 # Stage 2, based on Nginx, to have only the compiled app, ready for production with Nginx
-FROM nginxinc/nginx-unprivileged:1.20-alpine
-
-## Remove default Nginx website
-#RUN rm -rf /usr/share/nginx/html/*
+FROM nginxinc/nginx-unprivileged:1.22-alpine
 
 ENV BASE_HREF=/appconfig/
 ENV AUTH_URL=http://localhost:8080/managementportal/oauth

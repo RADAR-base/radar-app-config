@@ -62,7 +62,6 @@ class ExpressionParser(functions: List<Function>) {
             }
         }
 
-
         private fun ComparisonParser.MultiplicationOperationContext.toModel(): BinaryExpression {
             return TimesExpression(left = left.toModel(), right = right.toModel())
         }

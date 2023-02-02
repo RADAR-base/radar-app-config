@@ -8,7 +8,9 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
 import java.net.URI
-import org.radarbase.appconfig.domain.*
+import org.radarbase.appconfig.api.Condition
+import org.radarbase.appconfig.api.ConditionList
+import org.radarbase.appconfig.api.*
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConditionService
 import org.radarbase.appconfig.service.ConfigService

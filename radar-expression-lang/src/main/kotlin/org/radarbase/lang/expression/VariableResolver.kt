@@ -56,14 +56,13 @@ class DirectVariableRepository : VariableRepository {
     override fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable {
         return scopes.asSequence()
             .mapNotNull { s ->
-                variables[s]?.variables?.get(id)
-                    ?.let { ResolvedVariable(s, id, it) }
+                val variableSet = variables[s] ?: return@mapNotNull null
+                val variable = variableSet.variables[id] ?: return@mapNotNull null
+                ResolvedVariable(s, id, variable)
             }
             .firstOrNull()
-            ?: throw NoSuchElementException("Unknown variable $id in scopes $scopes.")
+            ?: throw UnsupportedOperationException("Unknown variable $id in scopes $scopes.")
     }
 
-    override fun toString(): String {
-        return "DirectVariableResolver(variables=$variables)"
-    }
+    override fun toString(): String = "DirectVariableResolver(variables=$variables)"
 }

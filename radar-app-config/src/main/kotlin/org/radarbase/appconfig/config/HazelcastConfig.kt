@@ -7,6 +7,8 @@ data class HazelcastConfig(
     val instanceName: String = "appconfig",
     val clusterName: String = "appconfig",
     val network: NetworkConfig = NetworkConfig().apply {
+        port = 5701
+        portCount = 1
         join.apply {
             multicastConfig.apply {
                 isEnabled = true

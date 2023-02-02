@@ -14,7 +14,9 @@
     "cancel": "Cancel",
     "name": "Name",
     "value": "Value",
-    "defaultValue": "Default Value"
+    "defaultValue": "Default Value",
+    "export": "Export",
+    "import": "Import"
   },
   "project": {
     "project": "Project",
@@ -29,10 +31,10 @@
     "applications": "Applications",
     "selectAnApplication": "Select an Application",
     "globalApplications": "Global Applications",
-    "allGroupsAndUsers": "All Groups and Participants"
+    "project": "Project"
   },
   "footer": {
-    "footer": "Place footer content here."
+    "footer": "Powered by <a href=\"https://radar-base.org/\" target=\"_blank\">RADAR-base</a>"
   },
   "common": {
     "loading": "Loading...",

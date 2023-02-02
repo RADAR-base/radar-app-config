@@ -1,12 +1,12 @@
 package org.radarbase.appconfig.service
 
 import jakarta.ws.rs.core.Context
+import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.config.ConditionScope
 import org.radarbase.appconfig.config.ProjectScope
 import org.radarbase.appconfig.config.Scopes.GLOBAL_CONFIG_SCOPE
 import org.radarbase.appconfig.config.Scopes.config
 import org.radarbase.appconfig.config.UserScope
-import org.radarbase.appconfig.domain.ClientConfig
 import org.radarbase.appconfig.persistence.ConfigRepository
 
 class ConfigService(

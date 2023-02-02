@@ -1,15 +1,15 @@
 package org.radarbase.appconfig.service
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
 import java.time.Instant
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.radarbase.appconfig.api.ClientConfig
+import org.radarbase.appconfig.api.SingleVariable
 import org.radarbase.appconfig.config.Scopes.toQualifiedId
-import org.radarbase.appconfig.domain.ClientConfig
-import org.radarbase.appconfig.domain.SingleVariable
 import org.radarbase.appconfig.inject.InMemoryResourceEnhancer
 import org.radarbase.appconfig.persistence.ConfigRepository
 import org.radarbase.lang.expression.SimpleScope

@@ -4,7 +4,7 @@ import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
-import org.radarbase.appconfig.domain.ClientProtocol
+import org.radarbase.appconfig.api.ClientProtocol
 import org.radarbase.appconfig.service.ProtocolService
 import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated

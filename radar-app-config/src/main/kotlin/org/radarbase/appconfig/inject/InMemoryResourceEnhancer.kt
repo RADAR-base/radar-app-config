@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.persistence.ClientVariableSet
 import org.radarbase.appconfig.persistence.ConfigRepository
-import org.radarbase.jersey.config.JerseyResourceEnhancer
+import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.lang.expression.*
 
 class InMemoryResourceEnhancer : JerseyResourceEnhancer {

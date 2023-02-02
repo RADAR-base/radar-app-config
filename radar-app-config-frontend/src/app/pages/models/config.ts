@@ -1,16 +1,13 @@
-export class Config {
-  clientId: string;
-  scope: string;
-  config: [{
-    name: string;
-    value: string;
-    default: string;
-  }];
-  defaults: [
-    {
-      name: string;
-      value: string;
-      scope: string;
-    }
-  ];
+export interface Config {
+  clientId?: string;
+  scope?: string;
+  config?: ConfigElement[];
+  defaults?: ConfigElement[];
+}
+
+export interface ConfigElement {
+  name: string;
+  value: string;
+  default?: string;
+  scope?: string;
 }

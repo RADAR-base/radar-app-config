@@ -1,6 +1,6 @@
 package org.radarbase.appconfig.persistence.entity
 
-import javax.persistence.*
+import jakarta.persistence.*
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy
 import org.hibernate.annotations.Immutable
@@ -26,6 +26,7 @@ class ConfigEntity(
 ) {
     @Id
     @GeneratedValue(generator = "config_id_sequence")
+    @SequenceGenerator(name = "config_id_sequence", allocationSize = 1)
     var id: Long? = null
-        protected set
+        private set
 }

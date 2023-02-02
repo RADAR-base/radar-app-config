@@ -1,4 +1,4 @@
-package org.radarbase.appconfig.domain
+package org.radarbase.appconfig.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.ws.rs.core.Context

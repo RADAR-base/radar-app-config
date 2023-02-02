@@ -1,10 +1,7 @@
-package org.radarbase.appconfig.domain
+package org.radarbase.appconfig.api
 
 import java.time.Instant
-import org.radarbase.lang.expression.QualifiedId
-import org.radarbase.lang.expression.Scope
-import org.radarbase.lang.expression.VariableSet
-import org.radarbase.lang.expression.toVariable
+import org.radarbase.lang.expression.*
 
 data class ClientConfig(
     val clientId: String?,
@@ -20,6 +17,16 @@ data class ClientConfig(
         lastModifiedAt = if (overrideLastModified) Instant.now() else lastModifiedAt,
     )
 
+    fun with(other: ClientConfig): ClientConfig = ClientConfig(
+        clientId = clientId,
+        scope = scope,
+        config = (config.asSequence() + other.config.asSequence())
+            .associateBy { (k) -> k }
+            .values
+            .toList(),
+        defaults = defaults
+    )
+
     companion object {
         fun fromStream(clientId: String, scope: Scope, config: VariableSet?, defaults: List<VariableSet>): ClientConfig {
             val lastModified = maxOf(
@@ -29,14 +36,13 @@ data class ClientConfig(
 
             val scopeConfig = config?.variables
                 ?.map { (id, value) -> SingleVariable(id.asString(), value.asOptString()) }
-                ?: listOf()
+                ?: emptyList()
 
-            val defaultConfig = mutableMapOf<String, SingleVariable>()
-            for (variableSet in defaults) {
-                for ((id, value) in variableSet.variables) {
-                    val name = id.asString()
-                    if (name !in defaultConfig) {
-                        defaultConfig[name] = SingleVariable(name, value.asOptString(), variableSet.scope.asString())
+            val defaultConfig = buildMap {
+                for (variableSet in defaults.asReversed()) {
+                    for ((id, value) in variableSet.variables) {
+                        val name = id.asString()
+                        put(name, SingleVariable(name, value.asOptString(), variableSet.scope.asString()))
                     }
                 }
             }
@@ -50,4 +56,6 @@ data class ClientConfig(
             )
         }
     }
+
 }
+

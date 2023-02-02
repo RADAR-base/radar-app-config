@@ -1,4 +1,4 @@
-package org.radarbase.appconfig.domain
+package org.radarbase.appconfig.api
 
 import com.fasterxml.jackson.databind.JsonNode
 import java.time.Instant

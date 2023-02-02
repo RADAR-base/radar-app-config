@@ -13,6 +13,7 @@ auth:
   jwtResourceName: res_appconfig
 
 database:
+<<<<<<< HEAD
   driver: "org.h2.Driver"
   url: "jdbc:h2:./build/resources/h2"
   dialect: org.hibernate.dialect.H2Dialect
@@ -24,3 +25,8 @@ projects:
   p2:
     u3: eu3
     u4: eu4
+=======
+  url: "jdbc:postgresql://localhost:5432/appconfig?sslmode=disable"
+  user: radarcns
+  password: radarcns
+>>>>>>> dev

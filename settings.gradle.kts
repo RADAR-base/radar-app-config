@@ -10,15 +10,23 @@
 rootProject.name = "radar-app-config"
 include(":radar-app-config")
 include(":radar-expression-lang")
+include(":radar-expression-lang-antlr")
 include(":radar-app-config-client")
+include(":radar-app-config-core")
 
 pluginManagement {
     val kotlinVersion: String by settings
+    val dokkaVersion: String by settings
+    val nexusPluginVersion: String by settings
+    val dependencyUpdateVersion: String by settings
     plugins {
         kotlin("jvm") version kotlinVersion
         kotlin("plugin.serialization") version kotlinVersion
+        id("org.jetbrains.dokka") version dokkaVersion
         id("org.jetbrains.kotlin.plugin.noarg") version kotlinVersion
         id("org.jetbrains.kotlin.plugin.jpa") version kotlinVersion
         id("org.jetbrains.kotlin.plugin.allopen") version kotlinVersion
+        id("io.github.gradle-nexus.publish-plugin") version nexusPluginVersion
+        id("com.github.ben-manes.versions") version dependencyUpdateVersion
     }
 }

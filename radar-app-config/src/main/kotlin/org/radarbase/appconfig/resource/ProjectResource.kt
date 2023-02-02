@@ -7,7 +7,8 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
-import org.radarbase.appconfig.domain.*
+import org.radarbase.appconfig.api.*
+import org.radarbase.appconfig.api.toProject
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.appconfig.service.ProtocolService

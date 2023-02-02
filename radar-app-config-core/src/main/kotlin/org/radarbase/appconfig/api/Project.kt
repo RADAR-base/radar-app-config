@@ -1,4 +1,4 @@
-package org.radarbase.appconfig.domain
+package org.radarbase.appconfig.api
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
@@ -7,5 +7,5 @@ data class Project(
     @JsonProperty("humanReadableProjectName") val humanReadableName: String? = null,
     val location: String? = null,
     val organization: String? = null,
-    val description: String? = null
+    val description: String? = null,
 )

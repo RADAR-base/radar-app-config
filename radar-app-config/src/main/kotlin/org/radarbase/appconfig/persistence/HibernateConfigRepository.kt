@@ -2,9 +2,9 @@ package org.radarbase.appconfig.persistence
 
 import com.hazelcast.core.HazelcastInstance
 import jakarta.inject.Provider
+import jakarta.persistence.EntityManager
 import jakarta.ws.rs.core.Context
 import java.time.Instant
-import javax.persistence.EntityManager
 import org.radarbase.appconfig.config.ConfigScope
 import org.radarbase.appconfig.config.Scopes.toAppConfigScope
 import org.radarbase.appconfig.persistence.entity.ConfigEntity

@@ -2,24 +2,13 @@
     <div class="row">
         <div class="col-md-2">
             <app-left-sidebar [backButton]="makeBackButton()"></app-left-sidebar>
-<!--            <div class="btn-group-vertical w-100 mb-3 mb-md-0"-->
-<!--                 role="group" aria-label="Button group with nested dropdown">-->
-<!--                <a class="btn btn-secondary btn-block tab-button"-->
-<!--                   [routerLink]="['/global-clients']">{{'config.globalConfigurations' | translate}}</a>-->
-<!--                <a class="btn btn-secondary btn-block tab-button active" [routerLink]="['/projects']">-->
-<!--                    {{'project.projects' | translate}}</a>-->
-<!--            </div>-->
             <div class="btn-group-vertical w-100 mb-3 mb-md-0"
                  role="group"
                  aria-label="Button group with nested dropdown">
                 <a class="btn btn-secondary btn-block tab-button"
                    [routerLink]="['/configs']"
                    [queryParams]="makeQueryParams(null)"
-                   [state]="makeState()">{{'client.allGroupsAndUsers' | translate}}</a>
-                <a class="btn btn-secondary btn-block tab-button"
-                   [routerLink]="['/groups']"
-                   [queryParams]="makeQueryParams(null)"
-                   [state]="makeState()">{{'group.groups' | translate}}</a>
+                   [state]="makeState()">{{'client.project' | translate}}</a>
                 <a class="btn btn-secondary btn-block tab-button active"
                    [routerLink]="['/users']"
                    [queryParams]="makeQueryParams(null)"
@@ -54,8 +43,7 @@
                         <div class="card">
                             <a [routerLink]="['/configs']" [queryParams]="makeQueryParams(user.id)" [state]="makeState()">
                                 <div class="card-body">
-                                    <!--<h5 class="card-title">{{user.name}}</h5>-->
-                                    <h5 class="card-title">{{user.id}}</h5>
+                                    <h5 class="card-title">{{user.name}}</h5>
                                 </div>
                             </a>
                         </div>

@@ -1,8 +1,9 @@
 package org.radarbase.appconfig.service
 
 import jakarta.ws.rs.core.Context
-import java.lang.UnsupportedOperationException
 import java.time.Instant
+import org.radarbase.appconfig.api.Condition
+import org.radarbase.appconfig.api.toCondition
 import org.radarbase.appconfig.condition.ClientInterpreter
 import org.radarbase.appconfig.config.ConditionScope
 import org.radarbase.appconfig.config.ProjectScope
@@ -10,8 +11,6 @@ import org.radarbase.appconfig.config.Scopes.GLOBAL_CONFIG_SCOPE
 import org.radarbase.appconfig.config.Scopes.config
 import org.radarbase.appconfig.config.Scopes.dynamic
 import org.radarbase.appconfig.config.UserScope
-import org.radarbase.appconfig.domain.Condition
-import org.radarbase.appconfig.domain.Condition.Companion.toCondition
 import org.radarbase.appconfig.persistence.ConditionRepository
 import org.radarbase.appconfig.persistence.entity.ConditionEntity
 import org.radarbase.appconfig.persistence.entity.EntityStatus
@@ -41,19 +40,21 @@ open class ConditionService(
         )
 
         return allConditions
-            .filter { try {
-                interpreter[clientId].interpret(conditionScopes, it.expression!!).asBoolean()
-            } catch (ex: Exception) {
-                logger.warn("Failed to evaluate condition ${it.name} in project $projectId: {}", ex.toString())
-                false
-            }}
+            .filter {
+                try {
+                    interpreter[clientId].interpret(conditionScopes, it.expression!!).asBoolean()
+                } catch (ex: Exception) {
+                    logger.warn("Failed to evaluate condition ${it.name} in project $projectId: {}", ex.toString())
+                    false
+                }
+            }
             .map { ConditionScope(it.name, projectScope) }
     }
 
     fun evaluate(clientId: String, projectId: String, conditionName: String, userId: String): Pair<Condition, Any?> {
-        val condition = (conditionRepository.get(projectId, conditionName)
-            ?: throw HttpNotFoundException("condition_not_found", "No condition $conditionName in project $projectId"))
-            .toCondition(expressionParser)
+        val conditionEntity = conditionRepository.get(projectId, conditionName)
+            ?: throw HttpNotFoundException("condition_not_found", "No condition $conditionName in project $projectId")
+        val condition = conditionEntity.toCondition(expressionParser)
 
         val expression = condition.expression
             ?: throw HttpNotFoundException("condition_expression_not_found", "No condition expression $conditionName in project $projectId")

@@ -51,7 +51,7 @@ class ConditionScope(val name: String, val project: ProjectScope) : AppConfigSco
     }
 }
 
-class GlobalScope : AppConfigScope(GLOBAL_ID)
+object GlobalScope : AppConfigScope(GLOBAL_ID)
 
 class ProjectScope(val projectId: String) : AppConfigScope(QualifiedId(PROJECT_TOKEN, projectId))
 
@@ -78,10 +78,9 @@ object Scopes {
     fun String.toAppConfigScope(): AppConfigScope = parse(this)
     fun String.toQualifiedId(): QualifiedId = QualifiedId(this)
 
-    val GLOBAL_SCOPE = GlobalScope()
-    val GLOBAL_CONFIG_SCOPE = GLOBAL_SCOPE.config
-    val GLOBAL_PROTOCOL_SCOPE = GLOBAL_SCOPE.protocol
-    val GLOBAL_DYNAMIC_SCOPE = GLOBAL_SCOPE.dynamic
+    val GLOBAL_CONFIG_SCOPE = GlobalScope.config
+    val GLOBAL_PROTOCOL_SCOPE = GlobalScope.protocol
+    val GLOBAL_DYNAMIC_SCOPE = GlobalScope.dynamic
 
     fun parse(idString: String): AppConfigScope = parse(QualifiedId(idString))
 
@@ -101,7 +100,7 @@ object Scopes {
             PROTOCOL_TOKEN -> ProtocolScope(parse(requireNotNull(tail) { "Cannot make config scope without sub scope" }))
             GLOBAL_TOKEN -> {
                 require(tail == null) { "Global scope does not take any arguments" }
-                GlobalScope()
+                GlobalScope
             }
             USER_TOKEN -> {
                 requireNotNull(tail) { "User scope needs a user ID." }

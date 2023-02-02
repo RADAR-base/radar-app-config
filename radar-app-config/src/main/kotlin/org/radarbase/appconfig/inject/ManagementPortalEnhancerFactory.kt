@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.addDeserializer
-import com.fasterxml.jackson.module.kotlin.addSerializer
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import kotlin.reflect.jvm.jvmName
@@ -14,17 +13,16 @@ import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.persistence.entity.ConditionEntity
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.appconfig.persistence.entity.ConfigStateEntity
-import org.radarbase.jersey.config.ConfigLoader
-import org.radarbase.jersey.config.EnhancerFactory
-import org.radarbase.jersey.config.JerseyResourceEnhancer
+import org.radarbase.jersey.enhancer.EnhancerFactory
+import org.radarbase.jersey.enhancer.Enhancers
+import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.jersey.hibernate.config.HibernateResourceEnhancer
 import org.radarbase.lang.expression.*
-import org.radarbase.lang.expression.Function
 
 /** This binder needs to register all non-Jersey classes, otherwise initialization fails. */
 class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : EnhancerFactory {
-    override fun createEnhancers(): List<JerseyResourceEnhancer> {
-        val resolverEnhancer = if (config.database != null) {
+    override fun createEnhancers(): List<JerseyResourceEnhancer> = buildList {
+        if (config.database != null) {
             val databaseConfig = config.database.copy(
                 managedClasses = listOf(
                     ConfigEntity::class.jvmName,
@@ -37,60 +35,55 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
                     "hibernate.cache.hazelcast.instance_name" to config.hazelcast.instanceName,
                 ) + config.database.properties,
             )
-            listOf(
-                HibernateResourceEnhancer(databaseConfig),
-                HibernatePersistenceResourceEnhancer(config.hazelcast),
-            )
+            add(HibernateResourceEnhancer(databaseConfig))
+            add(HibernatePersistenceResourceEnhancer(config.hazelcast))
         } else {
-            listOf(InMemoryResourceEnhancer())
+            add(InMemoryResourceEnhancer())
         }
 
-        val radarEnhancer = ConfigLoader.Enhancers.radar(config.auth).apply {
-            utilityResourceEnhancer = null
-        }
-        val allowedFunctions = listOf<Function>(
+        add(Enhancers.radar(config.auth, includeMapper = false))
+        val allowedFunctions = listOf(
             SumFunction(),
             CountFunction(),
         )
-        val utility = ConfigLoader.Enhancers.utility.apply {
-            mapper = jsonMapper {
-                serializationInclusion(JsonInclude.Include.NON_NULL)
-                addModule(JavaTimeModule())
-                addModule(
-                    kotlinModule {
-                        nullIsSameAsDefault(true)
-                        nullToEmptyCollection(true)
-                        nullToEmptyMap(true)
-                    }
-                )
-                configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                addModule(
-                    SimpleModule().apply {
-                        addDeserializer(
-                            Expression::class,
-                            ExpressionDeserializer(ExpressionParser(allowedFunctions)),
-                        )
-                        addSerializer(
-                            Expression::class,
-                            ExpressionSerializer(),
-                        )
-                    }
-                )
+        add(
+            Enhancers.mapper.apply {
+                mapper = jsonMapper {
+                    serializationInclusion(JsonInclude.Include.NON_NULL)
+                    addModule(JavaTimeModule())
+                    addModule(
+                        kotlinModule {
+                            enable(KotlinFeature.NullIsSameAsDefault)
+                            enable(KotlinFeature.NullToEmptyCollection)
+                            enable(KotlinFeature.NullToEmptyMap)
+                        }
+                    )
+                    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    addModule(
+                        SimpleModule().apply {
+                            addDeserializer(
+                                Expression::class.java,
+                                ExpressionDeserializer(ExpressionParser(allowedFunctions)),
+                            )
+                            addSerializer(
+                                Expression::class.java,
+                                ExpressionSerializer(),
+                            )
+                        }
+                    )
+                }
             }
+        )
+
+        if (config.isAuthEnabled) {
+            add(Enhancers.managementPortal(config.auth))
+        } else {
+            add(Enhancers.disabledAuthorization)
         }
 
-        val authEnhancer = if (config.isAuthEnabled) {
-            ConfigLoader.Enhancers.managementPortal(config.auth)
-        } else ConfigLoader.Enhancers.disabledAuthorization
-
-        return listOf(
-            utility,
-            AppConfigResourceEnhancer(config, allowedFunctions),
-            radarEnhancer,
-            ConfigLoader.Enhancers.health,
-            ConfigLoader.Enhancers.generalException,
-            ConfigLoader.Enhancers.httpException,
-        ) + resolverEnhancer + authEnhancer
+        add(AppConfigResourceEnhancer(config, allowedFunctions))
+        add(Enhancers.health)
+        add(Enhancers.exception)
     }
 }

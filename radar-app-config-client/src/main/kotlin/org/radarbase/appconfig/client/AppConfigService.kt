@@ -1,6 +1,5 @@
 package org.radarbase.appconfig.client
 
-import java.io.IOException
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.TemporalAmount
@@ -11,66 +10,46 @@ class AppConfigService(
     private val cache: Cache<String, AppConfigResult>,
     private val config: AppConfigServiceConfig,
 ) {
-    suspend fun config(projectId: String? = null, userId: String? = null): Map<String, String> {
-        val scope = when {
-            userId != null -> "user.$userId"
-            projectId != null -> "project.$projectId"
-            else -> "global"
-        }
-        val result = cache.get(scope)
+    suspend fun config(scope: Scope): Map<String, String> {
+        val cachedResult = cache.get(scope.toString())
 
-        when (result) {
-            is AppConfigNotFound ->
-                if (!result.isValid(config.notFoundValidity)) {
-                    cache.remove(scope, result)
-                }
-                throw NoSuchElementException()
-        }
-
-        return result
-            ?: try {
-                val config = client.fetchConfig(projectId, userId)
-                cache.putIfAbsent(scope, config)
-                config
+        val validResult = if (cachedResult == null || !cachedResult.isValid(config)) {
+            val fetchedResult = try {
+                val config = client.fetchConfig(scope)
+                AppConfigSuccess(config.configMap)
             } catch (ex: NoSuchElementException) {
-                state =
-                throw ex
+                AppConfigNotFound()
             } catch (ex: Exception) {
-                state = if (ex is when (ex) {
-                    is IOException, is IllegalStateException -> State.ERROR
-                    is NoSuchElementException -> State.UNAVAILABLE
-                }
-                throw ex
-            } catch (ex: IllegalStateException) {
-            } catch (ex: NoSuchElementException) {
-
-            } catch (ex: Exception) {
-                throw ex
+                AppConfigError(ex)
             }
+            cache.put(scope.toString(), fetchedResult)
+            fetchedResult
+        } else cachedResult
+
+        return when (validResult) {
+            is AppConfigSuccess -> validResult.config
+            is AppConfigNotFound -> throw NoSuchElementException()
+            is AppConfigError -> throw validResult.exception
+        }
     }
 
-    suspend fun update(config: AppConfigConfig, projectId: String? = null, userId: String? = null): Map<String, String> {
+    suspend fun update(config: AppConfigConfig, scope: Scope): Map<String, String> {
         val result = try {
-            client.updateConfig(config, projectId, userId)
-        } catch (ex: IOException) {
-
-        } catch (ex: IllegalStateException) {
-
+            val newConfig = client.updateConfig(config, scope)
+            AppConfigSuccess(newConfig.configMap)
         } catch (ex: NoSuchElementException) {
-
+            AppConfigNotFound()
         } catch (ex: Exception) {
-
             throw ex
         }
 
-        val scope = when {
-            userId != null -> "user.$userId"
-            projectId != null -> "project.$projectId"
-            else -> "global"
-        }
-        cache.put(scope, result)
+        cache.put(scope.toString(), result)
 
-        return result
+        return when (result) {
+            is AppConfigSuccess -> result.config
+            is AppConfigNotFound -> throw NoSuchElementException()
+            else -> throw IllegalStateException("No result found")
+        }
     }
 }
 
@@ -80,14 +59,20 @@ data class AppConfigServiceConfig(
     val successValidity: Duration = Duration.ofMinutes(10),
 )
 
-sealed interface AppConfigResult {
-    val time: Instant
+sealed class AppConfigResult {
+    private val time: Instant = Instant.now()
 
     fun isValid(validity: TemporalAmount): Boolean {
         return Instant.now() <= time + validity
     }
 }
 
-class AppConfigNotFound(override val time: Instant) : AppConfigResult
-class AppConfigError(override val time: Instant) : AppConfigResult
-class AppConfigSuccess(override val time: Instant, val config: Map<String, String>) : AppConfigResult
+class AppConfigNotFound : AppConfigResult()
+class AppConfigError(val exception: Exception) : AppConfigResult()
+class AppConfigSuccess(val config: Map<String, String>) : AppConfigResult()
+
+fun AppConfigResult.isValid(config: AppConfigServiceConfig) = when (this) {
+    is AppConfigNotFound -> isValid(config.notFoundValidity)
+    is AppConfigSuccess -> isValid(config.successValidity)
+    is AppConfigError -> isValid(config.errorValidity)
+}
