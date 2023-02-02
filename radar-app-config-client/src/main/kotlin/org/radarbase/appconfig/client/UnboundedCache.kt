@@ -15,7 +15,7 @@ class UnboundedCache<K, V> : Cache<K, V> {
         cache.putIfAbsent(key, value)
     }
 
-    override suspend fun remove(key: K, value: V) {
-        cache.remove(key, value)
+    override suspend fun remove(key: K) {
+        cache.remove(key)
     }
 }

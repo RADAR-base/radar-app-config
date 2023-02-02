@@ -1,6 +1,6 @@
 package org.radarbase.appconfig.client
 
-import io.ktor.client.features.auth.*
+import io.ktor.client.plugins.auth.*
 
 interface AuthClient {
     val clientId: String

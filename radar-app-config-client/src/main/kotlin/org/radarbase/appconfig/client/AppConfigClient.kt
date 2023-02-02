@@ -3,12 +3,13 @@ package org.radarbase.appconfig.client
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.java.*
-import io.ktor.client.features.auth.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.http.ContentType.Application.Json
+import io.ktor.serialization.kotlinx.json.*
 import org.radarbase.appconfig.client.api.AppConfigConfig
 
 class AppConfigClient(
@@ -19,8 +20,8 @@ class AppConfigClient(
     private val baseUrl: Url = Url(baseUrl)
 
     private val client = HttpClient(Java) {
-        install(JsonFeature) {
-            serializer = KotlinxSerializer()
+        install(ContentNegotiation) {
+            json()
         }
         install(Auth) {
             authClient.configure(this)
@@ -35,19 +36,20 @@ class AppConfigClient(
 
     suspend fun updateConfig(config: AppConfigConfig, scope: Scope): AppConfigConfig {
         val response: HttpResponse = client.post(scope.toUrl()) {
-            body = config
+            setBody(config)
+            contentType(Json)
         }
         return response.processAppConfig()
     }
 
     private fun Scope.toUrl(): Url = URLBuilder(baseUrl).run {
         when (this@toUrl) {
-            GlobalScope -> pathComponents("global")
-            is ConditionScope -> pathComponents("project", projectId, "conditions", conditionId)
-            is UserScope -> pathComponents("projects", projectId, "users", userId)
-            is ProjectScope -> pathComponents("projects", projectId)
+            Scope.Global -> appendPathSegments("global")
+            is Scope.Condition -> appendPathSegments("project", projectId, "conditions", conditionId)
+            is Scope.User -> appendPathSegments("projects", projectId, "users", userId)
+            is Scope.Project -> appendPathSegments("projects", projectId)
         }
-        pathComponents("config", authClient.clientId)
+        appendPathSegments("config", authClient.clientId)
         build()
     }
 
@@ -56,24 +58,9 @@ class AppConfigClient(
             when (status.value) {
                 404 -> throw NoSuchElementException()
                 409 -> throw ConcurrentModificationException()
-                in 400..1000 -> throw IllegalStateException(receive<String>())
+                in 400..1000 -> throw IllegalStateException(body<String>())
             }
-            return receive()
+            return body()
         }
     }
-}
-
-sealed interface Scope
-
-object GlobalScope : Scope {
-    override fun toString(): String = "\$g"
-}
-class UserScope(val projectId: String, val userId: String) : Scope {
-    override fun toString(): String = "\$u.$userId.\$p.$projectId"
-}
-class ConditionScope(val projectId: String, val conditionId: String) : Scope {
-    override fun toString(): String = "\$c.$conditionId.\$p.$projectId"
-}
-class ProjectScope(val projectId: String) : Scope {
-    override fun toString(): String = "\$p.$projectId"
 }

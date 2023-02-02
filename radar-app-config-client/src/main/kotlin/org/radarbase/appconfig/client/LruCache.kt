@@ -2,7 +2,6 @@ package org.radarbase.appconfig.client
 
 import java.time.Duration
 import java.time.Instant
-import java.util.LinkedHashMap
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -17,7 +16,7 @@ class LruCache<K, V>(
     private val maxAge: Duration,
     private val capacity: Int
 ): Cache<K, V> {
-    private val map: MutableMap<K, Node> = LinkedHashMap<K, Node>(16, 0.75f, true)
+    private val map: MutableMap<K, Node> = LinkedHashMap(16, 0.75f, true)
     private val mutex = Mutex()
 
     /**
@@ -35,10 +34,8 @@ class LruCache<K, V>(
     }
 
     /** Remove a cache item from the cache. */
-    override suspend fun remove(key: K, value: V) = mutex.withLock {
-        val oldNode = map[key] ?: return@withLock
-        if (oldNode.value != value) return@withLock
-        map.remove(key, oldNode)
+    override suspend fun remove(key: K): Unit = mutex.withLock {
+        map.remove(key)
     }
 
     /** Set a new cache item. */
@@ -75,12 +72,5 @@ class LruCache<K, V>(
 
         val isExpired: Boolean
             get() = Instant.now().isAfter(validUntil)
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-            other as LruCache<*, *>.Node
-            return value == other.value
-        }
     }
 }

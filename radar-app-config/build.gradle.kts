@@ -60,7 +60,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation("org.hamcrest:hamcrest:2.2")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    val mockitoKotlinVersion: String by project
+    testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
 }
 
 allOpen {

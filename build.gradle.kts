@@ -6,7 +6,7 @@ plugins {
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
     id("com.github.ben-manes.versions")
     id("org.jetbrains.dokka") apply false
-    id("org.jlleitschuh.gradle.ktlint") version "10.1.0" apply false
+    id("org.jlleitschuh.gradle.ktlint") version  "11.1.0" apply false
     `maven-publish`
     signing
     id("io.github.gradle-nexus.publish-plugin")
@@ -24,6 +24,7 @@ val githubIssueUrl = "https://github.com/$githubRepoName/issues"
 subprojects {
     repositories {
         mavenCentral()
+        mavenLocal()
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
     tasks.withType<JavaCompile> {
