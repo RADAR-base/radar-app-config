@@ -1,5 +1,10 @@
 package org.radarbase.appconfig.resource
 
+import jakarta.inject.Singleton
+import jakarta.ws.rs.*
+import jakarta.ws.rs.core.Context
+import jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION
+import jakarta.ws.rs.core.MediaType
 import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.api.User
 import org.radarbase.appconfig.api.UserList
@@ -9,13 +14,9 @@ import org.radarbase.appconfig.service.UserService
 import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
+import org.radarbase.jersey.cache.Cache
 import org.radarbase.jersey.exception.HttpNotFoundException
 import org.radarbase.jersey.service.managementportal.RadarProjectService
-import jakarta.inject.Singleton
-import jakarta.ws.rs.*
-import jakarta.ws.rs.core.Context
-import jakarta.ws.rs.core.MediaType
-import org.radarbase.jersey.cache.Cache
 import org.radarbase.management.client.MPSubject
 
 /** Root path, just forward requests without authentication. */
@@ -30,7 +31,7 @@ class UserResource(
     @Context private val radarProjectService: RadarProjectService,
 ) {
     @GET
-    @Cache(maxAge = 60, isPrivate = true)
+    @Cache(maxAge = 60, isPrivate = true, vary = [AUTHORIZATION])
     @NeedsPermission(Permission.SUBJECT_READ, "projectId")
     fun userClientConfig(
         @PathParam("projectId") projectId: String,
@@ -43,7 +44,7 @@ class UserResource(
 
     @Path("/{userId}")
     @GET
-    @Cache(maxAge = 60, isPrivate = true)
+    @Cache(maxAge = 60, isPrivate = true, vary = [AUTHORIZATION])
     @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
     fun userClientConfig(
         @PathParam("projectId") projectId: String,

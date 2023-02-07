@@ -1,9 +1,9 @@
 package org.radarbase.appconfig.inject
 
+import jakarta.ws.rs.core.Context
 import org.radarbase.lang.expression.Interpreter
 import org.radarbase.lang.expression.VariableResolver
 import java.util.function.Supplier
-import jakarta.ws.rs.core.Context
 
 class InterpreterFactory(
     @Context private val variableResolver: VariableResolver,
