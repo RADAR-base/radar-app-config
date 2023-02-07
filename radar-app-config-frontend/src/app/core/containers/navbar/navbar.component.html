@@ -3,7 +3,7 @@
 
     <div class="navbar-brand">
       <div class="logo-wrapper">
-        <img class="logo" src="assets/radar-logo.png" alt="radar-base logo">
+        <img class="logo" src="assets/images/radar-logo.svg" alt="radar-base logo">
       </div>
 
       <div class="site-text-wrapper">
@@ -20,7 +20,8 @@
     </button>
     <span class="spacer"></span>
     <button mat-button *ngIf="!currentUser" [routerLink]="['/login']">{{'login.login' | translate}}</button>
-    <button mat-button *ngIf="currentUser"  (click)="logout()">{{'login.logout' | translate}}</button>
+    <span class="small-text" *ngIf="currentUser">{{currentUser.username}}</span>
+    <button mat-button *ngIf="currentUser" (click)="logout()">{{'login.logout' | translate}}</button>
     <button mat-icon-button (click)="openHelp()">
       <mat-icon svgIcon="help">help</mat-icon>
     </button>
