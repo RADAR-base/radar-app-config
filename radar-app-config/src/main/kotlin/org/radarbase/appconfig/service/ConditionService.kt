@@ -15,7 +15,7 @@ class ConditionService(
     @Context private val resolver: ClientVariableResolver,
     @Context private val interpreter: ClientInterpreter,
 ) {
-    fun matchingConditions(clientId: String, projectId: String, userId: String?): List<Condition> {
+    suspend fun matchingConditions(clientId: String, projectId: String, userId: String?): List<Condition> {
         val allConditions = listOf<Condition>()
 
         val conditionScopes = mutableListOf<Scope>()

@@ -14,5 +14,5 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-databind")
 
     val mpVersion: String by project
-    api("org.radarbase:oauth-client-util:$mpVersion")
+    api("org.radarbase:managementportal-client:$mpVersion")
 }

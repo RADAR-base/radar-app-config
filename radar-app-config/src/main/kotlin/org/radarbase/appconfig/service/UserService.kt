@@ -16,7 +16,7 @@ class UserService(
     @Context private val conditionService: ConditionService,
     @Context private val resolver: ClientVariableResolver,
 ) {
-    fun putUserConfig(clientId: String, userId: String, clientConfig: ClientConfig) {
+    suspend fun putUserConfig(clientId: String, userId: String, clientConfig: ClientConfig) {
         resolver[clientId].replace(
             userScope(userId),
             null,
@@ -26,7 +26,7 @@ class UserService(
                 })
     }
 
-    fun userConfig(
+    suspend fun userConfig(
         clientId: String,
         projectId: String,
         userId: String,
@@ -38,7 +38,7 @@ class UserService(
         )
     }
 
-    private fun userScopes(
+    private suspend fun userScopes(
         clientId: String,
         projectId: String,
         userId: String,
