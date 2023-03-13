@@ -8,7 +8,7 @@ import org.radarbase.lang.expression.*
 class ConfigProjectServiceImpl(
     @Context private val resolver: ClientVariableResolver,
 ) : ConfigProjectService {
-    override fun projectConfig(clientId: String, projectId: String): ClientConfig {
+    override suspend fun projectConfig(clientId: String, projectId: String): ClientConfig {
         val scope = projectScope(projectId)
         return ClientConfig.fromStream(
             clientId, scope,
@@ -16,7 +16,7 @@ class ConfigProjectServiceImpl(
         )
     }
 
-    override fun putProjectConfig(clientId: String, projectId: String, clientConfig: ClientConfig) {
+    override suspend fun putProjectConfig(clientId: String, projectId: String, clientConfig: ClientConfig) {
         resolver[clientId].replace(
             projectScope(projectId),
             null,

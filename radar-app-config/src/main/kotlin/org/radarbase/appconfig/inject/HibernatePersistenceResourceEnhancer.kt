@@ -7,6 +7,7 @@ import jakarta.inject.Singleton
 import jakarta.persistence.EntityManager
 import jakarta.ws.rs.core.Context
 import org.glassfish.jersey.internal.inject.AbstractBinder
+import org.glassfish.jersey.process.internal.RequestScope
 import org.radarbase.appconfig.config.HazelcastConfig
 import org.radarbase.appconfig.persistence.HibernateVariableResolver
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
@@ -42,8 +43,13 @@ class HibernatePersistenceResourceEnhancer(
     class HibernateClientVariableResolver(
         @Context private val em: jakarta.inject.Provider<EntityManager>,
         @Context private val hazelcastInstance: HazelcastInstance,
+        @Context private val requestScope: RequestScope,
     ) : ClientVariableResolver {
-        override fun get(clientId: String): VariableResolver =
-            HibernateVariableResolver(em, clientId, hazelcastInstance.getMap(clientId))
+        override fun get(clientId: String): VariableResolver = HibernateVariableResolver(
+            em,
+            clientId,
+            hazelcastInstance.getMap(clientId),
+            requestScope
+        )
     }
 }

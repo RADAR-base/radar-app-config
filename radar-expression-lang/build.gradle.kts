@@ -27,6 +27,12 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+    val coroutinesVersion: String by project
+    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$coroutinesVersion"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    val mpVersion: String by project
+    implementation("org.radarbase:radar-kotlin:$mpVersion")
+
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 
