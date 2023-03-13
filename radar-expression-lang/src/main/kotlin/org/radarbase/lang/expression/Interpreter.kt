@@ -1,11 +1,16 @@
 package org.radarbase.lang.expression
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+
 class InterpreterException(val expression: Expression, cause: Throwable) : RuntimeException(cause.message, cause)
 
 class Interpreter(val variables: VariableResolver) {
-    fun interpret(scope: List<Scope>, expression: Expression): Variable = expression.evaluate(scope)
+    suspend fun interpret(scope: List<Scope>, expression: Expression): Variable = expression.evaluate(scope)
 
-    private fun Expression.evaluate(scope: List<Scope>): Variable {
+    private suspend fun Expression.evaluate(scope: List<Scope>): Variable {
         try {
             return when (this) {
                 is OrExpression -> BooleanLiteral(left.evaluate(scope).asBoolean() || right.evaluate(scope).asBoolean())
@@ -15,12 +20,12 @@ class Interpreter(val variables: VariableResolver) {
                 is XorExpression -> BooleanLiteral(
                     left.evaluate(scope).asBoolean() != right.evaluate(scope).asBoolean()
                 )
-                is EqualExpression -> BooleanLiteral(left.evaluate(scope).compareTo(right.evaluate(scope)) == 0)
-                is NotEqualExpression -> BooleanLiteral(left.evaluate(scope).compareTo(right.evaluate(scope)) != 0)
-                is GreaterThanOrEqualExpression -> BooleanLiteral(left.evaluate(scope) >= right.evaluate(scope))
-                is GreaterThanExpression -> BooleanLiteral(left.evaluate(scope) > right.evaluate(scope))
-                is LessThanExpression -> BooleanLiteral(left.evaluate(scope) < right.evaluate(scope))
-                is LessThanOrEqualExpression -> BooleanLiteral(left.evaluate(scope) <= right.evaluate(scope))
+                is EqualExpression -> BooleanLiteral(evaluate(scope) { l, r -> l.compareTo(r) == 0 })
+                is NotEqualExpression -> BooleanLiteral(evaluate(scope) { l, r -> l.compareTo(r) != 0 })
+                is GreaterThanOrEqualExpression -> BooleanLiteral(evaluate(scope) { l, r -> l >= r })
+                is GreaterThanExpression -> BooleanLiteral(evaluate(scope) { l, r -> l > r })
+                is LessThanExpression -> BooleanLiteral(evaluate(scope) { l, r -> l < r })
+                is LessThanOrEqualExpression -> BooleanLiteral(evaluate(scope) { l, r -> l <= r })
                 is Variable -> this
                 is FunctionReference -> function.apply(this@Interpreter, scope, parameters)
                 is QualifiedId -> variables.resolve(scope, this).variable
@@ -32,7 +37,18 @@ class Interpreter(val variables: VariableResolver) {
             throw InterpreterException(this, ex)
         }
     }
+
+    private suspend fun <T> BinaryExpression.evaluate(
+        scope: List<Scope>,
+        coroutineContext: CoroutineContext = EmptyCoroutineContext,
+        evaluate: (Variable, Variable) -> T,
+    ): T = coroutineScope {
+        val leftJob = async(coroutineContext) { left.evaluate(scope) }
+        val rightJob = async(coroutineContext) { right.evaluate(scope) }
+        evaluate(leftJob.await(), rightJob.await())
+    }
 }
+
 
 interface Scope {
     val id: QualifiedId

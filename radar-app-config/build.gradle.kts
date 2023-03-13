@@ -33,6 +33,9 @@ dependencies {
     implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
     implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
 
+    val mpVersion: String by project
+    implementation("org.radarbase:radar-kotlin:$mpVersion")
+
     val hazelcastHibernateVersion: String by project
     implementation("com.hazelcast:hazelcast-hibernate53:$hazelcastHibernateVersion")
     val hazelcastVersion: String by project

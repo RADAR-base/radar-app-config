@@ -2,20 +2,21 @@ package org.radarbase.appconfig.resource
 
 import jakarta.inject.Singleton
 import jakarta.ws.rs.*
+import jakarta.ws.rs.container.AsyncResponse
+import jakarta.ws.rs.container.Suspended
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION
 import jakarta.ws.rs.core.MediaType
 import org.radarbase.appconfig.api.ClientConfig
-import org.radarbase.appconfig.api.Project
 import org.radarbase.appconfig.api.ProjectList
 import org.radarbase.appconfig.api.toProject
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigProjectService
 import org.radarbase.auth.authorization.Permission
-import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.cache.Cache
+import org.radarbase.jersey.coroutines.runAsCoroutine
 import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarbase.management.client.MPProject
 
@@ -32,39 +33,47 @@ class ProjectResource(
     @GET
     @Cache(maxAge = 300, isPrivate = true, vary = [AUTHORIZATION])
     @NeedsPermission(Permission.PROJECT_READ)
-    fun listProjects(@Context auth: Auth) = ProjectList(
-        radarProjectService.userProjects(auth)
-            .map(MPProject::toProject)
-    )
+    fun listProjects(@Suspended asyncResponse: AsyncResponse) = asyncResponse.runAsCoroutine {
+        ProjectList(
+            radarProjectService.userProjects()
+                .map(MPProject::toProject)
+        )
+    }
 
     @GET
     @NeedsPermission(Permission.PROJECT_READ, "projectId")
     @Path("{projectId}")
     @Cache(maxAge = 3600, isPrivate = true, vary = [AUTHORIZATION])
-    fun get(@PathParam("projectId") projectId: String): Project =
+    fun get(
+        @Suspended asyncResponse: AsyncResponse,
+        @PathParam("projectId") projectId: String,
+    ) = asyncResponse.runAsCoroutine {
         radarProjectService.project(projectId).toProject()
+    }
 
     @Path("{projectId}/config/{clientId}")
     @GET
     @NeedsPermission(Permission.PROJECT_READ, "projectId")
     fun projectConfig(
+        @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
-    ): ClientConfig {
+    ) = asyncResponse.runAsCoroutine {
         clientService.ensureClient(clientId)
-        return projectService.projectConfig(clientId, projectId)
+        projectService.projectConfig(clientId, projectId)
     }
 
     @Path("{projectId}/config/{clientId}")
     @POST
     @NeedsPermission(Permission.PROJECT_UPDATE, "projectId")
     fun putProjectConfig(
+        @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
         clientConfig: ClientConfig,
-    ): ClientConfig {
+    ) = asyncResponse.runAsCoroutine {
         clientService.ensureClient(clientId)
         projectService.putProjectConfig(clientId, projectId, clientConfig)
-        return projectService.projectConfig(clientId, projectId)
+        projectService.projectConfig(clientId, projectId)
     }
 }
