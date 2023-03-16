@@ -6,7 +6,7 @@ services:
   # Management Portal                                                         #
   #---------------------------------------------------------------------------#
   managementportal:
-    image: radarbase/management-portal:Mp2.0-rc
+    image: radarbase/management-portal:2.0.0
     depends_on:
       - mp-postgresql
     environment:
