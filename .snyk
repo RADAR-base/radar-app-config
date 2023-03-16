@@ -18,6 +18,11 @@ ignore:
   SNYK-JAVA-ORGYAML-3113851:
     - '*':
         reason: Only YAML from config files are read
-        expires: 2023-05-15T15:08:58.881Z
+        expires: 2024-05-15T15:08:58.881Z
         created: 2022-11-15T15:08:58.889Z
+  SNYK-JAVA-ORGYAML-3152153:
+    - '*':
+        reason: Only YAML from config files are read
+        expires: 2024-05-15T15:08:58.881Z
+        created: 2023-03-16T16:16:42.643Z
 patch: {}
