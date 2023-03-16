@@ -180,16 +180,17 @@ configure(listOf(
     }
 }
 
-fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
-    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-    val isStable = stableKeyword || regex.matches(version)
-    return isStable.not()
-}
-
 tasks.withType<DependencyUpdatesTask> {
+    doFirst {
+        allprojects {
+            repositories.removeAll {
+                it is MavenArtifactRepository && it.url.toString().endsWith("/snapshots")
+            }
+        }
+    }
+    val isStable = "(^[0-9,.v-]+(-r)?|RELEASE|FINAL|GA|-CE)$".toRegex(RegexOption.IGNORE_CASE)
     rejectVersionIf {
-        isNonStable(candidate.version)
+        !isStable.containsMatchIn(candidate.version)
     }
 }
 
@@ -211,5 +212,5 @@ nexusPublishing {
 }
 
 tasks.wrapper {
-    gradleVersion = "7.6"
+    gradleVersion = "8.0.2"
 }
