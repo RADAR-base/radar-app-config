@@ -1,15 +1,14 @@
 package org.radarbase.appconfig.persistence
 
 import com.hazelcast.map.IMap
-import org.radarbase.appconfig.persistence.entity.ConfigEntity
-import org.radarbase.jersey.hibernate.HibernateRepository
-import java.util.stream.Stream
 import jakarta.inject.Provider
-import org.radarbase.lang.expression.*
 import jakarta.persistence.EntityManager
 import jakarta.persistence.Query
 import jakarta.persistence.TypedQuery
-import kotlin.streams.asSequence
+import org.radarbase.appconfig.persistence.entity.ConfigEntity
+import org.radarbase.jersey.hibernate.HibernateRepository
+import org.radarbase.lang.expression.*
+import java.util.stream.Stream
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 class HibernateVariableResolver(

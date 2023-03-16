@@ -120,15 +120,15 @@
                                         <tbody>
                                                 <tr>
                                                         <td>authService</td>
-                                                  
+
                                                         <td>
                                                                         <code><a href="../injectables/AuthService.html" target="_self" >AuthService</a></code>
                                                         </td>
-                                                  
+
                                                     <td>
                                                             No
                                                     </td>
-                                                    
+
                                                 </tr>
                                         </tbody>
                                     </table>
@@ -140,7 +140,7 @@
 </section>
 
             <section>
-    
+
     <h3 id="methods">
         Methods
     </h3>
@@ -220,7 +220,7 @@
 
                     </div>
                     <div class="io-description">
-                        
+
                     </div>
                 </td>
             </tr>
@@ -246,7 +246,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         return next.handle(request).pipe(catchError(err &#x3D;&gt; {
             if ([401, 403].indexOf(err.status) !&#x3D;&#x3D; -1) {
                 this.authService.logout();
-                location.reload(true);
+                location.reload();
             }
             const error &#x3D; err.error.message || err.statusText;
             return throwError(error);
@@ -262,7 +262,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
 
 
-                   
+
 
 
 

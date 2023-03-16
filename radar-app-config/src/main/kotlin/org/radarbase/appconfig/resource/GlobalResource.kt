@@ -1,15 +1,15 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.auth.authorization.Permission
-import org.radarbase.appconfig.api.ClientConfig
-import org.radarbase.appconfig.service.ClientService
-import org.radarbase.appconfig.service.ConfigService
-import org.radarbase.jersey.auth.Authenticated
-import org.radarbase.jersey.auth.NeedsPermission
 import jakarta.inject.Singleton
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
+import org.radarbase.appconfig.api.ClientConfig
+import org.radarbase.appconfig.service.ClientService
+import org.radarbase.appconfig.service.ConfigService
+import org.radarbase.auth.authorization.Permission
+import org.radarbase.jersey.auth.Authenticated
+import org.radarbase.jersey.auth.NeedsPermission
 
 @Path("global")
 @Singleton
@@ -22,7 +22,7 @@ class GlobalResource(
 ) {
     @POST
     @Path("config/{clientId}")
-    @NeedsPermission(Permission.Entity.PROJECT, Permission.Operation.CREATE)
+    @NeedsPermission(Permission.PROJECT_CREATE)
     fun updateConfig(
         @PathParam("clientId") clientId: String,
         config: ClientConfig,

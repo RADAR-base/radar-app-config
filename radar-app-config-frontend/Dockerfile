@@ -42,5 +42,5 @@ COPY --chown=101 docker/default.conf /etc/nginx/conf.d/
 COPY docker/30-env-subst.sh /docker-entrypoint.d/
 
 COPY --from=builder /code/dist/out/ /usr/share/nginx/html
-COPY --from=builder --chown=101 /code/dist/out/main-* /code/dist/out/index.html* /usr/share/nginx/html/
+COPY --from=builder --chown=101 /code/dist/out/main* /code/dist/out/index.html* /usr/share/nginx/html/
 

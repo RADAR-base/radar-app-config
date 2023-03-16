@@ -6,7 +6,7 @@ services:
   # Management Portal                                                         #
   #---------------------------------------------------------------------------#
   managementportal:
-    image: radarbase/management-portal:0.8.1
+    image: radarbase/management-portal:2.0.0
     depends_on:
       - mp-postgresql
     environment:
@@ -20,6 +20,7 @@ services:
       MANAGEMENTPORTAL_OAUTH_CLIENTS_FILE: /mp-includes/config/oauth_client_details.csv
       MANAGEMENTPORTAL_CATALOGUE_SERVER_ENABLE_AUTO_IMPORT: 'false'
       MANAGEMENTPORTAL_OAUTH_SIGNING_KEY_ALIAS: 'radarbase-managementportal-ec'
+      SERVER_SERVLET_SESSION_COOKIE_SECURE: "false"
       JAVA_OPTS: -Xmx256m  # maximum heap size for the JVM running ManagementPortal, increase this as necessary
     volumes:
       - ./etc/mp-config/:/mp-includes/config
@@ -28,7 +29,8 @@ services:
       - "traefik.http.services.managementportal.loadbalancer.server.port=8080"
 
   mp-postgresql:
-    image: bitnami/postgresql:14
+    image: bitnami/postgresql:15
+    platform: linux/amd64
     environment:
       - POSTGRESQL_USERNAME=radarcns
       - POSTGRESQL_PASSWORD=radarcns
@@ -37,7 +39,8 @@ services:
       - "traefik.enable=false"
 
   app-postgresql:
-    image: bitnami/postgresql:14
+    image: bitnami/postgresql:15
+    platform: linux/amd64
     environment:
       - POSTGRESQL_USERNAME=radarcns
       - POSTGRESQL_PASSWORD=radarcns
@@ -75,7 +78,7 @@ services:
       - "traefik.http.services.appconfigfrontend.loadbalancer.server.port=8080"
 
   traefik:
-    image: traefik:2.6
+    image: traefik:2.9
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --api.insecure=true --providers.docker

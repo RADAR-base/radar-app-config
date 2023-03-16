@@ -3,15 +3,14 @@ package org.radarbase.appconfig.inject
 import com.hazelcast.config.Config
 import com.hazelcast.core.Hazelcast
 import com.hazelcast.core.HazelcastInstance
-import com.hazelcast.jet.config.JetConfig
-import org.radarbase.lang.expression.VariableResolver
+import jakarta.inject.Singleton
+import jakarta.persistence.EntityManager
+import jakarta.ws.rs.core.Context
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.HazelcastConfig
 import org.radarbase.appconfig.persistence.HibernateVariableResolver
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
-import jakarta.inject.Singleton
-import jakarta.persistence.EntityManager
-import jakarta.ws.rs.core.Context
+import org.radarbase.lang.expression.VariableResolver
 
 class HibernatePersistenceResourceEnhancer(
     private val hazelcastConfig: HazelcastConfig,

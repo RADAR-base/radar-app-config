@@ -2,6 +2,7 @@ import { Component} from '@angular/core';
 import {User} from '@app/auth/models/user';
 import {AuthService} from '@app/auth/services/auth.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {TranslateService} from "@ngx-translate/core";
 // import strings from '@i18n/strings.json';
 
 /**
@@ -25,7 +26,11 @@ export class NavbarComponent {
 
   navbarOpen = false;
 
-  constructor(private authService: AuthService, public router: Router){
+  constructor(
+    private authService: AuthService,
+    public router: Router,
+    public translateService: TranslateService,
+  ){
     this.authService.currentUser.subscribe(() => {
       this.currentUser = this.authService.currentDecodedUserValue;
       this.isAdmin = this.authService.isAdmin;
@@ -49,5 +54,12 @@ export class NavbarComponent {
 
   closeNavbar(){
     this.navbarOpen = false;
+  }
+
+  openHelp() {
+    this.translateService.get('general.helpUrl')
+      .subscribe({
+        next: value => window.open(value, '_blank'),
+      })
   }
 }

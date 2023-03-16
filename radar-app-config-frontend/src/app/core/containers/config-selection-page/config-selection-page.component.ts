@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import {Project} from '@app/pages/models/project';
-import {Client} from '@app/pages/models/client';
+import {Project, projectsToDropDown} from '@app/pages/models/project';
+import {Client, clientsToDropDown} from '@app/pages/models/client';
 import {ConfigService} from '@app/pages/services/config.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ToastService} from '@app/shared/services/toast.service';
 import {ProjectService} from '@app/pages/services/project.service';
 import {ClientService} from '@app/pages/services/client.service';
 import {TranslateService} from '@app/shared/services/translate.service';
+import {DropDownItem} from "@app/shared/components/drop-down/drop-down.component";
+import {BackButtonOptions} from "@app/core/containers/left-sidebar/left-sidebar.component";
 // import strings from '@i18n/strings.json';
 
 @Component({
@@ -19,8 +21,11 @@ export class ConfigSelectionPageComponent implements OnInit {
 
   projectId;
   clientId;
-  projects: [Project];
-  clients: [Client];
+  projects: Project[];
+  clients: Client[];
+
+  projectOptions: DropDownItem[] = []
+  clientOptions: DropDownItem[] = []
 
   constructor(
     public translate: TranslateService,
@@ -36,45 +41,64 @@ export class ConfigSelectionPageComponent implements OnInit {
     this.clientId = this.activatedRoute.snapshot.queryParams.client;
 
     this.projects = await this.getProjects();
+    this.projectOptions = projectsToDropDown(this.projects)
     this.clients = await this.getClients();
+    this.clientOptions = clientsToDropDown(this.clients)
   }
 
-  getProjects() {
-    if (!this.projectId) { return; }
-    const {projects} = history.state;
-    return (projects ? projects : this.projectService.getAllProjects());
+  async getProjects() {
+    if (!this.projectId) return null;
+    const { projects } = history.state;
+    return (projects ? projects : await this.projectService.getAllProjects());
   }
 
-  getClients() {
-    if (!this.clientId) { return; }
-    const {clients} = history.state;
-    return (clients ? clients : this.clientService.getAllClients());
+  async getClients() {
+    if (!this.clientId) return null;
+    const { clients } = history.state;
+    return (clients ? clients : await this.clientService.getAllClients());
   }
 
-  onProjectChange(event) {
-    this.projectId = event.id;
-    const tempObject = {...this.activatedRoute.snapshot.queryParams};
-    tempObject.project = this.projectId;
-    this.router.navigate(['/configs'], {queryParams: tempObject});
+  onProjectChange(event: string) {
+    this.projectId = event;
+    const queryParams = {
+      ...this.activatedRoute.snapshot.queryParams,
+      project: this.projectId,
+    };
+    this.router.navigate(['/configs'], {queryParams});
   }
 
-  onClientChange(event) {
-    this.clientId = event.id;
-    const tempObject = {...this.activatedRoute.snapshot.queryParams};
-    tempObject.client = this.clientId;
-    this.router.navigate(['/configs'], {queryParams: tempObject});
+  onClientChange(event: string) {
+    this.clientId = event;
+    const queryParams = {
+      ...this.activatedRoute.snapshot.queryParams,
+      client: this.clientId,
+    };
+    this.router.navigate(['/configs'], {queryParams});
   }
 
   makeState() {
-    return {projects: this.projects, clients: this.clients};
+    return {
+      projects: this.projects,
+      clients: this.clients,
+    };
   }
 
   makeQueryParams() {
-    return {project: this.projectId, client: this.clientId};
+    return {
+      project: this.projectId,
+      client: this.clientId,
+    };
   }
 
-  makeBackButton() {
-    if (!this.clientId || !this.projectId) { return; }
-    return {routerLink: ['/clients'], queryParams: {project: this.projectId}, name: 'Applications'};
+  makeBackButton(): BackButtonOptions | null {
+    if (!this.clientId || !this.projectId) {
+      return null;
+    }
+
+    return {
+      routerLink: ['/clients'],
+      queryParams: {project: this.projectId},
+      name: 'Applications',
+    };
   }
 }

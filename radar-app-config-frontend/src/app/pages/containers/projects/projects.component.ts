@@ -14,7 +14,7 @@ import {TranslateService} from "@app/shared/services/translate.service";
 export class ProjectsComponent implements OnInit {
 
   loading = true;
-  projects: [Project] | void;
+  projects: Project[] = [];
 
   constructor(public translate: TranslateService, private projectService: ProjectService) {}
 

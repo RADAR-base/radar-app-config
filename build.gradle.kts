@@ -13,7 +13,7 @@ plugins {
 
 allprojects {
     group = "org.radarbase"
-    version = "0.4.3-SNAPSHOT"
+    version = "0.5.0-SNAPSHOT"
 }
 
 val githubRepoName = "RADAR-base/radar-app-config"
@@ -23,6 +23,7 @@ val githubIssueUrl = "https://github.com/$githubRepoName/issues"
 subprojects {
     repositories {
         mavenCentral()
+        mavenLocal()
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
     tasks.withType<JavaCompile> {
@@ -31,8 +32,8 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "17"
-            languageVersion = "1.6"
-            apiVersion = "1.6"
+            languageVersion = "1.8"
+            apiVersion = "1.8"
         }
     }
     afterEvaluate {
@@ -179,16 +180,17 @@ configure(listOf(
     }
 }
 
-fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
-    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-    val isStable = stableKeyword || regex.matches(version)
-    return isStable.not()
-}
-
 tasks.withType<DependencyUpdatesTask> {
+    doFirst {
+        allprojects {
+            repositories.removeAll {
+                it is MavenArtifactRepository && it.url.toString().endsWith("/snapshots")
+            }
+        }
+    }
+    val isStable = "(^[0-9,.v-]+(-r)?|RELEASE|FINAL|GA|-CE)$".toRegex(RegexOption.IGNORE_CASE)
     rejectVersionIf {
-        isNonStable(candidate.version)
+        !isStable.containsMatchIn(candidate.version)
     }
 }
 
@@ -210,5 +212,5 @@ nexusPublishing {
 }
 
 tasks.wrapper {
-    gradleVersion = "7.6"
+    gradleVersion = "8.0.2"
 }
