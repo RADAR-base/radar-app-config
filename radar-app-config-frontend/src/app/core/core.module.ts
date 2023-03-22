@@ -11,6 +11,8 @@ import { ConfigSelectionPageComponent } from './containers/config-selection-page
 import { SharedModule } from '@app/shared/shared.module';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatMenuModule} from "@angular/material/menu";
 
 @NgModule({
   declarations: [
@@ -33,6 +35,8 @@ import { TranslateModule } from '@ngx-translate/core';
     SharedModule,
     MatButtonModule,
     TranslateModule,
+    MatToolbarModule,
+    MatMenuModule,
   ]
 })
 export class CoreModule { }

@@ -7,6 +7,8 @@ import { ToastComponent } from './components/toast/toast.component';
 import { DropDownComponent } from './components/drop-down/drop-down.component';
 import { JwtInterceptor } from '@app/shared/helpers/jwt.interceptor';
 import { ErrorInterceptor } from '@app/shared/helpers/error.interceptor';
+import {MatSelectModule} from "@angular/material/select";
+import {MatInputModule} from "@angular/material/input";
 
 @NgModule({
   declarations: [ToastComponent, DropDownComponent],
@@ -15,6 +17,8 @@ import { ErrorInterceptor } from '@app/shared/helpers/error.interceptor';
     CommonModule,
     NgbModule,
     MatIconModule,
+    MatSelectModule,
+    MatInputModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

@@ -8,7 +8,7 @@ fun MPProject.toProject(): Project = Project(
     name = id,
     humanReadableName = name,
     location = location,
-    organization = organization,
+    organization = organization?.id,
     description = description
 )
 

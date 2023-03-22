@@ -1,7 +1,5 @@
 package org.radarbase.appconfig.service
 
-import org.radarbase.lang.expression.register
-import org.radarbase.lang.expression.toVariable
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -9,6 +7,8 @@ import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.api.SingleVariable
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.inject.InMemoryResourceEnhancer
+import org.radarbase.lang.expression.register
+import org.radarbase.lang.expression.toVariable
 
 internal class ProjectServiceTest {
     private lateinit var projectService: ConfigProjectService

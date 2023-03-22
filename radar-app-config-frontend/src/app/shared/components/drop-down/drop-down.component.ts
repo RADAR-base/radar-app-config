@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {MatSelectChange} from "@angular/material/select";
 
 /**
  * DropDown Component
@@ -9,37 +10,52 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
   // styleUrls: ['./drop-down.component.scss']
 })
 
-export class DropDownComponent{
+export class DropDownComponent {
+  _data: DropDownItem[] | null = null;
+
   /**
    * array of dropdown items
    */
-  @Input() data;
+  @Input() set data(value: DropDownItem[]) {
+    if (!value) {
+      this._data = null;
+      return;
+    }
+    this._data = value.map(d => ({
+      id: d.id || '',
+      value: typeof d.value === 'string' ? d.value : (d.id || '')
+    }))
+  }
+
+  get data(): DropDownItem[] {
+    return this._data;
+  }
 
   /**
    * selected item
    */
-  @Input() selected;
+  @Input() selected: string;
 
   /**
    * dropdown label
    */
-  @Input() label;
-
-  /**
-   * field of item in data which should be displayed in dropdown (e.g. name or projectName)
-   */
-  @Input() field;
+  @Input() label: string;
 
   /**
    * change event emitter
    */
-  @Output() change: EventEmitter<string> = new EventEmitter<string>();
+  @Output() selectionUpdates: EventEmitter<string> = new EventEmitter<string>();
 
   /**
    * On dropdown item click, emit an event to parent
    * @param item: dropdown item
    */
-  onChange(item: any) {
-      this.change.emit(item);
+  onChange(item: MatSelectChange) {
+      this.selectionUpdates.emit(item.value);
   }
+}
+
+export interface DropDownItem {
+  id: string;
+  value?: string;
 }

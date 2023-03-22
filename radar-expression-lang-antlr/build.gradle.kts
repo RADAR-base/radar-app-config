@@ -31,7 +31,6 @@ fun IdeaProject.settings(block: ProjectSettings.() -> Unit) =
 fun ProjectSettings.taskTriggers(block: TaskTriggersConfig.() -> Unit) =
     (this@taskTriggers as ExtensionAware).extensions.configure("taskTriggers", block)
 
-
 rootProject.idea {
     project {
         settings {

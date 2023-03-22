@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {Config, ConfigElement} from '@app/pages/models/config';
 import {ToastService} from '@app/shared/services/toast.service';
-import {Observable, pipe, OperatorFunction} from 'rxjs';
+import {Observable, pipe, OperatorFunction, firstValueFrom} from 'rxjs';
 import {environment} from '@environments/environment';
 import {map, tap} from 'rxjs/operators';
 
@@ -21,9 +21,9 @@ export class ConfigService {
   }
 
   async getGlobalConfigByClientId(clientId) {
-      return await this.getGlobalConfigByClientIdObservable(clientId).pipe(
+      return firstValueFrom(this.getGlobalConfigByClientIdObservable(clientId).pipe(
           this.mapConfigResponse(`Configurations of Application: ${clientId} loaded.`),
-      ).toPromise();
+      ));
   }
 
   private getConfigByProjectIdClientIdObservable(projectId, clientId): Observable<Config> {
@@ -43,9 +43,9 @@ export class ConfigService {
   }
   */
   async getConfigByProjectIdClientId(projectId, clientId) {
-    return await this.getConfigByProjectIdClientIdObservable(projectId, clientId).pipe(
+    return firstValueFrom(this.getConfigByProjectIdClientIdObservable(projectId, clientId).pipe(
         this.mapConfigResponse(`Configurations of Project: ${projectId} - Application: ${clientId} loaded.`),
-    ).toPromise();
+    ));
   }
 
   private getConfigByProjectIdUserIDClientIdObservable(projectId, userId, clientId): Observable<Config> {
@@ -65,9 +65,9 @@ export class ConfigService {
   }
   */
   async getConfigByProjectIdUserIdClientId(projectId, userId, clientId) {
-    return await this.getConfigByProjectIdUserIDClientIdObservable(projectId, userId, clientId).pipe(
+    return firstValueFrom(this.getConfigByProjectIdUserIDClientIdObservable(projectId, userId, clientId).pipe(
         this.mapConfigResponse(`Configurations of Project: ${projectId} - Participant: ${userId} - Application: ${clientId} loaded.`),
-    ).toPromise();
+    ));
   }
 
 
@@ -114,13 +114,13 @@ export class ConfigService {
   private mapConfigResponse(successMessage: string): OperatorFunction<Config, ConfigElement[]> {
       return pipe(
           map(config => this.serverConfigToConfig(config)),
-          tap(
-              () => this.toastService.showSuccess(successMessage),
-              e => {
+          tap({
+              next: () => this.toastService.showSuccess(successMessage),
+              error: e => {
                   this.toastService.showError(e);
                   console.log(e);
               },
-          ),
+          }),
       );
   }
 

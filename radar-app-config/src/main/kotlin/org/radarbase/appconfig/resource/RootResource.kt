@@ -1,18 +1,19 @@
 package org.radarbase.appconfig.resource
 
-import org.radarbase.appconfig.api.OAuthClientList
-import org.radarbase.appconfig.api.toOAuthClient
-import org.radarbase.appconfig.service.ClientService
-import org.radarbase.auth.authorization.Permission
-import org.radarbase.jersey.auth.Authenticated
-import org.radarbase.jersey.auth.NeedsPermission
 import jakarta.inject.Singleton
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
+import jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION
 import jakarta.ws.rs.core.MediaType
+import org.radarbase.appconfig.api.OAuthClientList
+import org.radarbase.appconfig.api.toOAuthClient
+import org.radarbase.appconfig.service.ClientService
+import org.radarbase.auth.authorization.Permission
+import org.radarbase.jersey.auth.Authenticated
+import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.cache.Cache
 import org.radarbase.management.client.MPOAuthClient
 
@@ -27,8 +28,8 @@ class RootResource(
 ) {
     @Path("clients")
     @GET
-    @Cache(maxAge = 3600, isPrivate = true)
-    @NeedsPermission(Permission.Entity.OAUTHCLIENTS, Permission.Operation.READ)
+    @Cache(maxAge = 3600, isPrivate = true, vary = [AUTHORIZATION])
+    @NeedsPermission(Permission.OAUTHCLIENTS_READ)
     fun clients() = OAuthClientList(
         clientService.readClients()
             .map(MPOAuthClient::toOAuthClient)

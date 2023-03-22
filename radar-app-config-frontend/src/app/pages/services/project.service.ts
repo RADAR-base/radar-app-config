@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {firstValueFrom, Observable, of} from 'rxjs';
 import {Project} from '@app/pages/models/project';
 import {ToastService} from '@app/shared/services/toast.service';
 import {environment} from "@environments/environment";
+import {catchError, first, map} from "rxjs/operators";
 
 /**
  * Project Service
@@ -17,21 +18,24 @@ export class ProjectService {
     private toastService: ToastService,
   ) {}
 
-  private getAllProjectsObservable(): Observable<[Project]> {
-    return this.http.get<any>(`${environment.backendUrl}/projects`);
+  private getAllProjectsObservable(): Observable<{projects: Project[]}> {
+    return this.http.get<{projects: Project[]}>(`${environment.backendUrl}/projects`);
   }
 
-  async getAllProjects(): Promise<[Project] | void> {
-    return this.getAllProjectsObservable().toPromise()
-      .then((data: any) => {
-        const projects: [Project] = data.projects;
-        projects.forEach(p => p.name = p.projectName);
+  getAllProjects(): Promise<Project[]> {
+    return firstValueFrom(this.getAllProjectsObservable().pipe(
+      map((data: any) => {
+        if (!data.projects) {
+          throw Error("Cannot load projects: " + data['error_description'])
+        }
         this.toastService.showSuccess('Projects loaded.');
-        return projects;
-      })
-      .catch(e => {
+        return data.projects;
+      }),
+      catchError(e => {
         this.toastService.showError(e);
         console.log(e);
-      });
+        return of([]);
+      }),
+    ));
   }
 }
