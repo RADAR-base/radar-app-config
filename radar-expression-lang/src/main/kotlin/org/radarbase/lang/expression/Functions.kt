@@ -45,7 +45,9 @@ class ListVariablesFunction : AbstractFunction() {
         val id = if (parameters.isNotEmpty()) {
             parameters.firstOrNull() as? QualifiedId
                 ?: throw UnsupportedOperationException("Can only list variables of an ID")
-        } else null
+        } else {
+            null
+        }
 
         return interpreter.variables.list(scope, id)
             .map { it.asString().toVariable() }

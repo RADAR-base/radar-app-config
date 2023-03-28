@@ -1,7 +1,6 @@
 package org.radarbase.appconfig.service
 
 import jakarta.ws.rs.core.Context
-import kotlinx.coroutines.runBlocking
 import org.radarbase.jersey.auth.AuthConfig
 import org.radarbase.jersey.exception.HttpNotFoundException
 import org.radarbase.kotlin.coroutines.CacheConfig
@@ -19,11 +18,11 @@ class ClientService(
         CacheConfig(
             refreshDuration = 1.hours,
             retryDuration = 5.minutes,
-        )
+        ),
     ) {
-            mpClient.requestClients()
-                .filter { authConfig.jwtResourceName in it.resourceIds }
-                .associateBy { it.id }
+        mpClient.requestClients()
+            .filter { authConfig.jwtResourceName in it.resourceIds }
+            .associateBy { it.id }
     }
 
     suspend fun readClients(): Collection<MPOAuthClient> = clients.get().values

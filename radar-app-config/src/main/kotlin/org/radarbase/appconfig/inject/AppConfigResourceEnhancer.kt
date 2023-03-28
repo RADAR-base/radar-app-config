@@ -8,15 +8,18 @@ import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.jersey.filter.Filters
 
 class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyResourceEnhancer {
-    override val classes: Array<Class<*>> = if (config.isCorsEnabled) arrayOf(
-        Filters.cors,
-        Filters.logResponse,
-        Filters.cache,
-    )
-    else arrayOf(
-        Filters.logResponse,
-        Filters.cache,
-    )
+    override val classes: Array<Class<*>> = if (config.isCorsEnabled) {
+        arrayOf(
+            Filters.cors,
+            Filters.logResponse,
+            Filters.cache,
+        )
+    } else {
+        arrayOf(
+            Filters.logResponse,
+            Filters.cache,
+        )
+    }
 
     override val packages: Array<String> = arrayOf("org.radarbase.appconfig.resource")
 

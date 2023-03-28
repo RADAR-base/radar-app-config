@@ -1,6 +1,5 @@
 plugins {
     application
-    kotlin("jvm")
 }
 
 application {
@@ -26,62 +25,18 @@ dependencies {
 
     implementation(project(":radar-app-config-core"))
 
-    val jacksonVersion: String by project
-    implementation(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
+    implementation(platform("com.fasterxml.jackson:jackson-bom:${Versions.jackson}"))
 
-    val radarJerseyVersion: String by project
-    implementation("org.radarbase:radar-jersey:$radarJerseyVersion")
-    implementation("org.radarbase:radar-jersey-hibernate:$radarJerseyVersion")
+    implementation("org.radarbase:radar-jersey:${Versions.radarJersey}")
+    implementation("org.radarbase:radar-jersey-hibernate:${Versions.radarJersey}")
 
-    val mpVersion: String by project
-    implementation("org.radarbase:radar-kotlin:$mpVersion")
+    implementation("org.radarbase:radar-commons-kotlin:${Versions.radarCommons}")
 
-    val hazelcastHibernateVersion: String by project
-    implementation("com.hazelcast:hazelcast-hibernate53:$hazelcastHibernateVersion")
-    val hazelcastVersion: String by project
-    implementation("com.hazelcast:hazelcast:$hazelcastVersion")
-    val hazelcastKubernetesVersion: String by project
-    runtimeOnly("com.hazelcast:hazelcast-kubernetes:$hazelcastKubernetesVersion")
+    implementation("com.hazelcast:hazelcast-hibernate53:${Versions.hazelcastHibernate}")
+    implementation("com.hazelcast:hazelcast:${Versions.hazelcast}")
+    runtimeOnly("com.hazelcast:hazelcast-kubernetes:${Versions.hazelcastKubernetes}")
 
-    val slf4jVersion: String by project
-    implementation("org.slf4j:slf4j-api:$slf4jVersion")
-    val log4j2Version: String by project
-    runtimeOnly("org.apache.logging.log4j:log4j-core:$log4j2Version")
-    runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:$log4j2Version")
-    runtimeOnly("org.apache.logging.log4j:log4j-jul:$log4j2Version")
-
-    val junitVersion: String by project
-    testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
-    testImplementation("org.hamcrest:hamcrest:2.2")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
-        setExceptionFormat("full")
-        showStandardStreams = true
-    }
-}
-
-tasks.withType<Tar> {
-    compression = Compression.GZIP
-    archiveExtension.set("tar.gz")
-}
-
-tasks.register("downloadDependencies") {
-    doLast {
-        configurations.compileClasspath.get().files
-        println("Downloaded compile-time dependencies")
-    }
-}
-
-tasks.register<Copy>("copyDependencies") {
-    from(configurations.runtimeClasspath.map { it.files })
-    into("$buildDir/third-party/")
-    doLast {
-        println("Copied third-party runtime dependencies")
-    }
+    testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.junit}")
+    testImplementation("org.hamcrest:hamcrest:${Versions.hamcrest}")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
 }

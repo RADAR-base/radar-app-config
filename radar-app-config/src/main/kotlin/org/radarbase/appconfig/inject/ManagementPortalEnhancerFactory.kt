@@ -29,20 +29,24 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
             add(InMemoryResourceEnhancer())
         }
 
-        add(MapperResourceEnhancer().apply {
-            mapper = MapperResourceEnhancer.createDefaultMapper()
-                .registerModule(SimpleModule().apply {
-                    val allowedFunctions = listOf<Function>(
-                        SumFunction(),
-                        ListVariablesFunction(),
-                        CountFunction(),
+        add(
+            MapperResourceEnhancer().apply {
+                mapper = MapperResourceEnhancer.createDefaultMapper()
+                    .registerModule(
+                        SimpleModule().apply {
+                            val allowedFunctions = listOf<Function>(
+                                SumFunction(),
+                                ListVariablesFunction(),
+                                CountFunction(),
+                            )
+                            addDeserializer(
+                                Expression::class.java,
+                                ExpressionDeserializer(ExpressionParser(allowedFunctions)),
+                            )
+                        },
                     )
-                    addDeserializer(
-                        Expression::class.java,
-                        ExpressionDeserializer(ExpressionParser(allowedFunctions)),
-                    )
-                })
-        })
+            },
+        )
 
         add(AppConfigResourceEnhancer(config))
         add(Enhancers.radar(config.auth, includeMapper = false))
