@@ -16,7 +16,7 @@ import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.cache.Cache
-import org.radarbase.jersey.coroutines.runAsCoroutine
+import org.radarbase.jersey.service.AsyncCoroutineService
 import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarbase.management.client.MPProject
 
@@ -29,14 +29,15 @@ class ProjectResource(
     @Context private val radarProjectService: RadarProjectService,
     @Context private val projectService: ConfigProjectService,
     @Context private val clientService: ClientService,
+    @Context private val asyncService: AsyncCoroutineService,
 ) {
     @GET
     @Cache(maxAge = 300, isPrivate = true, vary = [AUTHORIZATION])
     @NeedsPermission(Permission.PROJECT_READ)
-    fun listProjects(@Suspended asyncResponse: AsyncResponse) = asyncResponse.runAsCoroutine {
+    fun listProjects(@Suspended asyncResponse: AsyncResponse) = asyncService.runAsCoroutine(asyncResponse) {
         ProjectList(
             radarProjectService.userProjects()
-                .map(MPProject::toProject)
+                .map(MPProject::toProject),
         )
     }
 
@@ -47,7 +48,7 @@ class ProjectResource(
     fun get(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
-    ) = asyncResponse.runAsCoroutine {
+    ) = asyncService.runAsCoroutine(asyncResponse) {
         radarProjectService.project(projectId).toProject()
     }
 
@@ -58,7 +59,7 @@ class ProjectResource(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
-    ) = asyncResponse.runAsCoroutine {
+    ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
         projectService.projectConfig(clientId, projectId)
     }
@@ -71,7 +72,7 @@ class ProjectResource(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
         clientConfig: ClientConfig,
-    ) = asyncResponse.runAsCoroutine {
+    ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
         projectService.putProjectConfig(clientId, projectId, clientConfig)
         projectService.projectConfig(clientId, projectId)

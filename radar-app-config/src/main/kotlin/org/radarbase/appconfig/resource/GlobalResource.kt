@@ -12,7 +12,7 @@ import org.radarbase.appconfig.service.ConfigService
 import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
-import org.radarbase.jersey.coroutines.runAsCoroutine
+import org.radarbase.jersey.service.AsyncCoroutineService
 
 @Path("global")
 @Singleton
@@ -22,6 +22,7 @@ import org.radarbase.jersey.coroutines.runAsCoroutine
 class GlobalResource(
     @Context private val configService: ConfigService,
     @Context private val clientService: ClientService,
+    @Context private val asyncService: AsyncCoroutineService,
 ) {
     @POST
     @Path("config/{clientId}")
@@ -30,7 +31,7 @@ class GlobalResource(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("clientId") clientId: String,
         config: ClientConfig,
-    ) = asyncResponse.runAsCoroutine {
+    ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
         configService.putGlobalConfig(config, clientId)
         configService.globalConfig(clientId)
@@ -41,7 +42,7 @@ class GlobalResource(
     fun globalConfig(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("clientId") clientId: String,
-    ) = asyncResponse.runAsCoroutine {
+    ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
         configService.globalConfig(clientId)
     }

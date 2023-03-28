@@ -11,8 +11,9 @@ class ConfigProjectServiceImpl(
     override suspend fun projectConfig(clientId: String, projectId: String): ClientConfig {
         val scope = projectScope(projectId)
         return ClientConfig.fromStream(
-            clientId, scope,
-            resolver[clientId].resolveAll(listOf(scope, ConfigService.globalScope), null)
+            clientId,
+            scope,
+            resolver[clientId].resolveAll(listOf(scope, ConfigService.globalScope), null),
         )
     }
 
@@ -23,7 +24,8 @@ class ConfigProjectServiceImpl(
             clientConfig.config.asSequence()
                 .map { (innerId, value, _) ->
                     Pair(QualifiedId(innerId), value?.toVariable() ?: NullLiteral())
-                })
+                },
+        )
     }
 
     companion object {

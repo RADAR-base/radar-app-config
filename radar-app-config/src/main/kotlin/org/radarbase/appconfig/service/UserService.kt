@@ -23,7 +23,8 @@ class UserService(
             clientConfig.config.asSequence()
                 .map { (innerId, value, _) ->
                     Pair(QualifiedId(innerId), value?.toVariable() ?: NullLiteral())
-                })
+                },
+        )
     }
 
     suspend fun userConfig(
@@ -33,8 +34,9 @@ class UserService(
     ): ClientConfig {
         val scopes = userScopes(clientId, projectId, userId)
         return ClientConfig.fromStream(
-            clientId, scopes[0],
-            resolver[clientId].resolveAll(scopes, null)
+            clientId,
+            scopes[0],
+            resolver[clientId].resolveAll(scopes, null),
         )
     }
 

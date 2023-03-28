@@ -4,15 +4,15 @@
 package comparisons
 
 import kotlinx.coroutines.runBlocking
-import org.radarbase.lang.expression.Function
 import org.radarbase.lang.expression.*
+import org.radarbase.lang.expression.Function
 import kotlin.system.exitProcess
 
 fun main() {
     val functions = listOf<Function>(
         SumFunction(),
         ListVariablesFunction(),
-        CountFunction()
+        CountFunction(),
     )
     val parser = ExpressionParser(functions)
 
@@ -42,9 +42,10 @@ fun main() {
                 interpreter.interpret(
                     listOf(
                         SimpleScope("user.blootsvoets"),
-                        SimpleScope("user")
-                    ), expr
-                )
+                        SimpleScope("user"),
+                    ),
+                    expr,
+                ),
             )
         } catch (ex: InterpreterException) {
             println("Failed to evaluate expression ${ex.expression}:\n\n${ex.message}")

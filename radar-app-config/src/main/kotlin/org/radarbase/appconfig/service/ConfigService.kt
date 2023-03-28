@@ -12,17 +12,22 @@ class ConfigService(
 ) {
     suspend fun globalConfig(clientId: String): ClientConfig {
         return ClientConfig.fromStream(
-            clientId, globalScope,
-            resolver[clientId].resolveAll(listOf(globalScope), null)
+            clientId,
+            globalScope,
+            resolver[clientId].resolveAll(listOf(globalScope), null),
         )
     }
 
     suspend fun putGlobalConfig(config: ClientConfig, clientId: String) {
-        resolver[clientId].replace(globalScope, null, config.config.asSequence()
-            .map { (innerId, variable, _) ->
-                QualifiedId(innerId) to
+        resolver[clientId].replace(
+            globalScope,
+            null,
+            config.config.asSequence()
+                .map { (innerId, variable, _) ->
+                    QualifiedId(innerId) to
                         (variable?.toVariable() ?: NullLiteral())
-            })
+                },
+        )
     }
 
     companion object {

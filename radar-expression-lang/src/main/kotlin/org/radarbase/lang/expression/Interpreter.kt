@@ -15,10 +15,10 @@ class Interpreter(val variables: VariableResolver) {
             return when (this) {
                 is OrExpression -> BooleanLiteral(left.evaluate(scope).asBoolean() || right.evaluate(scope).asBoolean())
                 is AndExpression -> BooleanLiteral(
-                    left.evaluate(scope).asBoolean() && right.evaluate(scope).asBoolean()
+                    left.evaluate(scope).asBoolean() && right.evaluate(scope).asBoolean(),
                 )
                 is XorExpression -> BooleanLiteral(
-                    left.evaluate(scope).asBoolean() != right.evaluate(scope).asBoolean()
+                    left.evaluate(scope).asBoolean() != right.evaluate(scope).asBoolean(),
                 )
                 is EqualExpression -> BooleanLiteral(evaluate(scope) { l, r -> l.compareTo(r) == 0 })
                 is NotEqualExpression -> BooleanLiteral(evaluate(scope) { l, r -> l.compareTo(r) != 0 })
@@ -48,7 +48,6 @@ class Interpreter(val variables: VariableResolver) {
         evaluate(leftJob.await(), rightJob.await())
     }
 }
-
 
 interface Scope {
     val id: QualifiedId

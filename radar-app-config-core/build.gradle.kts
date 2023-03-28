@@ -1,15 +1,11 @@
 plugins {
-    kotlin("jvm")
-    `maven-publish`
-    signing
-    id("org.jetbrains.dokka")
+    kotlin("plugin.serialization")
 }
 
 description = "RADAR app config core API"
 
 dependencies {
-    val jacksonVersion: String by project
-    api(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
-    api("com.fasterxml.jackson.core:jackson-databind")
     api(project(":radar-expression-lang"))
+
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerialization}")
 }

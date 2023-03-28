@@ -1,13 +1,15 @@
 package org.radarbase.appconfig.api
 
+import kotlinx.serialization.Serializable
 import org.radarbase.lang.expression.ResolvedVariable
 import org.radarbase.lang.expression.Scope
 
+@Serializable
 data class ClientConfig(
     val clientId: String?,
     val scope: String?,
     val config: List<SingleVariable>,
-    val defaults: List<SingleVariable>? = null
+    val defaults: List<SingleVariable>? = null,
 ) {
     fun with(other: ClientConfig): ClientConfig = ClientConfig(
         clientId = clientId,
@@ -16,14 +18,14 @@ data class ClientConfig(
             .associateBy { (k) -> k }
             .values
             .toList(),
-        defaults = defaults
+        defaults = defaults,
     )
 
     companion object {
         fun fromStream(
             clientId: String,
             scope: Scope,
-            configSequence: Sequence<ResolvedVariable>
+            configSequence: Sequence<ResolvedVariable>,
         ): ClientConfig {
             val configs = configSequence.groupBy { it.scope == scope }
             return ClientConfig(
