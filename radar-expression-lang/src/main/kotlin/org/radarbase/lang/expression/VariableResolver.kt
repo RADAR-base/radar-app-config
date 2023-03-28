@@ -17,12 +17,12 @@ suspend fun VariableResolver.register(functions: List<Function>) {
         register(
             SimpleScope.root,
             QualifiedId("functions.${it.name}.numberOfArguments.min"),
-            it.numberOfArguments.first.toVariable()
+            it.numberOfArguments.first.toVariable(),
         )
         register(
             SimpleScope.root,
             QualifiedId("functions.${it.name}.numberOfArguments.max"),
-            it.numberOfArguments.last.toVariable()
+            it.numberOfArguments.last.toVariable(),
         )
     }
     register(SimpleScope.root, QualifiedId("functions"), CollectionLiteral(functions.map { it.name.toVariable() }))
@@ -52,8 +52,8 @@ class DirectVariableResolver : VariableResolver {
         if (usePrefix.isNotEmpty()) {
             refStream = refStream
                 .filter {
-                    it.names.count() >= usePrefix.count()
-                        && it.names.subList(0, usePrefix.count()) == usePrefix
+                    it.names.count() >= usePrefix.count() &&
+                        it.names.subList(0, usePrefix.count()) == usePrefix
                 }
         }
 

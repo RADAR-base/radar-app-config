@@ -9,7 +9,7 @@ fun MPProject.toProject(): Project = Project(
     humanReadableName = name,
     location = location,
     organization = organization?.id,
-    description = description
+    description = description,
 )
 
 fun MPSubject.toUser(): User = User(

@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
     val config = ConfigLoader.loadConfig(
         listOf("appconfig.yml", "/etc/radar-app-config/appconfig.yml"),
         args,
-        ApplicationConfig::class.java
+        ApplicationConfig::class.java,
     )
     val resources = ConfigLoader.loadResources(config.inject.enhancerFactory, config)
 

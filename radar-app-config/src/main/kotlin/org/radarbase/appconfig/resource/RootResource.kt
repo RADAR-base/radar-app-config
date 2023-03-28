@@ -17,7 +17,7 @@ import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.cache.Cache
-import org.radarbase.jersey.coroutines.runAsCoroutine
+import org.radarbase.jersey.service.AsyncCoroutineService
 import org.radarbase.management.client.MPOAuthClient
 
 /** Root path, just forward requests without authentication. */
@@ -28,6 +28,7 @@ import org.radarbase.management.client.MPOAuthClient
 @Singleton
 class RootResource(
     @Context private val clientService: ClientService,
+    @Context private val asyncService: AsyncCoroutineService,
 ) {
     @Path("clients")
     @GET
@@ -35,10 +36,10 @@ class RootResource(
     @NeedsPermission(Permission.OAUTHCLIENTS_READ)
     fun clients(
         @Suspended asyncResponse: AsyncResponse,
-    ) = asyncResponse.runAsCoroutine {
+    ) = asyncService.runAsCoroutine(asyncResponse) {
         OAuthClientList(
             clientService.readClients()
-                .map(MPOAuthClient::toOAuthClient)
+                .map(MPOAuthClient::toOAuthClient),
         )
     }
 }

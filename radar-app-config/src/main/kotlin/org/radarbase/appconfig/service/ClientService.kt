@@ -19,7 +19,7 @@ class ClientService(
         CacheConfig(
             refreshDuration = 1.hours,
             retryDuration = 5.minutes,
-        )
+        ),
     ) {
         runBlocking {
             mpClient.requestClients()

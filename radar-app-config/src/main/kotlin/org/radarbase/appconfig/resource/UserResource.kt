@@ -16,8 +16,8 @@ import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.cache.Cache
-import org.radarbase.jersey.coroutines.runAsCoroutine
 import org.radarbase.jersey.exception.HttpNotFoundException
+import org.radarbase.jersey.service.AsyncCoroutineService
 import org.radarbase.jersey.service.managementportal.RadarProjectService
 import org.radarbase.management.client.MPSubject
 
@@ -31,6 +31,7 @@ class UserResource(
     @Context private val userService: UserService,
     @Context private val clientService: ClientService,
     @Context private val radarProjectService: RadarProjectService,
+    @Context private val asyncService: AsyncCoroutineService,
 ) {
     @GET
     @Cache(maxAge = 60, isPrivate = true, vary = [AUTHORIZATION])
@@ -38,10 +39,10 @@ class UserResource(
     fun userClientConfig(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
-    ) = asyncResponse.runAsCoroutine {
+    ) = asyncService.runAsCoroutine(asyncResponse) {
         UserList(
             radarProjectService.projectSubjects(projectId)
-                .map(MPSubject::toUser)
+                .map(MPSubject::toUser),
         )
     }
 
@@ -53,7 +54,7 @@ class UserResource(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
-    ) = asyncResponse.runAsCoroutine {
+    ) = asyncService.runAsCoroutine(asyncResponse) {
         radarProjectService.subject(projectId, userId)?.toUser()
             ?: throw HttpNotFoundException("user_missing", "User not found")
     }
@@ -66,7 +67,7 @@ class UserResource(
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
         @PathParam("clientId") clientId: String,
-    ) = asyncResponse.runAsCoroutine {
+    ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
         userService.userConfig(clientId, projectId, userId)
     }
@@ -80,7 +81,7 @@ class UserResource(
         @PathParam("userId") userId: String,
         @PathParam("clientId") clientId: String,
         clientConfig: ClientConfig,
-    ) = asyncResponse.runAsCoroutine {
+    ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
         userService.putUserConfig(clientId, userId, clientConfig)
         userService.userConfig(clientId, projectId, userId)

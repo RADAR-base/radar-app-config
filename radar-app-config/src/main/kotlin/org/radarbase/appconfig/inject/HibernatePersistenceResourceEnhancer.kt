@@ -7,17 +7,17 @@ import jakarta.inject.Singleton
 import jakarta.persistence.EntityManager
 import jakarta.ws.rs.core.Context
 import org.glassfish.jersey.internal.inject.AbstractBinder
-import org.glassfish.jersey.process.internal.RequestScope
 import org.radarbase.appconfig.config.HazelcastConfig
 import org.radarbase.appconfig.persistence.HibernateVariableResolver
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
+import org.radarbase.jersey.service.AsyncCoroutineService
 import org.radarbase.lang.expression.VariableResolver
 
 class HibernatePersistenceResourceEnhancer(
     private val hazelcastConfig: HazelcastConfig,
 ) : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {
-        System.setProperty("hazelcast.logging.type", "slf4j");
+        System.setProperty("hazelcast.logging.type", "slf4j")
         val hzConfig = if (hazelcastConfig.configPath != null) {
             com.hazelcast.internal.config.ConfigLoader.load(hazelcastConfig.configPath)
         } else {
@@ -43,13 +43,13 @@ class HibernatePersistenceResourceEnhancer(
     class HibernateClientVariableResolver(
         @Context private val em: jakarta.inject.Provider<EntityManager>,
         @Context private val hazelcastInstance: HazelcastInstance,
-        @Context private val requestScope: RequestScope,
+        @Context private val asyncService: AsyncCoroutineService,
     ) : ClientVariableResolver {
         override fun get(clientId: String): VariableResolver = HibernateVariableResolver(
             em,
             clientId,
             hazelcastInstance.getMap(clientId),
-            requestScope
+            asyncService,
         )
     }
 }
