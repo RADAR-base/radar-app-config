@@ -41,7 +41,7 @@ project(":radar-expression-lang-antlr") {
     }
 
     tasks.withType<JavaCompile> {
-        options.release.set(Versions.java)
+        options.release.set(11)
     }
 }
 
@@ -51,6 +51,10 @@ configure(listOf(
     project(":radar-app-config-client"),
 )) {
     apply(plugin = "org.radarbase.radar-publishing")
+
+    radarKotlin {
+        javaVersion.set(11)
+    }
 
     radarPublishing {
         val githubRepoName = "RADAR-base/radar-app-config"
