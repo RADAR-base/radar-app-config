@@ -11,7 +11,6 @@ sourceSets {
 }
 
 dependencies {
-    compileOnly(project(":radar-expression-lang-antlr"))
     implementation("org.antlr:antlr4-runtime:${Versions.antlr}")
 
     // Use the Kotlin JDK 8 standard library.
