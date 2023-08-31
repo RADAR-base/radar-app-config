@@ -1,7 +1,6 @@
 import org.radarbase.gradle.plugin.radarKotlin
 import org.radarbase.gradle.plugin.radarPublishing
 
-
 plugins {
     id("org.radarbase.radar-root-project") version Versions.radarCommons
     id("org.radarbase.radar-dependency-management") version Versions.radarCommons

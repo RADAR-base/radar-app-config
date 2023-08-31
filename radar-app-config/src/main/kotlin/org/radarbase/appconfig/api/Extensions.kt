@@ -5,8 +5,8 @@ import org.radarbase.management.client.MPProject
 import org.radarbase.management.client.MPSubject
 
 fun MPProject.toProject(): Project = Project(
-    name = id,
-    humanReadableName = name,
+    projectName = id,
+    humanReadableProjectName = name,
     location = location,
     organization = organization?.id,
     description = description,
@@ -17,4 +17,4 @@ fun MPSubject.toUser(): User = User(
     externalUserId = externalId,
 )
 
-fun MPOAuthClient.toOAuthClient() = OAuthClient(id = id)
+fun MPOAuthClient.toOAuthClient() = OAuthClient(clientId = id)

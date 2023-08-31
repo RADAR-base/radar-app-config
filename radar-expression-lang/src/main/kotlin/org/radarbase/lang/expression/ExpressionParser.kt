@@ -1,6 +1,5 @@
 package org.radarbase.lang.expression
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
@@ -11,7 +10,6 @@ import java.io.InputStream
 import java.math.BigDecimal
 import java.text.ParseException
 
-@JsonDeserialize(using = ExpressionDeserializer::class)
 class ExpressionParser(functions: List<Function>) {
     private val indexedFunctions: Map<String, Function> = functions.associateBy { it.name }
 

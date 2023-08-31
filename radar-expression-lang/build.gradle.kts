@@ -1,3 +1,4 @@
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask
 import org.jlleitschuh.gradle.ktlint.tasks.KtLintFormatTask
@@ -17,11 +18,6 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    api(platform("com.fasterxml.jackson:jackson-bom:${Versions.jackson}"))
-    api("com.fasterxml.jackson.core:jackson-annotations")
-    implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
     implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:${Versions.coroutines}"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.radarbase:radar-commons-kotlin:${Versions.radarCommons}")
@@ -38,5 +34,8 @@ tasks.withType<KotlinCompile> {
     dependsOn(generateGrammarSource)
 }
 tasks.withType<JavaCompile> {
+    dependsOn(generateGrammarSource)
+}
+tasks.withType<DokkaTask> {
     dependsOn(generateGrammarSource)
 }
