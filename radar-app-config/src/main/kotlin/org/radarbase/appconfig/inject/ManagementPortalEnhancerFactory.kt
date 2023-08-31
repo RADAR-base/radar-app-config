@@ -3,6 +3,7 @@ package org.radarbase.appconfig.inject
 import com.fasterxml.jackson.databind.module.SimpleModule
 import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
+import org.radarbase.appconfig.serialization.ExpressionDeserializer
 import org.radarbase.jersey.enhancer.EnhancerFactory
 import org.radarbase.jersey.enhancer.Enhancers
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
