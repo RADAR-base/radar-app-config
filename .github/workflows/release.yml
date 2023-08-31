@@ -24,7 +24,7 @@ jobs:
 
       # Compile code
       - name: Compile code
-        run: ./gradlew assemble
+        run: ./gradlew assemble collectLicense
 
       - name: Use Node.js 16
         uses: actions/setup-node@v3
@@ -51,7 +51,7 @@ jobs:
       - name: Upload to GitHub
         uses: AButler/upload-release-assets@v2.0
         with:
-          files: '*/build/libs/*;radar-app-config/build/distributions/*;radar-app-config-frontend/dist/radar-app-config-frontend.zip'
+          files: '*/build/libs/*;radar-app-config/build/distributions/*;radar-app-config-frontend/dist/radar-app-config-frontend.zip;*/build/reports/*.tar.gz'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install gpg secret key
