@@ -3,7 +3,11 @@ package org.radarbase.appconfig.service
 import jakarta.ws.rs.core.Context
 import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
-import org.radarbase.lang.expression.*
+import org.radarbase.lang.expression.NullLiteral
+import org.radarbase.lang.expression.QualifiedId
+import org.radarbase.lang.expression.Scope
+import org.radarbase.lang.expression.SimpleScope
+import org.radarbase.lang.expression.toVariable
 
 class ConfigService(
     @Context private val resolver: ClientVariableResolver,

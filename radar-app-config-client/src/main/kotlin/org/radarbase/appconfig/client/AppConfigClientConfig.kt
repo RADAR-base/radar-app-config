@@ -1,7 +1,6 @@
 package org.radarbase.appconfig.client
 
-import io.ktor.client.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
