@@ -2,7 +2,6 @@ package org.radarbase.appconfig.client
 
 import java.time.Duration
 import java.time.Instant
-import java.util.LinkedHashMap
 
 /**
  * Least recently used cache. It is synchronized.

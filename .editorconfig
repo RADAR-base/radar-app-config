@@ -14,10 +14,3 @@ indent_size = 4
 [{*.yml, *.yaml}]
 indent_size = 2
 
-[*.gradle]
-indent_size = 4
-
-[*.{kt,kts}]
-ij_kotlin_allow_trailing_comma_on_call_site = true
-ij_kotlin_allow_trailing_comma = true
-ktlint_standard_no-wildcard-imports = disabled

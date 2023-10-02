@@ -3,7 +3,12 @@ package org.radarbase.appconfig.inject
 import jakarta.inject.Singleton
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.ApplicationConfig
-import org.radarbase.appconfig.service.*
+import org.radarbase.appconfig.service.ClientService
+import org.radarbase.appconfig.service.ConditionService
+import org.radarbase.appconfig.service.ConfigProjectService
+import org.radarbase.appconfig.service.ConfigProjectServiceImpl
+import org.radarbase.appconfig.service.ConfigService
+import org.radarbase.appconfig.service.UserService
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.jersey.filter.Filters
 

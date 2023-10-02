@@ -8,7 +8,14 @@ import jakarta.persistence.TypedQuery
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.jersey.hibernate.HibernateRepository
 import org.radarbase.jersey.service.AsyncCoroutineService
-import org.radarbase.lang.expression.*
+import org.radarbase.lang.expression.NullLiteral
+import org.radarbase.lang.expression.QualifiedId
+import org.radarbase.lang.expression.ResolvedVariable
+import org.radarbase.lang.expression.Scope
+import org.radarbase.lang.expression.SimpleScope
+import org.radarbase.lang.expression.Variable
+import org.radarbase.lang.expression.VariableResolver
+import org.radarbase.lang.expression.toVariable
 import java.util.stream.Stream
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")

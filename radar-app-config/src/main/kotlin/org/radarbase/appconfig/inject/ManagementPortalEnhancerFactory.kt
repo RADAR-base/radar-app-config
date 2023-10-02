@@ -9,8 +9,12 @@ import org.radarbase.jersey.enhancer.Enhancers
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.jersey.enhancer.MapperResourceEnhancer
 import org.radarbase.jersey.hibernate.config.HibernateResourceEnhancer
-import org.radarbase.lang.expression.*
+import org.radarbase.lang.expression.CountFunction
+import org.radarbase.lang.expression.Expression
+import org.radarbase.lang.expression.ExpressionParser
 import org.radarbase.lang.expression.Function
+import org.radarbase.lang.expression.ListVariablesFunction
+import org.radarbase.lang.expression.SumFunction
 
 /** This binder needs to register all non-Jersey classes, otherwise initialization fails. */
 class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : EnhancerFactory {
