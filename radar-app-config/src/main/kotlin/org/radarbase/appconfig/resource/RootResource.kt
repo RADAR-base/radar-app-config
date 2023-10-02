@@ -1,6 +1,5 @@
 package org.radarbase.appconfig.resource
 
-import io.ktor.http.*
 import jakarta.inject.Singleton
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
