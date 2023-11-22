@@ -11,7 +11,8 @@
   </div>
   <div class="row">
     <div class="col-md-4 text-center mx-auto">
-      <button class="btn btn-outline-primary btn-block" (click)="login()">{{'login.loginButton' | translate}}</button>
+      <button class="btn btn-outline-primary btn-block" (click)="login()">Authorize managementportal (log in first)</button>
     </div>
   </div>
+  <button (click)="redirect()">login to managementportal</button>
 </div>
