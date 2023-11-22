@@ -1,5 +1,5 @@
 client_id;resource_ids;client_secret;scope;authorized_grant_types;redirect_uri;authorities;access_token_validity;refresh_token_validity;additional_information;autoapprove
 pRMT;res_ManagementPortal,res_gateway;;MEASUREMENT.CREATE,SUBJECT.UPDATE,SUBJECT.READ,PROJECT.READ,SOURCETYPE.READ,SOURCE.READ,SOURCETYPE.READ,SOURCEDATA.READ,USER.READ,ROLE.READ;refresh_token,authorization_code;;;43200;7948800;{"dynamic_registration": true};
 appconfig;res_ManagementPortal,res_appconfig;test;SOURCETYPE.READ,MEASUREMENT.CREATE,PROJECT.READ,SUBJECT.READ,OAUTHCLIENTS.READ;client_credentials;;;3600;78000;;
-appconfig_frontend;res_appconfig;;SOURCETYPE.READ,MEASUREMENT.CREATE,PROJECT.READ,PROJECT.CREATE,PROJECT.UPDATE,SUBJECT.READ,SUBJECT.UPDATE,OAUTHCLIENTS.READ;authorization_code,refresh_token;http://localhost:8080/appconfig/login,http://localhost:4200/login;;3600;78000;;
+appconfig_frontend;res_appconfig;;SOURCETYPE.READ,MEASUREMENT.CREATE,PROJECT.READ,PROJECT.CREATE,PROJECT.UPDATE,SUBJECT.READ,SUBJECT.UPDATE,OAUTHCLIENTS.READ;authorization_code,refresh_token;http://localhost:8080/appconfig/login,http://127.0.0.1:8080/appconfig/login,http://localhost:4200/login;;3600;78000;;
 appconfig_cli;res_appconfig;test;SOURCETYPE.READ,MEASUREMENT.CREATE,PROJECT.READ,SUBJECT.READ,OAUTHCLIENTS.READ,PROJECT.UPDATE,PROJECT.CREATE;password;;;3600;78000;;
