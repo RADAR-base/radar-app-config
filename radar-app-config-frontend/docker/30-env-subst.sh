@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# IMPORTANT: the line endings in this script need to be LF, if not the script fails in the docker container.
+
 set -e
 
 function replace() {
