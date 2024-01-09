@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  app-config:
+    build:
+      context: ..
+      dockerfile: radar-app-config/Dockerfile
+    restart: on-failure
+    volumes:
+      - ./etc/appconfig.yml:/etc/radar-app-config/appconfig.yml
+    depends_on:
+      - managementportal
+    labels:
+      - "traefik.http.routers.appconfig.rule=PathPrefix(`/appconfig/api`)"
+      - "traefik.http.services.appconfig.loadbalancer.server.port=8090"
+

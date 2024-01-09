@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  app-config-frontend:
+      build:
+        context: ../radar-app-config-frontend
+      #    image: radarbase/radar-app-config-frontend:dev
+      environment:
+        - AUTH_URL=http://127.0.0.1:8080/managementportal/oauth
+        - AUTH_CALLBACK_URL=http://127.0.0.1:8080/appconfig/login
+      depends_on:
+        - app-config
+      labels:
+        - "traefik.http.routers.appconfigfrontend.rule=PathPrefix(`/appconfig`)"
+        - "traefik.http.services.appconfigfrontend.loadbalancer.server.port=8080"
+

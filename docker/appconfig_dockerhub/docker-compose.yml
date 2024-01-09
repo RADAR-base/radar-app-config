@@ -1,0 +1,16 @@
+# start the dockerstack using a prebuilt image pulled from dockerhub. This stack does not work without adding GOOGLE_APPLICATION_CREDENTIALS
+version: "3.8"
+
+include:
+  - "../non_appconfig/docker-compose.yml"
+
+services:
+  appconfig :
+    extends:
+      file: ../appconfig.yml
+      service: app-config
+    image: radarbase/radar-app-config:dev
+    networks:
+      - db
+      - default
+      - admin
