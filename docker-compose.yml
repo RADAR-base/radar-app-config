@@ -57,19 +57,6 @@ services:
   #---------------------------------------------------------------------------#
   # RADAR Upload Source connector                                             #
   #---------------------------------------------------------------------------#
-  app-config:
-    build:
-      context: .
-      dockerfile: radar-app-config/Dockerfile
-    image: radarbase/radar-app-config:dev
-    restart: on-failure
-    volumes:
-      - ./etc/appconfig.yml:/etc/radar-app-config/appconfig.yml
-    depends_on:
-      - managementportal
-    labels:
-      - "traefik.http.routers.appconfig.rule=PathPrefix(`/appconfig/api`)"
-      - "traefik.http.services.appconfig.loadbalancer.server.port=8090"
 
   app-config-frontend:
     build:
@@ -139,13 +126,6 @@ services:
         target: /etc/config/kratos
     command: -c /etc/config/kratos/kratos.yml migrate sql -e --yes
     restart: on-failure
-
-  postgresd-kratos:
-    image: postgres:11.8
-    environment:
-      - POSTGRES_USER=kratos
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=kratos
 
   mailslurper:
     image: oryd/mailslurper:latest-smtps

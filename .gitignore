@@ -7,4 +7,4 @@ out/
 
 .idea/
 
-etc/smtp.env
+docker/etc/smtp.env
