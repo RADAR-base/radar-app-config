@@ -41,8 +41,11 @@ services:
     extends:
       file: ../managementportal.yml
       service: managementportal
+    depends_on:
+      - kratos
     networks:
       - mp
+#      - ory
       - default
 
   managementportal-postgresql:
@@ -51,6 +54,9 @@ services:
       service: postgres
     networks:
       - mp
+#      - default
+#    ports:
+#      - "5432:5432"
 
 
   kratos-selfservice-ui-node:
@@ -67,6 +73,7 @@ services:
       service: kratos
     networks:
       - ory
+      - mp
       - default
 
   kratos-migrate:

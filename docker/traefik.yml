@@ -6,5 +6,3 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --api.insecure=true --providers.docker
-    ports:
-      - "8080:80"
