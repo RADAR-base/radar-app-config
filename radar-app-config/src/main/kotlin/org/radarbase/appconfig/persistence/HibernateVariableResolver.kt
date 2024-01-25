@@ -7,16 +7,18 @@ import jakarta.persistence.Query
 import jakarta.persistence.TypedQuery
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.jersey.hibernate.HibernateRepository
+import org.radarbase.jersey.service.AsyncCoroutineService
 import org.radarbase.lang.expression.*
 import java.util.stream.Stream
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 class HibernateVariableResolver(
     em: Provider<EntityManager>,
+    asyncCoroutineService: AsyncCoroutineService,
     private val clientId: String,
     private val cache: IMap<String, LongArray>,
-) : VariableResolver, HibernateRepository(em) {
-    override fun replace(
+) : VariableResolver, HibernateRepository(em, asyncCoroutineService) {
+    override suspend fun replace(
         scope: Scope,
         prefix: QualifiedId?,
         variables: Sequence<Pair<QualifiedId, Variable>>,
@@ -45,7 +47,7 @@ class HibernateVariableResolver(
         persist(configEntity)
     }
 
-    override fun register(
+    override suspend fun register(
         scope: Scope,
         id: QualifiedId,
         variable: Variable,
@@ -54,7 +56,7 @@ class HibernateVariableResolver(
         cache -= scope.asString()
     }
 
-    override fun resolve(
+    override suspend fun resolve(
         scopes: List<Scope>,
         id: QualifiedId,
     ): ResolvedVariable {
@@ -68,7 +70,7 @@ class HibernateVariableResolver(
         }
     }
 
-    override fun resolveAll(
+    override suspend fun resolveAll(
         scopes: List<Scope>,
         prefix: QualifiedId?,
     ): Sequence<ResolvedVariable> = transact {
@@ -85,7 +87,7 @@ class HibernateVariableResolver(
             .mapNotNull { v -> v.minByOrNull { scopes.indexOf(it.scope) } }
     }
 
-    override fun list(
+    override suspend fun list(
         scopes: List<Scope>,
         prefix: QualifiedId?,
     ): Sequence<QualifiedId> = transact {

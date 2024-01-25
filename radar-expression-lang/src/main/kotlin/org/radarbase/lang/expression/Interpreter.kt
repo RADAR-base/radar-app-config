@@ -3,9 +3,9 @@ package org.radarbase.lang.expression
 class InterpreterException(val expression: Expression, cause: Throwable) : RuntimeException(cause.message, cause)
 
 class Interpreter(val variables: VariableResolver) {
-    fun interpret(scope: List<Scope>, expression: Expression): Variable = expression.evaluate(scope)
+    suspend fun interpret(scope: List<Scope>, expression: Expression): Variable = expression.evaluate(scope)
 
-    private fun Expression.evaluate(scope: List<Scope>): Variable {
+    private suspend fun Expression.evaluate(scope: List<Scope>): Variable {
         try {
             return when (this) {
                 is OrExpression -> BooleanLiteral(left.evaluate(scope).asBoolean() || right.evaluate(scope).asBoolean())
