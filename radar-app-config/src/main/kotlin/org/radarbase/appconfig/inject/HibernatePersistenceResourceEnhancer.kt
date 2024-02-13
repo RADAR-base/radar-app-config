@@ -11,6 +11,7 @@ import org.radarbase.appconfig.config.HazelcastConfig
 import org.radarbase.appconfig.persistence.HibernateVariableResolver
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.lang.expression.VariableResolver
+import org.radarbase.jersey.service.AsyncCoroutineService
 
 class HibernatePersistenceResourceEnhancer(
     private val hazelcastConfig: HazelcastConfig,
@@ -41,9 +42,10 @@ class HibernatePersistenceResourceEnhancer(
 
     class HibernateClientVariableResolver(
         @Context private val em: jakarta.inject.Provider<EntityManager>,
+        @Context private val asyncService: AsyncCoroutineService,
         @Context private val hazelcastInstance: HazelcastInstance,
     ) : ClientVariableResolver {
         override fun get(clientId: String): VariableResolver =
-            HibernateVariableResolver(em, clientId, hazelcastInstance.getMap(clientId))
+            HibernateVariableResolver(em, asyncService, clientId, hazelcastInstance.getMap(clientId))
     }
 }

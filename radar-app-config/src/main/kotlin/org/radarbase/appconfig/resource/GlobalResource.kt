@@ -23,7 +23,7 @@ class GlobalResource(
     @POST
     @Path("config/{clientId}")
     @NeedsPermission(Permission.PROJECT_CREATE)
-    fun updateConfig(
+    suspend fun updateConfig(
         @PathParam("clientId") clientId: String,
         config: ClientConfig,
     ): ClientConfig {
@@ -34,7 +34,7 @@ class GlobalResource(
 
     @Path("config/{clientId}")
     @GET
-    fun globalConfig(
+    suspend fun globalConfig(
         @PathParam("clientId") clientId: String,
     ): ClientConfig {
         clientService.ensureClient(clientId)

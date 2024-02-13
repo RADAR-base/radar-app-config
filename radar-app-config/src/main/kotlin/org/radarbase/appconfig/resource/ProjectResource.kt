@@ -12,7 +12,6 @@ import org.radarbase.appconfig.api.toProject
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConfigProjectService
 import org.radarbase.auth.authorization.Permission
-import org.radarbase.jersey.auth.Auth
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.cache.Cache
@@ -21,7 +20,7 @@ import org.radarbase.management.client.MPProject
 
 @Path("projects")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Singleton
 @Authenticated
 class ProjectResource(
@@ -32,8 +31,8 @@ class ProjectResource(
     @GET
     @Cache(maxAge = 300, isPrivate = true, vary = [AUTHORIZATION])
     @NeedsPermission(Permission.PROJECT_READ)
-    fun listProjects(@Context auth: Auth) = ProjectList(
-        radarProjectService.userProjects(auth)
+    suspend fun listProjects() = ProjectList(
+        radarProjectService.userProjects()
             .map(MPProject::toProject)
     )
 
@@ -41,13 +40,13 @@ class ProjectResource(
     @NeedsPermission(Permission.PROJECT_READ, "projectId")
     @Path("{projectId}")
     @Cache(maxAge = 3600, isPrivate = true, vary = [AUTHORIZATION])
-    fun get(@PathParam("projectId") projectId: String): Project =
+    suspend fun get(@PathParam("projectId") projectId: String): Project =
         radarProjectService.project(projectId).toProject()
 
     @Path("{projectId}/config/{clientId}")
     @GET
     @NeedsPermission(Permission.PROJECT_READ, "projectId")
-    fun projectConfig(
+    suspend fun projectConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
     ): ClientConfig {
@@ -58,7 +57,7 @@ class ProjectResource(
     @Path("{projectId}/config/{clientId}")
     @POST
     @NeedsPermission(Permission.PROJECT_UPDATE, "projectId")
-    fun putProjectConfig(
+    suspend fun putProjectConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
         clientConfig: ClientConfig,

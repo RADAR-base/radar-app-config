@@ -7,7 +7,7 @@ import org.radarbase.lang.expression.Function
 import org.radarbase.lang.expression.*
 import kotlin.system.exitProcess
 
-fun main() {
+suspend fun main() {
     val functions = listOf<Function>(
         SumFunction(),
         ListVariablesFunction(),

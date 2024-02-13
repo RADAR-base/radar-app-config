@@ -33,7 +33,7 @@ class UserResource(
     @GET
     @Cache(maxAge = 60, isPrivate = true, vary = [AUTHORIZATION])
     @NeedsPermission(Permission.SUBJECT_READ, "projectId")
-    fun userClientConfig(
+    suspend fun userClientConfig(
         @PathParam("projectId") projectId: String,
     ): UserList {
         return UserList(
@@ -46,7 +46,7 @@ class UserResource(
     @GET
     @Cache(maxAge = 60, isPrivate = true, vary = [AUTHORIZATION])
     @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
-    fun userClientConfig(
+    suspend fun userClientConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
     ): User {
@@ -57,7 +57,7 @@ class UserResource(
     @Path("/{userId}/config/{clientId}")
     @GET
     @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
-    fun userClientConfig(
+    suspend fun userClientConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
         @PathParam("clientId") clientId: String,
@@ -69,7 +69,7 @@ class UserResource(
     @Path("/{userId}/config/{clientId}")
     @POST
     @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
-    fun putUserClientConfig(
+    suspend fun putUserClientConfig(
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
         @PathParam("clientId") clientId: String,
