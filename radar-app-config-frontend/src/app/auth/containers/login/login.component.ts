@@ -65,11 +65,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.subscriptions.unsubscribe();
     }
 
-
-    redirect() {
-        window.location.href = "http://127.0.0.1:3000/login?return_to=http://127.0.0.1:8080/appconfig";
-    }
-
     login() {
         this.loading = true;
         this.authService.authorize();
