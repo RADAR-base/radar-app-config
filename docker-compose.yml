@@ -6,10 +6,15 @@ services:
   # Management Portal                                                         #
   #---------------------------------------------------------------------------#
   managementportal:
-    image: radarbase/management-portal:2.0.0
+#    image: radarbase/management-portal:2.0.0
+    image: managementportal
     depends_on:
       - mp-postgresql
     environment:
+      MANAGEMENTPORTAL_IDENTITYSERVER_SERVERURL: http://kratos
+      MANAGEMENTPORTAL_IDENTITYSERVER_ADMINEMAIL: bastiaan@thehyve.nl
+      MANAGEMENTPORTAL_OAUTH_REQUIREAAL2: false
+      SPRING_LIQUIBASE_CONTEXTS: dev #includes testing_data, remove for production builds
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://mp-postgresql:5432/managementportal
       SPRING_DATASOURCE_USERNAME: radarcns
@@ -21,7 +26,7 @@ services:
       MANAGEMENTPORTAL_CATALOGUE_SERVER_ENABLE_AUTO_IMPORT: 'false'
       MANAGEMENTPORTAL_OAUTH_SIGNING_KEY_ALIAS: 'radarbase-managementportal-ec'
       SERVER_SERVLET_SESSION_COOKIE_SECURE: "false"
-      JAVA_OPTS: -Xmx256m  # maximum heap size for the JVM running ManagementPortal, increase this as necessary
+      JAVA_OPTS: -Xmx512m  # maximum heap size for the JVM running ManagementPortal, increase this as necessary
     volumes:
       - ./etc/mp-config/:/mp-includes/config
     labels:
@@ -52,24 +57,14 @@ services:
   #---------------------------------------------------------------------------#
   # RADAR Upload Source connector                                             #
   #---------------------------------------------------------------------------#
-  app-config:
-    build:
-      context: .
-      dockerfile: radar-app-config/Dockerfile
-    image: radarbase/radar-app-config:dev
-    restart: on-failure
-    volumes:
-      - ./etc/appconfig.yml:/etc/radar-app-config/appconfig.yml
-    depends_on:
-      - managementportal
-    labels:
-      - "traefik.http.routers.appconfig.rule=PathPrefix(`/appconfig/api`)"
-      - "traefik.http.services.appconfig.loadbalancer.server.port=8090"
 
   app-config-frontend:
     build:
       context: radar-app-config-frontend
-    image: radarbase/radar-app-config-frontend:dev
+    #    image: radarbase/radar-app-config-frontend:dev
+    environment:
+      - AUTH_URL=http://127.0.0.1:8080/managementportal/oauth
+      - AUTH_CALLBACK_URL=http://127.0.0.1:8080/appconfig/login
     depends_on:
       - app-config
     labels:
@@ -83,3 +78,57 @@ services:
     command: --api.insecure=true --providers.docker
     ports:
       - "8080:80"
+
+  ## ORY
+
+  # Kratos
+  kratos-selfservice-ui-node:
+    image:
+      oryd/kratos-selfservice-ui-node
+    environment:
+      - LOG_LEAK_SENSITIVE_VALUES=true
+      - KRATOS_PUBLIC_URL=http://kratos:4433
+      - KRATOS_ADMIN_URL=http://kratos:4434
+      - SECURITY_MODE=standalone
+      - KRATOS_BROWSER_URL=http://127.0.0.1:4433
+      - COOKIE_SECRET=unsafe_cookie_secret
+      - CSRF_COOKIE_NAME=radar
+      - CSRF_COOKIE_SECRET=unsafe_csrf_cookie_secret
+    ports:
+      - "3000:3000"
+    volumes:
+      - /tmp/ui-node/logs:/root/.npm/_logs
+
+  kratos:
+    depends_on:
+      - kratos-migrate
+    image: oryd/kratos:v1.0.0
+    ports:
+      - "4433:4433" # public
+      - "4434:4434" # admin, should be closed in production
+    restart: unless-stopped
+    environment:
+      - DSN=postgres://kratos:secret@postgresd-kratos/kratos?sslmode=disable&max_conns=20&max_idle_conns=4
+    command: serve -c /etc/config/kratos/kratos.yml --dev --watch-courier
+    volumes:
+      - type: bind
+        source: ./etc/mp-config/kratos
+        target: /etc/config/kratos
+
+  kratos-migrate:
+    image:
+      oryd/kratos:v1.0.0
+    environment:
+      - DSN=postgres://kratos:secret@postgresd-kratos/kratos?sslmode=disable&max_conns=20&max_idle_conns=4
+    volumes:
+      - type: bind
+        source: ./etc/mp-config/kratos
+        target: /etc/config/kratos
+    command: -c /etc/config/kratos/kratos.yml migrate sql -e --yes
+    restart: on-failure
+
+  mailslurper:
+    image: oryd/mailslurper:latest-smtps
+    ports:
+      - "4436:4436"
+      - "4437:4437"

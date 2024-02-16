@@ -26,10 +26,12 @@
     <property name="autoIncrement" value="true" dbms="mysql,postgresql,oracle,mssql"/>
 
     <changeSet id="0" author="joris" dbms="postgresql">
+        <validCheckSum>8:66d339bfb0b07ca6736080b2bc5a37fd</validCheckSum>
         <createSequence sequenceName="hibernate_sequence" startValue="1" incrementBy="1"/>
     </changeSet>
 
     <changeSet id="1" author="joris">
+        <validCheckSum>8:27560cdbe0dffda7c88cceea7fb856af</validCheckSum>
         <comment>Create Config table</comment>
         <createSequence sequenceName="config_id_sequence" startValue="1" incrementBy="1"/>
 

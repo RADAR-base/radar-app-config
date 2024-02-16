@@ -1,18 +1,16 @@
-plugins {
-    kotlin("jvm")
-}
-
 description = "Kotlin Client SDK to the radar-app-config API"
 
 dependencies {
     api(project(":radar-app-config-core"))
-    val okhttpVersion: String by project
-    api("com.squareup.okhttp3:okhttp:$okhttpVersion")
 
-    val jacksonVersion: String by project
-    api(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
-    api("com.fasterxml.jackson.core:jackson-databind")
+    api(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:${Versions.coroutines}"))
+    api(platform("io.ktor:ktor-bom:${Versions.ktor}"))
 
-    val mpVersion: String by project
-    api("org.radarbase:oauth-client-util:$mpVersion")
+    api("io.ktor:ktor-client-core")
+    api("io.ktor:ktor-client-auth")
+    implementation("io.ktor:ktor-client-cio")
+    implementation("io.ktor:ktor-client-content-negotiation")
+    implementation("io.ktor:ktor-serialization-kotlinx-json")
+
+    implementation("org.radarbase:radar-commons-kotlin:${Versions.radarCommons}")
 }

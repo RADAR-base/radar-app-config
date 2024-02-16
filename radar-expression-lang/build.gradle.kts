@@ -1,41 +1,21 @@
-plugins {
-    kotlin("jvm")
-    idea
-    id("org.jetbrains.gradle.plugin.idea-ext")
-}
-
 description = "RADAR app condition expression language"
+
+val generateGrammarSource by project(":radar-expression-lang-antlr").tasks
 
 sourceSets {
     main {
-        java.srcDir("$buildDir/generated-src/antlr/main")
+        java.srcDir(generateGrammarSource.outputs)
     }
 }
 
 dependencies {
-    val antlrVersion: String by project
-    compileOnly(project(":radar-expression-lang-antlr"))
-    implementation("org.antlr:antlr4-runtime:$antlrVersion")
+    implementation("org.antlr:antlr4-runtime:${Versions.antlr}")
 
     // Use the Kotlin JDK 8 standard library.
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    val jacksonVersion: String by project
-    api(platform("com.fasterxml.jackson:jackson-bom:$jacksonVersion"))
-    api("com.fasterxml.jackson.core:jackson-annotations")
-    implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
-    // Use the Kotlin test library.
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-
-    // Use the Kotlin JUnit integration.
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-}
-
-idea {
-    module {
-        generatedSourceDirs = generatedSourceDirs + file("$buildDir/generated-src/antlr/main")
-    }
+    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:${Versions.coroutines}"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("org.radarbase:radar-commons-kotlin:${Versions.radarCommons}")
 }
