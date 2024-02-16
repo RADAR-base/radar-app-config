@@ -17,6 +17,7 @@ WORKDIR /code
 ENV GRADLE_USER_HOME=/code/.gradlecache \
    GRADLE_OPTS="-Djdk.lang.Process.launchMechanism=vfork -Dorg.gradle.vfs.watch=false"
 
+COPY buildSrc  /code/buildSrc/
 COPY build.gradle.kts settings.gradle.kts gradle.properties /code/
 COPY radar-app-config/build.gradle.kts  /code/radar-app-config/
 COPY radar-expression-lang/build.gradle.kts  /code/radar-expression-lang/
