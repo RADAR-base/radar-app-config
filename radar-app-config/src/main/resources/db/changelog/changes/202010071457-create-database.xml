@@ -27,11 +27,13 @@
 
     <changeSet id="0" author="joris" dbms="postgresql">
         <validCheckSum>8:66d339bfb0b07ca6736080b2bc5a37fd</validCheckSum>
+        <validCheckSum>9:4f80f55dc6fb69c363081a6ed3d3ef65</validCheckSum>
         <createSequence sequenceName="hibernate_sequence" startValue="1" incrementBy="1"/>
     </changeSet>
 
     <changeSet id="1" author="joris">
         <validCheckSum>8:27560cdbe0dffda7c88cceea7fb856af</validCheckSum>
+        <validCheckSum>9:d3791b2c06b40e2d1ea31bb1f4fb733b</validCheckSum>
         <comment>Create Config table</comment>
         <createSequence sequenceName="config_id_sequence" startValue="1" incrementBy="1"/>
 
