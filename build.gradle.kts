@@ -64,8 +64,8 @@ configure(listOf(
         developers {
             developer {
                 id.set("blootsvoets")
-                name.set("Joris Borgdorff")
-                email.set("joris@thehyve.nl")
+                name.set("Bastiaan de Graaf")
+                email.set("bastiaan@thehyve.nl")
                 organization.set("The Hyve")
             }
             developer {
