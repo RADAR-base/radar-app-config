@@ -5,6 +5,8 @@ import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.container.AsyncResponse
+import jakarta.ws.rs.container.Suspended
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION
 import jakarta.ws.rs.core.MediaType
@@ -15,6 +17,7 @@ import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.cache.Cache
+import org.radarbase.jersey.service.AsyncCoroutineService
 import org.radarbase.management.client.MPOAuthClient
 
 /** Root path, just forward requests without authentication. */
@@ -25,15 +28,20 @@ import org.radarbase.management.client.MPOAuthClient
 @Singleton
 class RootResource(
     @Context private val clientService: ClientService,
+    @Context private val asyncService: AsyncCoroutineService,
 ) {
     @Path("clients")
     @GET
     @Cache(maxAge = 3600, isPrivate = true, vary = [AUTHORIZATION])
     @NeedsPermission(Permission.OAUTHCLIENTS_READ)
-    fun clients() = OAuthClientList(
-        clientService.readClients()
-            .map(MPOAuthClient::toOAuthClient)
-    )
+    fun clients(
+        @Suspended asyncResponse: AsyncResponse,
+    ) = asyncService.runAsCoroutine(asyncResponse) {
+        OAuthClientList(
+            clientService.readClients()
+                .map(MPOAuthClient::toOAuthClient),
+        )
+    }
 }
 
 /**

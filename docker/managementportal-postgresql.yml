@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=radarcns
+      - POSTGRES_PASSWORD=radarcns
+      - POSTGRES_DB=managementportal
+    labels:
+      - "traefik.enable=false"

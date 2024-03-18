@@ -1,8 +1,6 @@
 package org.radarbase.lang.expression
 
 import java.math.BigDecimal
-import java.util.stream.Stream
-
 
 interface Expression
 
@@ -196,7 +194,7 @@ fun String.toUnescapedStringLiteral(): StringLiteral {
         substring(1, count() - 1)
             .replace("\\\\", "\\\\/")
             .replace("\\$quoteSymbol", quoteSymbol)
-            .replace("\\\\/", "\\")
+            .replace("\\\\/", "\\"),
     )
 }
 

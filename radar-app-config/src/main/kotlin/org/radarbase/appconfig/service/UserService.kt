@@ -16,29 +16,31 @@ class UserService(
     @Context private val conditionService: ConditionService,
     @Context private val resolver: ClientVariableResolver,
 ) {
-    fun putUserConfig(clientId: String, userId: String, clientConfig: ClientConfig) {
+    suspend fun putUserConfig(clientId: String, userId: String, clientConfig: ClientConfig) {
         resolver[clientId].replace(
             userScope(userId),
             null,
             clientConfig.config.asSequence()
                 .map { (innerId, value, _) ->
                     Pair(QualifiedId(innerId), value?.toVariable() ?: NullLiteral())
-                })
+                },
+        )
     }
 
-    fun userConfig(
+    suspend fun userConfig(
         clientId: String,
         projectId: String,
         userId: String,
     ): ClientConfig {
         val scopes = userScopes(clientId, projectId, userId)
         return ClientConfig.fromStream(
-            clientId, scopes[0],
-            resolver[clientId].resolveAll(scopes, null)
+            clientId,
+            scopes[0],
+            resolver[clientId].resolveAll(scopes, null),
         )
     }
 
-    private fun userScopes(
+    private suspend fun userScopes(
         clientId: String,
         projectId: String,
         userId: String,

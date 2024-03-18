@@ -7,66 +7,66 @@ import {TranslateService} from '@app/shared/services/translate.service';
 import {of, Subscription} from 'rxjs';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
+    selector: 'app-login',
+    templateUrl: './login.component.html',
 })
 
 export class LoginComponent implements OnInit, OnDestroy {
-  // __ = strings;
+    // __ = strings;
 
-  loading = false;
-  private subscriptions: Subscription = new Subscription();
+    loading = false;
+    private subscriptions: Subscription = new Subscription();
 
-  constructor(
-    public translate: TranslateService,
-    private authService: AuthService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router
-  ) {
-  }
+    constructor(
+        public translate: TranslateService,
+        private authService: AuthService,
+        private activatedRoute: ActivatedRoute,
+        private router: Router
+    ) {
+    }
 
-  ngOnInit() {
-    this.activatedRoute.queryParams.pipe(first()).subscribe(params => {
-      const {code} = params;
-      let {returnUrl} = params;
+    ngOnInit() {
+        this.activatedRoute.queryParams.pipe(first()).subscribe(params => {
+            const {code} = params;
+            let {returnUrl} = params;
 
-      if (returnUrl) {
-        localStorage.setItem('returnUrl', returnUrl);
-      }
+            if (returnUrl) {
+                localStorage.setItem('returnUrl', returnUrl);
+            }
 
-      if (code) {
+            if (code) {
+                this.loading = true;
+                this.subscriptions.add(
+                    this.authService.processLogin(code).pipe(
+                        first(),
+                        map(() => {
+                            const currentUser = this.authService.currentDecodedUserValue;
+                            returnUrl = localStorage.getItem('returnUrl');
+                            if (returnUrl) {
+                                return this.router.navigateByUrl(returnUrl);
+                            } else if (currentUser.role !== Roles.SYSTEM_ADMIN) {
+                                return this.router.navigateByUrl('projects');
+                            } else {
+                                return this.router.navigateByUrl('global-clients');
+                            }
+                        }),
+                        catchError((error) => {
+                            console.log(error);
+                            return of(error.message);
+                        }),
+                    )
+                        .subscribe(() => this.loading = false)
+                );
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        this.subscriptions.unsubscribe();
+    }
+
+    login() {
         this.loading = true;
-        this.subscriptions.add(
-            this.authService.processLogin(code).pipe(
-                first(),
-                map(() => {
-                  const currentUser = this.authService.currentDecodedUserValue;
-                  returnUrl = localStorage.getItem('returnUrl');
-                  if (returnUrl) {
-                    return this.router.navigateByUrl(returnUrl);
-                  } else if (currentUser.role !== Roles.SYSTEM_ADMIN) {
-                      return this.router.navigateByUrl('projects');
-                  } else {
-                      return this.router.navigateByUrl('global-clients');
-                  }
-                }),
-                catchError((error) => {
-                    console.log(error);
-                    return of(error.message);
-                }),
-              )
-              .subscribe(() => this.loading = false)
-        );
-      }
-    });
-  }
-
-  ngOnDestroy() {
-      this.subscriptions.unsubscribe();
-  }
-
-  login() {
-    this.loading = true;
-    this.authService.authorize();
-  }
+        this.authService.authorize();
+    }
 }

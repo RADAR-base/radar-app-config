@@ -2,7 +2,6 @@ package org.radarbase.appconfig.client
 
 import java.time.Duration
 import java.time.Instant
-import java.util.LinkedHashMap
 
 /**
  * Least recently used cache. It is synchronized.
@@ -13,8 +12,8 @@ import java.util.LinkedHashMap
 @Suppress("unused")
 class LruCache<K, V>(
     private val maxAge: Duration,
-    private val capacity: Int
-): Iterable<Pair<K, V>> {
+    private val capacity: Int,
+) : Iterable<Pair<K, V>> {
     private val map: MutableMap<K, Node> = LinkedHashMap<K, Node>(16, 0.75f, true)
 
     /**

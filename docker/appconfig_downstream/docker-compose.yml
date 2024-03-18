@@ -1,0 +1,9 @@
+# start the supporting dockerstack using the :dev image of the managementportal dependency.
+version: "3.8"
+
+include:
+  - "../non_appconfig/docker-compose.yml"
+
+# This file should be called in conjunction with the accompanying docker-compose.override.yml file
+# This can be done by navigating to the directory with both files and calling 'docker compose up -d'
+# the override file is used to alter configurations for specific services in the non-appconfig.yml file

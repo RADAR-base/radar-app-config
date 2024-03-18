@@ -1,17 +1,15 @@
 package org.radarbase.lang.expression
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import org.radarbase.lang.expression.antlr.ComparisonLexer
-import org.radarbase.lang.expression.antlr.ComparisonParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
+import org.radarbase.lang.expression.antlr.ComparisonLexer
+import org.radarbase.lang.expression.antlr.ComparisonParser
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.math.BigDecimal
 import java.text.ParseException
 
-@JsonDeserialize(using = ExpressionDeserializer::class)
 class ExpressionParser(functions: List<Function>) {
     private val indexedFunctions: Map<String, Function> = functions.associateBy { it.name }
 
@@ -26,7 +24,6 @@ class ExpressionParser(functions: List<Function>) {
     private inner class ParserContext(private val parser: ComparisonParser) {
         fun parse(): Expression = parser.expression().toModel()
 
-
         private fun ComparisonParser.ExpressionContext.toModel(): Expression = when (this) {
             is ComparisonParser.BinaryOperationContext -> toModel()
             is ComparisonParser.CombinationOperationContext -> toModel()
@@ -37,7 +34,8 @@ class ExpressionParser(functions: List<Function>) {
                 ?: throw toException("Cannot map string to boolean literal.")
             is ComparisonParser.StringLiteralContext -> text.toUnescapedStringLiteral()
             is ComparisonParser.DecimalLiteralContext,
-            is ComparisonParser.IntegerLiteralContext -> BigDecimal(text).toVariable()
+            is ComparisonParser.IntegerLiteralContext,
+            -> BigDecimal(text).toVariable()
             is ComparisonParser.FunctionExpressionContext -> function().toModel()
             is ComparisonParser.QualifiedIdExpressionContext -> QualifiedId(text)
             else -> throw toException("Cannot map expression $javaClass at ${toInfoString(parser)}")

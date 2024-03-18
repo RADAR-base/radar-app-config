@@ -1,5 +1,6 @@
 package org.radarbase.appconfig.service
 
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,61 +25,82 @@ internal class UserServiceTest {
     }
 
     @Test
-    fun putUserConfig() {
+    fun putUserConfig() = runBlocking {
         val configEmpty = userService.userConfig("aRMT", "radar-test", "a")
         assertEquals(ClientConfig("aRMT", "user.a", listOf()), configEmpty)
         userService.putUserConfig(
-            "aRMT", "a", ClientConfig(
-                null, null, listOf(
+            "aRMT",
+            "a",
+            ClientConfig(
+                null,
+                null,
+                listOf(
                     SingleVariable("c", "b"),
-                    SingleVariable("d", "5")
-                )
-            )
+                    SingleVariable("d", "5"),
+                ),
+            ),
         )
 
         val config = userService.userConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
-                "aRMT", "user.a", listOf(
+                "aRMT",
+                "user.a",
+                listOf(
                     SingleVariable("c", "b"),
-                    SingleVariable("d", "5")
-                )
-            ), config
+                    SingleVariable("d", "5"),
+                ),
+            ),
+            config,
         )
 
         userService.putUserConfig(
-            "aRMT", "a", ClientConfig(
-                null, null, listOf(
-                    SingleVariable("c", "b")
-                )
-            )
+            "aRMT",
+            "a",
+            ClientConfig(
+                null,
+                null,
+                listOf(
+                    SingleVariable("c", "b"),
+                ),
+            ),
         )
         val configNew = userService.userConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
-                "aRMT", "user.a", listOf(
-                    SingleVariable("c", "b")
-                )
-            ), configNew
+                "aRMT",
+                "user.a",
+                listOf(
+                    SingleVariable("c", "b"),
+                ),
+            ),
+            configNew,
         )
 
         projectService.putProjectConfig(
-            "aRMT", "radar-test", ClientConfig(
-                null, null, listOf(
-                    SingleVariable("d", "else")
-                )
-            )
+            "aRMT",
+            "radar-test",
+            ClientConfig(
+                null,
+                null,
+                listOf(
+                    SingleVariable("d", "else"),
+                ),
+            ),
         )
         val configNull = userService.userConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
-                "aRMT", "user.a", listOf(
-                    SingleVariable("c", "b")
+                "aRMT",
+                "user.a",
+                listOf(
+                    SingleVariable("c", "b"),
                 ),
                 listOf(
-                    SingleVariable("d", "else", "project.radar-test")
-                )
-            ), configNull
+                    SingleVariable("d", "else", "project.radar-test"),
+                ),
+            ),
+            configNull,
         )
     }
 }

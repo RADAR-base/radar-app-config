@@ -1,0 +1,17 @@
+baseUri: http://0.0.0.0:8090/appconfig/api
+isJmxEnabled: false
+
+inject:
+  enhancerFactory: org.radarbase.appconfig.inject.ManagementPortalEnhancerFactory
+
+auth:
+  managementPortal:
+    url: http://localhost:8080/managementportal/
+    clientId: appconfig
+    clientSecret: test
+  jwtResourceName: res_appconfig
+
+database:
+  url: "jdbc:postgresql://localhost:5432/appconfig?sslmode=disable"
+  user: radarcns
+  password: radarcns
