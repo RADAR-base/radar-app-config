@@ -1,8 +1,7 @@
 name: Snyk test
 on:
   pull_request:
-    branches:
-      - master
+    branches: [ master, dev, v0.4 ]
 jobs:
   security:
     runs-on: ubuntu-latest
