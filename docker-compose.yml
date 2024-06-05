@@ -44,7 +44,6 @@ services:
 
   app-postgresql:
     image: bitnami/postgresql:15
-    platform: linux/amd64
     environment:
       - POSTGRESQL_USERNAME=radarcns
       - POSTGRESQL_PASSWORD=radarcns
