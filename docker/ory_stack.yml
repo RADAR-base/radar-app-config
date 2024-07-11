@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   kratos-selfservice-ui-node:
     image:
@@ -13,8 +11,10 @@ services:
       - COOKIE_SECRET=unsafe_cookie_secret
       - CSRF_COOKIE_NAME=radar
       - CSRF_COOKIE_SECRET=unsafe_csrf_cookie_secret
-    ports:
-      - "3000:3000"
+      - BASE_PATH=/kratos-ui
+    labels:
+      - "traefik.http.routers.kratosselfserviceuinode.rule=PathPrefix(`/kratos-ui`)"
+      - "traefik.http.services.kratosselfserviceuinode.loadbalancer.server.port=3000"
     volumes:
       - /tmp/ui-node/logs:/root/.npm/_logs
 

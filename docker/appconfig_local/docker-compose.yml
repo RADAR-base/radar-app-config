@@ -1,6 +1,4 @@
 # start the dockerstack using a locally built docker image of app-config.
-version: "3.8"
-
 include:
   - "../non_appconfig/docker-compose.yml"
 
@@ -9,13 +7,16 @@ services:
     extends:
       file: ../appconfig.yml
       service: app-config
+    depends_on:
+      - traefik
     networks:
-      - db
       - default
 
   app-config-frontend:
     extends:
       file: ../appconfig-frontend.yml
       service: app-config-frontend
+    depends_on:
+      - traefik
     networks:
       - default
