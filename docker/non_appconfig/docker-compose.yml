@@ -1,7 +1,5 @@
 # Docker stack containing all the "required" interacting components to run app-config
 # Intended to use alongside local executables of app-config (e.g. in an  Intellij instance) for development/debug purposes
-version: "3.8"
-
 networks:
   db:
     driver: bridge
@@ -41,8 +39,12 @@ services:
     extends:
       file: ../managementportal.yml
       service: managementportal
+    depends_on:
+      - kratos
+      - traefik
     networks:
       - mp
+#      - ory
       - default
 
   managementportal-postgresql:
@@ -51,12 +53,17 @@ services:
       service: postgres
     networks:
       - mp
+#      - default
+#    ports:
+#      - "5432:5432"
 
 
   kratos-selfservice-ui-node:
     extends:
       file: ../ory_stack.yml
       service: kratos-selfservice-ui-node
+    depends_on:
+      - traefik
     networks:
       - ory
       - default
@@ -67,6 +74,7 @@ services:
       service: kratos
     networks:
       - ory
+      - mp
       - default
 
   kratos-migrate:
