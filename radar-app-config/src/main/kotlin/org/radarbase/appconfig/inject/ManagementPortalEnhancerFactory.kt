@@ -3,13 +3,18 @@ package org.radarbase.appconfig.inject
 import com.fasterxml.jackson.databind.module.SimpleModule
 import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
+import org.radarbase.appconfig.serialization.ExpressionDeserializer
 import org.radarbase.jersey.enhancer.EnhancerFactory
 import org.radarbase.jersey.enhancer.Enhancers
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.jersey.enhancer.MapperResourceEnhancer
 import org.radarbase.jersey.hibernate.config.HibernateResourceEnhancer
-import org.radarbase.lang.expression.*
+import org.radarbase.lang.expression.CountFunction
+import org.radarbase.lang.expression.Expression
+import org.radarbase.lang.expression.ExpressionParser
 import org.radarbase.lang.expression.Function
+import org.radarbase.lang.expression.ListVariablesFunction
+import org.radarbase.lang.expression.SumFunction
 
 /** This binder needs to register all non-Jersey classes, otherwise initialization fails. */
 class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : EnhancerFactory {
@@ -29,20 +34,24 @@ class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : E
             add(InMemoryResourceEnhancer())
         }
 
-        add(MapperResourceEnhancer().apply {
-            mapper = MapperResourceEnhancer.createDefaultMapper()
-                .registerModule(SimpleModule().apply {
-                    val allowedFunctions = listOf<Function>(
-                        SumFunction(),
-                        ListVariablesFunction(),
-                        CountFunction(),
+        add(
+            MapperResourceEnhancer().apply {
+                mapper = MapperResourceEnhancer.createDefaultMapper()
+                    .registerModule(
+                        SimpleModule().apply {
+                            val allowedFunctions = listOf<Function>(
+                                SumFunction(),
+                                ListVariablesFunction(),
+                                CountFunction(),
+                            )
+                            addDeserializer(
+                                Expression::class.java,
+                                ExpressionDeserializer(ExpressionParser(allowedFunctions)),
+                            )
+                        },
                     )
-                    addDeserializer(
-                        Expression::class.java,
-                        ExpressionDeserializer(ExpressionParser(allowedFunctions)),
-                    )
-                })
-        })
+            },
+        )
 
         add(AppConfigResourceEnhancer(config))
         add(Enhancers.radar(config.auth, includeMapper = false))

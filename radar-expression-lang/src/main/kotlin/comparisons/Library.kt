@@ -3,15 +3,26 @@
  */
 package comparisons
 
+import kotlinx.coroutines.runBlocking
+import org.radarbase.lang.expression.CountFunction
+import org.radarbase.lang.expression.DirectVariableResolver
+import org.radarbase.lang.expression.ExpressionParser
+import org.radarbase.lang.expression.ExpressionParserException
 import org.radarbase.lang.expression.Function
-import org.radarbase.lang.expression.*
+import org.radarbase.lang.expression.Interpreter
+import org.radarbase.lang.expression.InterpreterException
+import org.radarbase.lang.expression.ListVariablesFunction
+import org.radarbase.lang.expression.SimpleScope
+import org.radarbase.lang.expression.SumFunction
+import org.radarbase.lang.expression.register
+import org.radarbase.lang.expression.toVariable
 import kotlin.system.exitProcess
 
 fun main() {
     val functions = listOf<Function>(
         SumFunction(),
         ListVariablesFunction(),
-        CountFunction()
+        CountFunction(),
     )
     val parser = ExpressionParser(functions)
 
@@ -23,20 +34,31 @@ fun main() {
     }
 
     println(expr)
-    val resolver = DirectVariableResolver()
-    resolver.register(functions)
-    resolver.register("user", "a", 1.toVariable())
-    resolver.register("user", "b", 1.toVariable())
-    resolver.register("user", "c", 1.toVariable())
-    resolver.register("user", "r", 1.toVariable())
-    resolver.register("user", "d", 1.toVariable())
-    resolver.register("user.blootsvoets", "alternative.brace.mellow", 0.toVariable())
-    resolver.register("user.blootsvoets", "alternative.brace.cool", 10.toVariable())
+    runBlocking {
+        val resolver = DirectVariableResolver().apply {
+            register(functions)
+            register("user", "a", 1.toVariable())
+            register("user", "b", 1.toVariable())
+            register("user", "c", 1.toVariable())
+            register("user", "r", 1.toVariable())
+            register("user", "d", 1.toVariable())
+            register("user.blootsvoets", "alternative.brace.mellow", 0.toVariable())
+            register("user.blootsvoets", "alternative.brace.cool", 10.toVariable())
+        }
 
-    val interpreter = Interpreter(resolver)
-    try {
-        print(interpreter.interpret(listOf(SimpleScope("user.blootsvoets"), SimpleScope("user")), expr))
-    } catch (ex: InterpreterException) {
-        println("Failed to evaluate expression ${ex.expression}:\n\n${ex.message}")
+        val interpreter = Interpreter(resolver)
+        try {
+            print(
+                interpreter.interpret(
+                    listOf(
+                        SimpleScope("user.blootsvoets"),
+                        SimpleScope("user"),
+                    ),
+                    expr,
+                ),
+            )
+        } catch (ex: InterpreterException) {
+            println("Failed to evaluate expression ${ex.expression}:\n\n${ex.message}")
+        }
     }
 }

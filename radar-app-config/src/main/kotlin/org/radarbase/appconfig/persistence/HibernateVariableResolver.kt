@@ -7,7 +7,15 @@ import jakarta.persistence.Query
 import jakarta.persistence.TypedQuery
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.jersey.hibernate.HibernateRepository
-import org.radarbase.lang.expression.*
+import org.radarbase.jersey.service.AsyncCoroutineService
+import org.radarbase.lang.expression.NullLiteral
+import org.radarbase.lang.expression.QualifiedId
+import org.radarbase.lang.expression.ResolvedVariable
+import org.radarbase.lang.expression.Scope
+import org.radarbase.lang.expression.SimpleScope
+import org.radarbase.lang.expression.Variable
+import org.radarbase.lang.expression.VariableResolver
+import org.radarbase.lang.expression.toVariable
 import java.util.stream.Stream
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
@@ -15,8 +23,9 @@ class HibernateVariableResolver(
     em: Provider<EntityManager>,
     private val clientId: String,
     private val cache: IMap<String, LongArray>,
-) : VariableResolver, HibernateRepository(em) {
-    override fun replace(
+    asyncCoroutineService: AsyncCoroutineService,
+) : VariableResolver, HibernateRepository(em, asyncCoroutineService) {
+    override suspend fun replace(
         scope: Scope,
         prefix: QualifiedId?,
         variables: Sequence<Pair<QualifiedId, Variable>>,
@@ -45,7 +54,7 @@ class HibernateVariableResolver(
         persist(configEntity)
     }
 
-    override fun register(
+    override suspend fun register(
         scope: Scope,
         id: QualifiedId,
         variable: Variable,
@@ -54,7 +63,7 @@ class HibernateVariableResolver(
         cache -= scope.asString()
     }
 
-    override fun resolve(
+    override suspend fun resolve(
         scopes: List<Scope>,
         id: QualifiedId,
     ): ResolvedVariable {
@@ -68,7 +77,7 @@ class HibernateVariableResolver(
         }
     }
 
-    override fun resolveAll(
+    override suspend fun resolveAll(
         scopes: List<Scope>,
         prefix: QualifiedId?,
     ): Sequence<ResolvedVariable> = transact {
@@ -77,15 +86,18 @@ class HibernateVariableResolver(
             .distinct()
             .map { find(ConfigEntity::class.java, it).toResolvedVariable() }
             .groupBy {
-                if (it.scope == scopes[0]) ActualVariableKey(it.id)
-                else DefaultsVariableKey(it.id)
+                if (it.scope == scopes[0]) {
+                    ActualVariableKey(it.id)
+                } else {
+                    DefaultsVariableKey(it.id)
+                }
             }
             .values
             .asSequence()
             .mapNotNull { v -> v.minByOrNull { scopes.indexOf(it.scope) } }
     }
 
-    override fun list(
+    override suspend fun list(
         scopes: List<Scope>,
         prefix: QualifiedId?,
     ): Sequence<QualifiedId> = transact {
@@ -139,7 +151,7 @@ class HibernateVariableResolver(
         scope: Scope,
     ): LongArray = createQuery(
         "SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId",
-        java.lang.Long::class.java
+        java.lang.Long::class.java,
     )
         .setParameter("scope", scope.asString())
         .setParameter("clientId", clientId)
@@ -152,7 +164,7 @@ class HibernateVariableResolver(
         prefix: String,
     ): LongArray = createQuery(
         "SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix",
-        java.lang.Long::class.java
+        java.lang.Long::class.java,
     )
         .setParameter("scope", scope.asString())
         .setParameter("clientId", clientId)
@@ -166,7 +178,7 @@ class HibernateVariableResolver(
         name: QualifiedId,
     ): TypedQuery<ConfigEntity> = createQuery(
         "SELECT c FROM Config c WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name = :name",
-        ConfigEntity::class.java
+        ConfigEntity::class.java,
     )
         .setParameter("scopes", scopes.map { it.asString() })
         .setParameter("clientId", clientId)
@@ -185,7 +197,7 @@ class HibernateVariableResolver(
         scopes: List<Scope>,
     ): TypedQuery<ConfigEntity> = createQuery(
         "SELECT DISTINCT c.clientId, c.name FROM Config c WHERE c.scope IN (:scopes) AND c.clientId = :clientId",
-        ConfigEntity::class.java
+        ConfigEntity::class.java,
     )
         .setParameter("scopes", scopes.map { it.asString() })
         .setParameter("clientId", clientId)
@@ -195,7 +207,7 @@ class HibernateVariableResolver(
         prefix: String,
     ): TypedQuery<ConfigEntity> = createQuery(
         "SELECT DISTINCT c.clientId, c.name FROM Config c WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name LIKE :prefix",
-        ConfigEntity::class.java
+        ConfigEntity::class.java,
     )
         .setParameter("scopes", scopes.map { it.asString() })
         .setParameter("clientId", clientId)
