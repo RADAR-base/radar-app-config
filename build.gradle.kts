@@ -77,12 +77,12 @@ configure(listOf(
     }
 
     tasks.withType<JavaCompile> {
-        options.release.set(11)
+        options.release.set(17)
     }
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
 
