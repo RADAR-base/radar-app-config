@@ -77,12 +77,12 @@ configure(listOf(
     }
 
     tasks.withType<JavaCompile> {
-        options.release.set(11)
+        options.release.set(17)
     }
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
 
@@ -210,5 +210,5 @@ nexusPublishing {
 }
 
 tasks.wrapper {
-    gradleVersion = "7.6"
+    gradleVersion = "8.8"
 }
