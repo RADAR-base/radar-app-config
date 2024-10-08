@@ -1,3 +1,5 @@
+REMOVE ME
+
 # RADAR app config
 
 Aimed to be an app configuration engine with per-project and per-conditional configuration. This will possibly be merged with [RADAR AppServer](https://github.com/radar-base/radar-appserver) in the future. 
