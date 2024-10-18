@@ -6,7 +6,7 @@ object Versions {
     const val kotlinxSerialization: String = "1.5.1"
 
     const val radarCommons = "1.1.1"
-    const val jackson = "2.15.2"
+    const val jackson = "2.16.1"
     const val antlr = "4.13.0"
     const val ktor: String = "2.3.2"
     const val coroutines = "1.7.2"
