@@ -29,7 +29,7 @@ RUN npm run build -- --output-path=./dist/out --configuration ${configuration}
 WORKDIR /code/dist/out
 
 # Stage 2, based on Nginx, to have only the compiled app, ready for production with Nginx
-FROM nginxinc/nginx-unprivileged:1.22-alpine
+FROM nginxinc/nginx-unprivileged:1.27-alpine3.20-perl
 
 ENV BASE_HREF=/appconfig/
 ENV AUTH_URL=http://localhost:8080/managementportal/oauth
