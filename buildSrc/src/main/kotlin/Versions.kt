@@ -1,14 +1,15 @@
 object Versions {
-    const val project = "0.5.1"
+    const val project = "0.5.3"
 
     const val java = 17
     const val kotlin = "1.9.23"
     const val kotlinxSerialization = "1.6.3"
 
     const val radarCommons = "1.1.2"
-    const val jackson = "2.15.2"
+    const val jackson = "2.16.1"
     const val antlr = "4.13.1"
     const val ktor = "2.3.11"
+
     const val coroutines = "1.7.2"
     const val radarJersey = "0.11.1"
     const val log4j2 = "2.20.0"
