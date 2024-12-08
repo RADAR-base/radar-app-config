@@ -1,5 +1,12 @@
 # RADAR app config
 
+<!-- TOC -->
+* [RADAR app config](#radar-app-config)
+  * [Supported API](#supported-api)
+  * [Docker usage](#docker-usage)
+  * [Sentry monitoring](#sentry-monitoring)
+<!-- TOC -->
+
 Aimed to be an app configuration engine with per-project and per-conditional configuration. This will possibly be merged with [RADAR AppServer](https://github.com/radar-base/radar-appserver) in the future. 
 
 Intended features:
@@ -219,3 +226,21 @@ Client ID: appconfig_frontend
 Leave `Client Secret`, `Scope` and `State` empty. Log in with user `admin`, password `admin` and accept the request. Once this is accepted, scroll down to indicate _Use token_. Now you can make any requests to the radar-app-config API.
 
 To have any projects or subjects, these should be created by going to <http://localhost:8080/managementportal/> and logging in again with `admin`, `admin`.
+
+
+## Sentry monitoring
+
+To enable Sentry monitoring:
+
+1. Set a `SENTRY_DSN` environment variable that points to the desired Sentry DSN.
+2. (Optional) Set the `SENTRY_LOG_LEVEL` environment variable to control the minimum log level of events sent to Sentry.
+   The default log level for Sentry is `ERROR`. Possible values are `TRACE`, `DEBUG`, `INFO`, `WARN`, and `ERROR`.
+
+For further configuration of Sentry via environmental variables see [here](https://docs.sentry.io/platforms/java/configuration/#configuration-via-the-runtime-environment). For instance:
+
+```
+SENTRY_LOG_LEVEL: 'ERROR'
+SENTRY_DSN: 'https://000000000000.ingest.de.sentry.io/000000000000'
+SENTRY_ATTACHSTACKTRACE: true
+SENTRY_STACKTRACE_APP_PACKAGES: io.confluent.connect,org.radarbase.connect.rest
+```
