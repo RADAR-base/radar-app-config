@@ -6,8 +6,7 @@ services:
   # Management Portal                                                         #
   #---------------------------------------------------------------------------#
   managementportal:
-#    image: radarbase/management-portal:2.0.0
-    image: managementportal
+    image: radarbase/management-portal:2.0.0
     depends_on:
       - mp-postgresql
     environment:
@@ -54,7 +53,7 @@ services:
       - "traefik.enable=false"
 
   #---------------------------------------------------------------------------#
-  # RADAR Upload Source connector                                             #
+  # App Config                                                                #
   #---------------------------------------------------------------------------#
 
   app-config-frontend:
