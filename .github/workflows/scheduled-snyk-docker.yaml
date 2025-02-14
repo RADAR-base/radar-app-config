@@ -31,7 +31,13 @@ jobs:
             --policy-path=.snyk
             --exclude-app-vulns
             --org=radar-base
-            --sarif-file-output=backend.sarif
+            --sarif-file-output=snyk.sarif
+
+      # Detected vulnerabilities will appear on Github in Security->Code_scanning_alerts tab
+      - name: Upload backend result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk.sarif
 
       - name: Run Snyk to check for vulnerabilities on frontend image
         uses: snyk/actions/docker@master
@@ -48,15 +54,10 @@ jobs:
             --policy-path=.snyk
             --exclude-app-vulns
             --org=radar-base
-            --sarif-file-output=frontend.sarif
+            --sarif-file-output=snyk.sarif
 
       # Detected vulnerabilities will appear on Github in Security->Code_scanning_alerts tab
-      - name: Upload backend result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: backend.sarif
-
       - name: Upload frontend result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: frontend.sarif
+          sarif_file: snyk.sarif
