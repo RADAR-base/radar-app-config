@@ -1,5 +1,6 @@
 plugins {
     application
+    id("kotlin-convention")
 }
 
 application {
@@ -25,18 +26,22 @@ dependencies {
 
     implementation(project(":radar-app-config-core"))
 
-    implementation(platform("com.fasterxml.jackson:jackson-bom:${Versions.jackson}"))
+    implementation(platform(libs.jackson.bom))
 
-    implementation("org.radarbase:radar-jersey:${Versions.radarJersey}")
-    implementation("org.radarbase:radar-jersey-hibernate:${Versions.radarJersey}")
+    implementation(libs.radar.jersey)
+    implementation(libs.radar.jersey.hibernate)
 
-    implementation("org.radarbase:radar-commons-kotlin:${Versions.radarCommons}")
+    implementation(libs.radar.commons.kotlin)
 
-    implementation("com.hazelcast:hazelcast-hibernate53:${Versions.hazelcastHibernate}")
-    implementation("com.hazelcast:hazelcast:${Versions.hazelcast}")
-    runtimeOnly("com.hazelcast:hazelcast-kubernetes:${Versions.hazelcastKubernetes}")
+    implementation(libs.hazelcast)
+    implementation(libs.hazelcast.hybernate53)
+    implementation(libs.hazelcast.kubernetes)
 
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${Versions.junit}")
-    testImplementation("org.hamcrest:hamcrest:${Versions.hamcrest}")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:${Versions.mockitoKotlin}")
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.hamcrest)
+    testImplementation(libs.mockito.kotlin)
+}
+
+radarKotlin {
+    sentryEnabled.set(true)
 }

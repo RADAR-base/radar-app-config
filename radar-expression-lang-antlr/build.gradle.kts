@@ -1,5 +1,15 @@
+plugins {
+    java
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
+}
+
 dependencies {
-    antlr("org.antlr:antlr4:${Versions.antlr}")
+    antlr(libs.antlr)
 }
 
 tasks.generateGrammarSource {
@@ -9,4 +19,8 @@ tasks.generateGrammarSource {
     arguments = arguments + listOf(
         "-package", "org.radarbase.lang.expression.antlr"
     )
+}
+
+tasks.withType<JavaCompile> {
+    options.release.set(11)
 }
