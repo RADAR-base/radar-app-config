@@ -37,6 +37,7 @@ jobs:
       - name: Upload backend result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
         with:
+          category: backend
           sarif_file: snyk.sarif
 
       - name: Run Snyk to check for vulnerabilities on frontend image
@@ -60,4 +61,5 @@ jobs:
       - name: Upload frontend result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
         with:
+          category: frontend
           sarif_file: snyk.sarif
