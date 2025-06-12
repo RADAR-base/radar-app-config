@@ -1,6 +1,6 @@
 {
   "name": "appconfig",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "scripts": {
     "ng": "ng",
     "add-icon": "addIcon() { cp node_modules/@material-icons/svg/svg/$1/${2:-baseline}.svg src/assets/icons/$1.svg; }; addIcon",
