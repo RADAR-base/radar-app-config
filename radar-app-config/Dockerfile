@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM --platform=$BUILDPLATFORM gradle:8.3-jdk17 as builder
+FROM --platform=$BUILDPLATFORM gradle:8.13-jdk17 as builder
 
 RUN mkdir /code
 WORKDIR /code
