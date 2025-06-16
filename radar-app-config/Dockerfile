@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM --platform=$BUILDPLATFORM gradle:8.3-jdk17 as builder
+FROM --platform=$BUILDPLATFORM gradle:8.13-jdk17 as builder
 
 RUN mkdir /code
 WORKDIR /code
@@ -18,6 +18,7 @@ ENV GRADLE_USER_HOME=/code/.gradlecache \
    GRADLE_OPTS="-Djdk.lang.Process.launchMechanism=vfork -Dorg.gradle.vfs.watch=false"
 
 COPY buildSrc  /code/buildSrc/
+COPY gradle/libs.versions.toml /code/gradle/
 COPY build.gradle.kts settings.gradle.kts gradle.properties /code/
 COPY radar-app-config/build.gradle.kts  /code/radar-app-config/
 COPY radar-expression-lang/build.gradle.kts  /code/radar-expression-lang/
@@ -36,7 +37,7 @@ RUN gradle :radar-app-config:jar
 
 FROM eclipse-temurin:17-jre
 
-MAINTAINER @nivemaham @blootsvoets
+MAINTAINER @pvannierop
 
 LABEL description="RADAR-base radar app config container"
 

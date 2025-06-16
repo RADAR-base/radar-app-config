@@ -1,3 +1,7 @@
+plugins {
+    id("publishing-convention")
+}
+
 description = "RADAR app condition expression language"
 
 val generateGrammarSource by project(":radar-expression-lang-antlr").tasks
@@ -9,13 +13,13 @@ sourceSets {
 }
 
 dependencies {
-    implementation("org.antlr:antlr4-runtime:${Versions.antlr}")
+    implementation(libs.antlr4.runtime)
 
     // Use the Kotlin JDK 8 standard library.
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:${Versions.coroutines}"))
+    implementation(libs.radar.commons.kotlin)
+    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("org.radarbase:radar-commons-kotlin:${Versions.radarCommons}")
 }
