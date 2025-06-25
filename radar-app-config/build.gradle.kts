@@ -44,4 +44,5 @@ dependencies {
 
 radarKotlin {
     sentryEnabled.set(true)
+    openTelemetryAgentEnabled.set(true)
 }
