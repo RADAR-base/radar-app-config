@@ -1,6 +1,7 @@
 [versions]
 # Platform
 kotlin = "1.9.23"
+kotlinCoroutines ="1.8.0"
 
 antlr = "4.13.1"
 hamcrest = "2.2"
@@ -13,6 +14,7 @@ kotlinxSerialization = "1.6.3"
 mockitoKotlin = "5.3.1"
 radarCommons = "1.2.4"
 radarJersey = "0.12.4"
+ktor = "2.3.9"
 
 [libraries]
 # For buildSrc project
@@ -27,7 +29,9 @@ hazelcast-hybernate53 = { group = "com.hazelcast", name = "hazelcast-hibernate53
 hazelcast-kubernetes = { group = "com.hazelcast", name = "hazelcast-kubernetes", version.ref = "hazelcastKubernetes" }
 jackson-bom = { group = "com.fasterxml.jackson", name = "jackson-bom", version.ref = "jackson" }
 junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit" }
+kotlinx-coroutines-bom = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom", version.ref = "kotlinCoroutines"}
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+ktor-bom = { group = "io.ktor", name = "ktor-bom", version.ref = "ktor" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 radar-commons-kotlin = { group = "org.radarbase", name = "radar-commons-kotlin", version.ref = "radarCommons" }
 radar-jersey = { group = "org.radarbase", name = "radar-jersey", version.ref = "radarJersey" }

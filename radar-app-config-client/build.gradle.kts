@@ -8,8 +8,8 @@ dependencies {
     api(project(":radar-app-config-core"))
 
     // Provided by libs.radar.commons.kotlin
-    api(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom"))
-    api(platform("io.ktor:ktor-bom"))
+    api(platform(libs.kotlinx.coroutines.bom))
+    api(platform(libs.ktor.bom))
     api("io.ktor:ktor-client-core")
     api("io.ktor:ktor-client-auth")
 
