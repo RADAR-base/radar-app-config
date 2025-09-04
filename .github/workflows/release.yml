@@ -10,15 +10,15 @@ env:
   REPOSITORY: ${{ github.repository }}
   IMAGES: >-
     [{
-    "name": "radar-app-config",
-    "build_file": "radar-app-config/Dockerfile",
-    "authors": "Pim van Nierop <pim@thehyve.nl>",
-    "description": "RADAR-base app config service"
+    'name': 'radar-app-config',
+    'build_file': 'radar-app-config/Dockerfile',
+    'authors': 'Pim van Nierop <pim@thehyve.nl>',
+    'description': 'RADAR-base app config service'
     },{
-    "name": "radar-app-config-frontend",
-    "build_file": "radar-app-config-frontend/Dockerfile",
-    "authors": "Peyman Mohtashami <peyman@thehyve.nl>",
-    "description": "RADAR-base app config frontend"
+    'name': 'radar-app-config-frontend',
+    'build_file': 'radar-app-config-frontend/Dockerfile',
+    'authors': 'Peyman Mohtashami <peyman@thehyve.nl>',
+    'description': 'RADAR-base app config frontend'
     }]
 
 jobs:
