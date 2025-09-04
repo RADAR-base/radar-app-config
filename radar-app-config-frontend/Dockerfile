@@ -15,12 +15,12 @@ FROM --platform=$BUILDPLATFORM node:16 as builder
 
 WORKDIR /code
 
-COPY package*.json /code/
+COPY radar-app-config-frontend/package*.json /code/
 
 RUN npm install
 
-COPY .browserslistrc angular.json karma.conf.js ts* /code/
-COPY src /code/src
+COPY radar-app-config-frontend/.browserslistrc radar-app-config-frontend/angular.json radar-app-config-frontend/karma.conf.js radar-app-config-frontend/ts* /code/
+COPY radar-app-config-frontend/src /code/src
 
 ARG configuration=production
 
@@ -37,9 +37,9 @@ ENV AUTH_CALLBACK_URL=http://localhost:8080/appconfig/login
 ENV APP_CONFIG_URL=/appconfig/api
 
 # add init script
-COPY docker/optimization.conf /etc/nginx/conf.d/
-COPY --chown=101 docker/default.conf /etc/nginx/conf.d/
-COPY docker/30-env-subst.sh /docker-entrypoint.d/
+COPY radar-app-config-frontend/docker/optimization.conf /etc/nginx/conf.d/
+COPY --chown=101 radar-app-config-frontend/docker/default.conf /etc/nginx/conf.d/
+COPY radar-app-config-frontend/docker/30-env-subst.sh /docker-entrypoint.d/
 
 COPY --from=builder /code/dist/out/ /usr/share/nginx/html
 COPY --from=builder --chown=101 /code/dist/out/main* /code/dist/out/index.html* /usr/share/nginx/html/
