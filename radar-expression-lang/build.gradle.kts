@@ -20,6 +20,6 @@ dependencies {
     implementation(kotlin("reflect"))
 
     implementation(libs.radar.commons.kotlin)
-    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom"))
+    implementation(platform(libs.kotlinx.coroutines.bom))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 }
