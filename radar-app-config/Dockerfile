@@ -43,7 +43,10 @@ LABEL description="RADAR-base radar app config container"
 
 # Override JAVA_OPTS to set heap parameters, for example
 ENV JAVA_OPTS="" \
-    RADAR_APP_CONFIG_OPTS=""
+    RADAR_APP_CONFIG_OPTS="" \
+    # Globally disables liquibase analytics.
+    # (see: https://docs.liquibase.com/pro/user-guide/what-data-does-liquibase-collect-and-how-is-it-used)
+    LIQUIBASE_ANALYTICS_ENABLED=false
 
 RUN mkdir -p /var/lib/radar-app-config/data
 WORKDIR /var/lib/radar-app-config
