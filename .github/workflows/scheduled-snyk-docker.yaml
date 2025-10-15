@@ -11,7 +11,7 @@ env:
   IMAGES: >-
     [{
     'module': 'radar-app-config',
-    'build_file': 'app-config/Dockerfile'
+    'build_file': 'radar-app-config/Dockerfile'
     },{
     'module': 'radar-app-config-frontend',
     'build_file': 'radar-app-config-frontend/Dockerfile'
