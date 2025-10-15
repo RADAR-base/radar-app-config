@@ -10,10 +10,10 @@ env:
   REPOSITORY: ${{ github.repository }}
   IMAGES: >-
     [{
-    'module': 'app-config',
+    'name': 'radar-app-config',
     'build_file': 'radar-app-config/Dockerfile'
     },{
-    'module': 'app-config-frontend',
+    'name': 'radar-app-config-frontend',
     'build_file': 'radar-app-config-frontend/Dockerfile'
     }]
 
