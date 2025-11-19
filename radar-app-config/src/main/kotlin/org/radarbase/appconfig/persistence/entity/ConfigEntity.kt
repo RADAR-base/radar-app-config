@@ -6,6 +6,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.Lob
+import jakarta.persistence.PrePersist
 import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import org.hibernate.annotations.Cache
@@ -44,4 +45,11 @@ class ConfigEntity {
 
     @Column
     var version: Int? = null
+
+    @PrePersist
+    fun onPrePersist() {
+        if (createTimestamp == null) {
+            createTimestamp = Instant.now()
+        }
+    }
 }
