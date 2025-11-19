@@ -16,6 +16,7 @@ import org.radarbase.lang.expression.SimpleScope
 import org.radarbase.lang.expression.Variable
 import org.radarbase.lang.expression.VariableResolver
 import org.radarbase.lang.expression.toVariable
+import org.slf4j.LoggerFactory
 import java.util.stream.Stream
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
@@ -24,7 +25,9 @@ class HibernateVariableResolver(
     private val clientId: String,
     private val cache: IMap<String, LongArray>,
     asyncCoroutineService: AsyncCoroutineService,
+    private val createdByUsername: String?,
 ) : VariableResolver, HibernateRepository(em, asyncCoroutineService) {
+    private val logger = LoggerFactory.getLogger(HibernateVariableResolver::class.java)
     override suspend fun replace(
         scope: Scope,
         prefix: QualifiedId?,
@@ -50,7 +53,17 @@ class HibernateVariableResolver(
             this.scope = scope.asString()
             this.name = id.asString()
             this.value = variable.asOptString()
+            this.createdByUser = createdByUsername
+
         }
+        // Log creator info and basic identifiers at info level on creation
+        logger.info(
+            "Created config entry: clientId={} scope={} name={} createdBy={}",
+            configEntity.clientId,
+            configEntity.scope,
+            configEntity.name,
+            configEntity.createdByUser,
+        )
         persist(configEntity)
     }
 
