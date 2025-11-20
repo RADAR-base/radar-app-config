@@ -5,6 +5,8 @@ import jakarta.inject.Provider
 import jakarta.persistence.EntityManager
 import jakarta.persistence.Query
 import jakarta.persistence.TypedQuery
+import org.radarbase.appconfig.api.ClientConfig
+import org.radarbase.appconfig.api.SingleVariable
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.jersey.hibernate.HibernateRepository
 import org.radarbase.jersey.service.AsyncCoroutineService
@@ -33,8 +35,6 @@ class HibernateVariableResolver(
         prefix: QualifiedId?,
         variables: Sequence<Pair<QualifiedId, Variable>>,
     ) = transact {
-        deleteConfig(scope, prefix).executeUpdate()
-
         variables
             .filter { (id, _) -> !id.isEmpty() }
             .forEach { (id, variable) -> save(scope, id, variable) }
@@ -48,12 +48,17 @@ class HibernateVariableResolver(
     ) {
         require(!id.isEmpty()) { "Cannot save variable without variable name" }
 
+        // Determine the next version based on the most recent existing config
+        val mostRecent = findMostRecentConfig(scope, id)
+        val nextVersion = ((mostRecent?.version) ?: 0) + 1
+
         val configEntity = ConfigEntity().apply {
             this.clientId = this@HibernateVariableResolver.clientId
             this.scope = scope.asString()
             this.name = id.asString()
             this.value = variable.asOptString()
             this.createdByUser = createdByUsername
+            this.version = nextVersion
 
         }
         // Log creator info and basic identifiers at info level on creation
@@ -123,6 +128,67 @@ class HibernateVariableResolver(
             .asSequence()
     }
 
+    /**
+     * List all versions for the given scope and variable name for this client.
+     * Results are ordered with newest version first.
+     */
+    suspend fun versions(scope: Scope, name: QualifiedId): List<ClientConfig> = transact {
+        createQuery(
+            "SELECT c FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name = :name ORDER BY c.version DESC",
+            ConfigEntity::class.java,
+        )
+            .setParameter("scope", scope.asString())
+            .setParameter("clientId", clientId)
+            .setParameter("name", name.asString())
+            .resultList
+            .map { e ->
+                ClientConfig(
+                    clientId = clientId,
+                    scope = e.scope,
+                    config = listOf(
+                        SingleVariable(
+                            name = e.name,
+                            value = e.value,
+                            scope = e.scope,
+                            clientId = e.clientId,
+                            version = e.version,
+                            createdByUser = e.createdByUser,
+                            createTimestamp = (e.createTimestamp ?: java.time.Instant.EPOCH).toEpochMilli(),
+                        ),
+                    ),
+                    defaults = null,
+                )
+            }
+    }
+
+    /**
+     * Return the most recent configuration for each variable name for the given scope and client.
+     */
+    suspend fun mostRecentConfigs(scope: Scope): List<ClientConfig> = transact {
+        selectConfig(scope)
+            .asSequence()
+            .map { id -> find(ConfigEntity::class.java, id) }
+            .map { e ->
+                ClientConfig(
+                    clientId = clientId,
+                    scope = e.scope,
+                    config = listOf(
+                        SingleVariable(
+                            name = e.name,
+                            value = e.value,
+                            scope = e.scope,
+                            clientId = e.clientId,
+                            version = e.version,
+                            createdByUser = e.createdByUser,
+                            createTimestamp = (e.createTimestamp ?: java.time.Instant.EPOCH).toEpochMilli(),
+                        ),
+                    ),
+                    defaults = null,
+                )
+            }
+            .toList()
+    }
+
     private fun EntityManager.deleteConfig(
         scope: Scope,
         prefix: QualifiedId?,
@@ -163,7 +229,12 @@ class HibernateVariableResolver(
     private fun EntityManager.selectConfig(
         scope: Scope,
     ): LongArray = createQuery(
-        "SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId",
+        "SELECT c.id FROM Config c " +
+            "WHERE c.scope = :scope AND c.clientId = :clientId " +
+            "AND c.createTimestamp = (" +
+            "  SELECT max(c2.createTimestamp) FROM Config c2 " +
+            "  WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name" +
+            ")",
         java.lang.Long::class.java,
     )
         .setParameter("scope", scope.asString())
@@ -176,7 +247,12 @@ class HibernateVariableResolver(
         scope: Scope,
         prefix: String,
     ): LongArray = createQuery(
-        "SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix",
+        "SELECT c.id FROM Config c " +
+            "WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix " +
+            "AND c.createTimestamp = (" +
+            "  SELECT max(c2.createTimestamp) FROM Config c2 " +
+            "  WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name" +
+            ")",
         java.lang.Long::class.java,
     )
         .setParameter("scope", scope.asString())
@@ -190,7 +266,12 @@ class HibernateVariableResolver(
         scopes: List<Scope>,
         name: QualifiedId,
     ): TypedQuery<ConfigEntity> = createQuery(
-        "SELECT c FROM Config c WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name = :name",
+        "SELECT c FROM Config c " +
+            "WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name = :name " +
+            "AND c.createTimestamp = (" +
+            "  SELECT max(c2.createTimestamp) FROM Config c2 " +
+            "  WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name" +
+            ")",
         ConfigEntity::class.java,
     )
         .setParameter("scopes", scopes.map { it.asString() })
@@ -225,6 +306,24 @@ class HibernateVariableResolver(
         .setParameter("scopes", scopes.map { it.asString() })
         .setParameter("clientId", clientId)
         .setParameter("prefix", "$prefix%")
+
+    /**
+     * Find the most recent configuration entity for the given client, scope and name,
+     * ordered by createTimestamp descending. Returns null if no entity exists.
+     */
+    private fun EntityManager.findMostRecentConfig(
+        scope: Scope,
+        name: QualifiedId,
+    ): ConfigEntity? = createQuery(
+        "SELECT c FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name = :name ORDER BY c.createTimestamp DESC",
+        ConfigEntity::class.java,
+    )
+        .setParameter("scope", scope.asString())
+        .setParameter("clientId", clientId)
+        .setParameter("name", name.asString())
+        .setMaxResults(1)
+        .resultList
+        .firstOrNull()
 
     companion object {
         private fun ConfigEntity.toResolvedVariable() = ResolvedVariable(
