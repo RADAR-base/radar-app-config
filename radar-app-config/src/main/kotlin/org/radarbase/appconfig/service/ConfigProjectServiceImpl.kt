@@ -2,7 +2,6 @@ package org.radarbase.appconfig.service
 
 import jakarta.ws.rs.core.Context
 import org.radarbase.appconfig.api.ClientConfig
-import org.radarbase.appconfig.api.SingleVariable
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.persistence.HibernateVariableResolver
 import org.radarbase.jersey.exception.HttpNotFoundException

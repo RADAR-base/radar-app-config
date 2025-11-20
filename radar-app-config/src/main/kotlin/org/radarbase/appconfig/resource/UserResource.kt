@@ -91,4 +91,50 @@ class UserResource(
         userService.putUserConfig(clientId, userId, clientConfig)
         userService.userConfig(clientId, projectId, userId)
     }
+
+    // return the most recent config of client clientId with name name for a user
+    @Path("/{userId}/config/{clientId}/names/{name}")
+    @GET
+    @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
+    fun userConfigName(
+        @Suspended asyncResponse: AsyncResponse,
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
+        @PathParam("clientId") clientId: String,
+        @PathParam("name") name: String,
+    ) = asyncService.runAsCoroutine(asyncResponse) {
+        clientService.ensureClient(clientId)
+        userService.userConfigName(clientId, projectId, userId, name)
+    }
+
+    // return all versions of the config of client clientId with name name for a user (user scope only)
+    @Path("/{userId}/config/{clientId}/names/{name}/versions")
+    @GET
+    @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
+    fun userConfigNameVersions(
+        @Suspended asyncResponse: AsyncResponse,
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
+        @PathParam("clientId") clientId: String,
+        @PathParam("name") name: String,
+    ) = asyncService.runAsCoroutine(asyncResponse) {
+        clientService.ensureClient(clientId)
+        userService.userConfigNameVersions(clientId, userId, name)
+    }
+
+    // return the version `version` of the config of client clientId with name name for a user (user scope only)
+    @Path("/{userId}/config/{clientId}/names/{name}/versions/{version}")
+    @GET
+    @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
+    fun userConfigNameVersion(
+        @Suspended asyncResponse: AsyncResponse,
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
+        @PathParam("clientId") clientId: String,
+        @PathParam("name") name: String,
+        @PathParam("version") version: Int,
+    ) = asyncService.runAsCoroutine(asyncResponse) {
+        clientService.ensureClient(clientId)
+        userService.userConfigNameVersion(clientId, userId, name, version)
+    }
 }
