@@ -120,6 +120,57 @@ HTTP 200 OK
 }
 ```
 
+Get the most recent value for a specific config name in the global scope.
+```
+GET /global/config/{clientId}/names/{name}
+---
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "scope": "global",
+  "config": [
+    {"name": "{name}", "value": "A", "scope": "global", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
+  ]
+}
+```
+
+List all versions for a specific config name in the global scope.
+```
+GET /global/config/{clientId}/names/{name}/versions
+---
+HTTP 200 OK
+[
+  {
+    "clientId": "{clientId}",
+    "scope": "global",
+    "config": [
+      {"name": "{name}", "value": "A", "scope": "global", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
+    ]
+  },
+  {
+    "clientId": "{clientId}",
+    "scope": "global",
+    "config": [
+      {"name": "{name}", "value": "B", "scope": "global", "clientId": "{clientId}", "version": 2, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
+    ]
+  }
+]
+```
+
+Get one specific version of a config name in the global scope.
+```
+GET /global/config/{clientId}/names/{name}/versions/{version}
+---
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "scope": "global",
+  "config": [
+    {"name": "{name}", "value": "A", "scope": "global", "clientId": "{clientId}", "version": {version}, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
+  ]
+}
+```
+
 Get the per-project config.
 ```
 GET /projects/{projectId}/config/{clientId}
@@ -129,10 +180,10 @@ HTTP 200 OK
   "clientId": "{clientId}",
   "scope": "project.projectA",
   "config": [
-    {"name": "plugins", "value": "A B"}
+    {"name": "plugins", "value": "A B", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
   ],
   "defaults": [
-    {"name": "plugins", "value", "A", "scope": "global"
+    {"name": "plugins", "value", "A", "scope": "global", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
   ]
 }
 ```
@@ -152,11 +203,56 @@ HTTP 200 OK
   "clientId": "{clientId}",
   "scope": "project.projectA",
   "config": [
-    {"name": "plugins", "value": "A B"},
-    {"name": "rate", "value": "1"}
+    {"name": "plugins", "value": "A B", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791},
+    {"name": "rate", "value": "1", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
   ],
   "defaults": [
-    {"name": "plugins", "value", "A", "scope": "global"
+    {"name": "plugins", "value", "A", "scope": "global", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
+  ]
+}
+```
+
+Get the most recent value for a specific config name in the project scope.
+```
+GET /projects/{projectId}/config/{clientId}/names/{name}
+---
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "scope": "project.{projectId}",
+  "config": [
+    {"name": "{name}", "value": "A", "scope": "project.{projectId}", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
+  ]
+}
+```
+
+List all versions for a specific config name in the project scope.
+```
+GET /projects/{projectId}/config/{clientId}/names/{name}/versions
+---
+HTTP 200 OK
+[
+  {
+    "clientId": "{clientId}",
+    "scope": "project.{projectId}",
+    "config": [
+      {"name": "{name}", "value": "A","scope": "project.{projectId}", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791},
+      {"name": "{name}", "value": "B","scope": "project.{projectId}", "clientId": "{clientId}", "version": 2, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
+    ]
+  }
+]
+```
+
+Get one specific version of a config name in the project scope.
+```
+GET /projects/{projectId}/config/{clientId}/names/{name}/versions/{version}
+---
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "scope": "project.{projectId}",
+  "config": [
+    {"name": "{name}", "value": "A B", "version": {version}, "scope": "project.{projectId}", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
   ]
 }
 ```
@@ -168,13 +264,13 @@ GET /projects/{projectId}/users/{userId}/config/{clientId}
 HTTP 200 OK
 {
   "clientId": "{clientId}",
-  "scope": "user.userA",
+  "scope": "user.sub-1",
   "config": [
-    {"name": "plugins", "value": "A B"}
+    {"name": "plugins1", "value": "D", "scope": "user.sub-1", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
   ],
   "defaults": [
-    {"name": "plugins", "value": "A B", "scope": "project.projectA"},
-    {"name": "rate", "value": "1", "scope": "project.projectA"}
+    {"name": "plugins1", "value": "C", "scope": "project.radar", "clientId": "{clientId}", "version": 2, "createdByUser": "appconfig", "createTimestamp": 1764079198971},
+    {"name": "plugins2", "value": "A", "scope": "global", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
   ]
 }
 ```
@@ -202,10 +298,70 @@ HTTP 200 OK
 }
 ```
 
+Get the most recent value for a specific config name for a user.
+```
+GET /projects/{projectId}/users/{userId}/config/{clientId}/names/{name}
+---
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "scope": "user.{userId}",
+  "config": [
+    {"name": "{name}", "value": "1", "scope": "user.{userId}", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}
+  ]
+
+}
+```
+
+List all user-scope versions for a specific config name for a user.
+```
+GET /projects/{projectId}/users/{userId}/config/{clientId}/names/{name}/versions
+---
+HTTP 200 OK
+[
+  {
+    "clientId": "{clientId}",
+    "scope": "user.{userId}",
+    "config": [
+      {"name": "{name}", "value": "1", "scope": "user.{userId}", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}}
+    ]
+  }
+]
+```
+
+Get one specific user-scope version of a config name for a user.
+```
+GET /projects/{projectId}/users/{userId}/config/{clientId}/names/{name}/versions/{version}
+---
+HTTP 200 OK
+{
+  "clientId": "{clientId}",
+  "scope": "user.{userId}",
+  "config": [
+    {"name": "{name}", "value": "1", "scope": "user.{userId}", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}}
+  ]
+}
+```
+
+Get the public configuration. This returns the global configuration for the special public client.
+```
+GET /public/config
+---
+HTTP 200 OK
+{
+  "clientId": "public_config_service",
+  "scope": "global",
+  "config": [
+    {"name": "somePublicSetting", "value": "on", "scope": "global", "clientId": "{clientId}", "version": 1, "createdByUser": "appconfig", "createTimestamp": 1764068409791}}
+  ]
+}
+
+```
+
 ## Docker usage
 
 Start the stack with
-
+SUPER_PROTOCOL
 ```
 docker-compose up -d
 ```
