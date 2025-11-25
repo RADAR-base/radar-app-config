@@ -33,13 +33,29 @@ class UserService(
         clientId: String,
         projectId: String,
         userId: String,
-    ): ClientConfig {
-        val scopes = userScopes(clientId, projectId, userId)
-        return ClientConfig.fromStream(
-            clientId,
-            scopes[0],
-            resolver[clientId].resolveAll(scopes, null),
-        )
+    ): ClientConfig? {
+        val scope = userScope(userId)
+        val vr = resolver[clientId]
+        return if (vr is HibernateVariableResolver) {
+            val userMostRecent = vr.mostRecentConfigs(scope)
+            val projectMostRecent = vr.mostRecentConfigs(projectScope(projectId))
+            val globalMostRecent = vr.mostRecentConfigs(globalScope)
+
+            ClientConfig(
+                clientId = clientId,
+                scope = scope.asString(),
+                config = userMostRecent.flatMap { it.config },
+                // Project defaults take precedence over global defaults
+                defaults = projectMostRecent.flatMap { it.config } +
+                    globalMostRecent.flatMap { it.config }.filter { global ->
+                        projectMostRecent.none { proj ->
+                            proj.config.any { it.name == global.name }
+                        }
+                    },
+            )
+        } else {
+                null
+        }
     }
 
     /**
