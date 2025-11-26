@@ -1,13 +1,23 @@
 package org.radarbase.lang.expression
 
 import java.math.BigDecimal
+import java.time.Instant
 
-data class ResolvedVariable(val scope: Scope, val id: QualifiedId, val variable: Variable)
-
+//data class ResolvedVariable(val scope: Scope, val id: QualifiedId, val variable: Variable)
+data class ResolvedVariable(
+    val scope: Scope,
+    val id: QualifiedId,
+    val variable: Variable,
+    val createTimestamp: Instant?,
+    val createdBy: String?,
+    val version: Int?
+)
 interface VariableResolver {
     suspend fun replace(scope: Scope, prefix: QualifiedId? = null, variables: Sequence<Pair<QualifiedId, Variable>>)
     suspend fun register(scope: Scope, id: QualifiedId, variable: Variable)
     suspend fun resolve(scopes: List<Scope>, id: QualifiedId): ResolvedVariable
+    suspend fun resolveVersions(scopes: List<Scope>, id: QualifiedId): Sequence<ResolvedVariable>
+    suspend fun resolveVersion(scopes: List<Scope>, id: QualifiedId, version: Int): Sequence<ResolvedVariable>
     suspend fun resolveAll(scopes: List<Scope>, prefix: QualifiedId?): Sequence<ResolvedVariable>
     suspend fun list(scopes: List<Scope>, prefix: QualifiedId?): Sequence<QualifiedId>
 }
@@ -87,7 +97,7 @@ class DirectVariableResolver : VariableResolver {
                 if (!usePrefix.isEmpty()) {
                     variableStream = variableStream.filter { (k) -> k.isPrefixedBy(usePrefix) }
                 }
-                variableStream.map { (k, v) -> ResolvedVariable(scope, k, v) }
+                variableStream.map { (k, v) -> ResolvedVariable(scope, k, v, null, null, null) }
             }
     }
 
@@ -95,8 +105,32 @@ class DirectVariableResolver : VariableResolver {
         scopes: List<Scope>,
         id: QualifiedId,
     ): ResolvedVariable = scopes
-        .firstNotNullOfOrNull { s -> variables[s]?.get(id)?.let { ResolvedVariable(s, id, it) } }
+        .firstNotNullOfOrNull { s -> variables[s]?.get(id)?.let { ResolvedVariable(s, id, it, null, null, null) } }
         ?: throw UnsupportedOperationException("Unknown variable $id in scopes $scopes.")
+
+    override suspend fun resolveVersions(
+        scopes: List<Scope>,
+        id: QualifiedId,
+    ): Sequence<ResolvedVariable> {
+        // Direct in-memory resolver has no versioning; return the first match as a single-element sequence
+        val resolved = scopes
+            .firstNotNullOfOrNull { s -> variables[s]?.get(id)?.let { ResolvedVariable(s, id, it, null, null, null) } }
+            ?: return emptySequence()
+        return sequenceOf(resolved)
+    }
+
+    override suspend fun resolveVersion(
+        scopes: List<Scope>,
+        id: QualifiedId,
+        version: Int,
+    ): Sequence<ResolvedVariable> {
+        // No versioning for direct resolver; behave like resolveVersions
+        val resolved = scopes
+            .firstNotNullOfOrNull { s -> variables[s]?.get(id)?.let { ResolvedVariable(s, id, it, null, null, null) } }
+            ?: return emptySequence()
+        return sequenceOf(resolved)
+    }
+
 
     override fun toString(): String {
         return "DirectVariableResolver(variables=$variables)"
