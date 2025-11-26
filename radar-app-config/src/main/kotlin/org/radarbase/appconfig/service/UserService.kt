@@ -29,99 +29,49 @@ class UserService(
         )
     }
 
-    suspend fun userConfig(
-        clientId: String,
-        projectId: String,
-        userId: String,
-    ): ClientConfig? {
-        val scope = userScope(userId)
-        val vr = resolver[clientId]
-        return if (vr is HibernateVariableResolver) {
-            val userMostRecent = vr.mostRecentConfigs(scope)
-            val projectMostRecent = vr.mostRecentConfigs(projectScope(projectId))
-            val globalMostRecent = vr.mostRecentConfigs(globalScope)
-
-            ClientConfig(
-                clientId = clientId,
-                scope = scope.asString(),
-                config = userMostRecent.flatMap { it.config },
-                // Project defaults take precedence over global defaults
-                defaults = projectMostRecent.flatMap { it.config } +
-                    globalMostRecent.flatMap { it.config }.filter { global ->
-                        projectMostRecent.none { proj ->
-                            proj.config.any { it.name == global.name }
-                        }
-                    },
-            )
-        } else {
-                null
-        }
-    }
-
-    /**
-     * Return the most recent config with the given name for this user. It searches in order
-     * of specificity: user -> matching conditions -> project -> global.
-     */
-    suspend fun userConfigName(
-        clientId: String,
-        projectId: String,
-        userId: String,
-        name: String,
-    ): ClientConfig? {
-        val vr = resolver[clientId]
-        if (vr !is HibernateVariableResolver) return null
-
-        val scopes = userScopes(clientId, projectId, userId)
-        val qName = QualifiedId(name)
-        for (scope in scopes) {
-            val cfg = vr.versions(scope, qName).firstOrNull()
-            if (cfg != null) return cfg
-        }
-        return null
-    }
-
-    /**
-     * Return all versions of the config with the given name in the user scope only.
-     */
-    suspend fun userConfigNameVersions(
-        clientId: String,
-        userId: String,
-        name: String,
-    ): List<ClientConfig> {
-        val vr = resolver[clientId]
-        return if (vr is HibernateVariableResolver) {
-            vr.versions(userScope(userId), QualifiedId(name))
-        } else {
-            emptyList()
-        }
-    }
-
-    /**
-     * Return the specific version of the config with the given name in the user scope only,
-     * or throw if not found.
-     */
-    suspend fun userConfigNameVersion(
-        clientId: String,
-        userId: String,
-        name: String,
-        version: Int,
+    suspend fun userConfig(clientId: String, projectId: String, userId: String,
     ): ClientConfig {
-        val vr = resolver[clientId]
-        val versions = if (vr is HibernateVariableResolver) {
-            vr.versions(userScope(userId), QualifiedId(name))
-        } else emptyList()
-
-        return versions.firstOrNull { it.config.firstOrNull()?.version == version }
-            ?: throw HttpNotFoundException(
-                "config_version_not_found",
-                "No config found for name '$name' with version $version in scope '${userScope(userId).asString()}' for client $clientId.",
-            )
+        val scopes = userScopes(clientId, projectId, userId)
+        return ClientConfig.fromStream(
+            clientId,
+            scopes[0],
+            resolver[clientId].resolveAll(scopes, null),
+        )
     }
 
-    private suspend fun userScopes(
-        clientId: String,
-        projectId: String,
-        userId: String,
+    suspend fun userConfigName(
+        clientId: String, projectId: String, userId: String, name: String,
+    ): ClientConfig {
+        val scopes = userScopes(clientId, projectId, userId)
+        return ClientConfig.fromResolvedVariable(
+            clientId,
+            scopes[0],
+            resolver[clientId].resolve(scopes, QualifiedId(name))
+        )
+    }
+
+    suspend fun userConfigNameVersion(
+        clientId: String, projectId: String, userId: String, name: String, version: Int,
+    ): ClientConfig {
+        val scopes = userScopes(clientId, projectId, userId)
+        return ClientConfig.fromVersionStream(
+            clientId,
+            scopes[0],
+            resolver[clientId].resolveVersion(scopes, QualifiedId(name), version)
+        )
+    }
+
+    suspend fun userConfigNameVersions(clientId: String, projectId: String, userId: String, name: String,
+    ): List<ClientConfig> {
+        val scopes = userScopes(clientId, projectId, userId)
+        val sequence = resolver[clientId].resolveVersions(scopes, QualifiedId(name))
+        val config = ClientConfig.fromVersionStream(clientId, scopes[0], sequence)
+        return listOf(config)
+    }
+
+
+
+    private suspend fun userScopes(clientId: String, projectId: String, userId: String,
     ): List<Scope> = buildList {
         add(userScope(userId))
         conditionService.matchingConditions(clientId, projectId, userId)

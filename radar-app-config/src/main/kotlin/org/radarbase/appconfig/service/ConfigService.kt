@@ -17,44 +17,34 @@ class ConfigService(
     @Context private val clientService: ClientService,
 ) {
 
-    suspend fun globalConfig(clientId: String): List<ClientConfig> {
-        val vr = resolver[clientId]
-        return if (vr is HibernateVariableResolver) {
-            vr.mostRecentConfigs(globalScope)
-        } else {
-            emptyList()
-        }
+    suspend fun globalConfig(clientId: String): ClientConfig {
+        return ClientConfig.fromStream(
+            clientId,
+            globalScope,
+            resolver[clientId].resolveAll(listOf(globalScope), null),
+        )
     }
 
-    suspend fun globalConfigName(clientId: String, name: String): ClientConfig? {
-        val vr = resolver[clientId]
-        return if (vr is HibernateVariableResolver) {
-            vr.versions(globalScope, QualifiedId(name)).firstOrNull()
-        } else {
-            null
-        }
+    suspend fun globalConfigName(clientId: String, name: String): ClientConfig {
+        return ClientConfig.fromResolvedVariable(
+            clientId,
+            globalScope,
+            resolver[clientId].resolve(listOf(globalScope), QualifiedId(name))
+        )
     }
 
     suspend fun globalConfigNameVersion(clientId: String, name: String, version: Int): ClientConfig {
-        val vr = resolver[clientId]
-        val versions = if (vr is HibernateVariableResolver) {
-            vr.versions(globalScope, QualifiedId(name))
-        } else emptyList()
-
-        return versions.firstOrNull { it.config.firstOrNull()?.version == version }
-            ?: throw HttpNotFoundException(
-                "config_version_not_found",
-                "No config found for name '$name' with version $version in scope '${globalScope.asString()}' for client $clientId.",
-            )
+        return ClientConfig.fromVersionStream(
+            clientId,
+            globalScope,
+            resolver[clientId].resolveVersion(listOf(globalScope), QualifiedId(name), version)
+        )
     }
 
     suspend fun globalConfigNameVersions(clientId: String, name: String): List<ClientConfig> {
-        val vr = resolver[clientId]
-        return if (vr is HibernateVariableResolver) {
-            vr.versions(globalScope, QualifiedId(name))
-        } else {
-            emptyList()
-        }
+        val sequence = resolver[clientId].resolveVersions(listOf(globalScope), QualifiedId(name))
+        val config = ClientConfig.fromVersionStream(clientId, globalScope, sequence)
+        return listOf(config)
     }
 
 

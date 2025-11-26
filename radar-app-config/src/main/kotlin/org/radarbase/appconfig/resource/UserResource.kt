@@ -119,7 +119,7 @@ class UserResource(
         @PathParam("name") name: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        userService.userConfigNameVersions(clientId, userId, name)
+        userService.userConfigNameVersions(clientId, projectId, userId, name)
     }
 
     // return the version `version` of the config of client clientId with name name for a user (user scope only)
@@ -135,6 +135,6 @@ class UserResource(
         @PathParam("version") version: Int,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        userService.userConfigNameVersion(clientId, userId, name, version)
+        userService.userConfigNameVersion(clientId, projectId, userId, name, version)
     }
 }
