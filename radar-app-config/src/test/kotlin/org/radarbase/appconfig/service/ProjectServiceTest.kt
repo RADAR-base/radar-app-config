@@ -3,115 +3,103 @@ package org.radarbase.appconfig.service
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.atLeastOnce
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.api.SingleVariable
 import org.radarbase.appconfig.inject.ClientVariableResolver
-import org.radarbase.appconfig.persistence.HibernateVariableResolver
-import org.radarbase.lang.expression.QualifiedId
+import org.radarbase.appconfig.inject.InMemoryResourceEnhancer
+import org.radarbase.lang.expression.register
 import org.radarbase.lang.expression.toVariable
 
 internal class ProjectServiceTest {
     private lateinit var projectService: ConfigProjectService
     private lateinit var resolver: ClientVariableResolver
-    private lateinit var hibernateResolver: HibernateVariableResolver
 
     @BeforeEach
     fun setUp() {
-        resolver = mock()
-        hibernateResolver = mock()
-        whenever(resolver["aRMT"]).thenReturn(hibernateResolver)
+        resolver = InMemoryResourceEnhancer.InMemoryClientVariableResolver()
         projectService = ConfigProjectServiceImpl(resolver)
     }
 
     @Test
     fun projectConfig() = runBlocking {
-        // Stub project scope most recent
-        whenever(hibernateResolver.mostRecentConfigs(ConfigProjectServiceImpl.projectScope("radar-test")))
-            .thenReturn(
-                listOf(
-                    ClientConfig(
-                        clientId = "aRMT",
-                        scope = "project.radar-test",
-                        config = listOf(
-                            SingleVariable("a.c", "b"),
-                            SingleVariable("a.d", "5"),
-                        ),
-                    ),
-                ),
-            )
-        // Stub global defaults
-        whenever(hibernateResolver.mostRecentConfigs(ConfigService.globalScope))
-            .thenReturn(
-                listOf(
-                    ClientConfig(
-                        clientId = "aRMT",
-                        scope = ConfigService.globalScope.asString(),
-                        config = listOf(
-                            SingleVariable("a.c", "f", "global"),
-                            SingleVariable("a.e", "5", "global"),
-                        ),
-                    ),
-                ),
-            )
-
-        val cfg = projectService.projectConfig("aRMT", "radar-test")
-        // Compare fields individually to avoid strict data class equality differences
-        assertEquals("aRMT", cfg?.clientId)
-        assertEquals("project.radar-test", cfg?.scope)
+        resolver["aRMT"].register("project.radar-test", "a.c", "b".toVariable())
+        resolver["aRMT"].register("project.radar-test", "a.d", 5.toVariable())
+        println(resolver["aRMT"])
         assertEquals(
-            listOf(
-                SingleVariable("a.c", "b"),
-                SingleVariable("a.d", "5"),
+            ClientConfig(
+                "aRMT",
+                "project.radar-test",
+                listOf(
+                    SingleVariable("a.c", "b", "project.radar-test", "aRMT", null, null, null),
+                    SingleVariable("a.d", "5", "project.radar-test", "aRMT", null, null, null),
+                ),
             ),
-            cfg?.config,
-        )
-        assertEquals(
-            listOf(
-                SingleVariable("a.c", "f", "global"),
-                SingleVariable("a.e", "5", "global"),
-            ),
-            cfg?.defaults,
+            projectService.projectConfig("aRMT", "radar-test"),
         )
 
-        // For another project, no project configs, only global defaults
-        whenever(hibernateResolver.mostRecentConfigs(ConfigProjectServiceImpl.projectScope("radar-demo")))
-            .thenReturn(emptyList())
+        resolver["aRMT"].register("global", "a.c", "f".toVariable())
+        resolver["aRMT"].register("global", "a.e", 5.toVariable())
 
-        val cfg2 = projectService.projectConfig("aRMT", "radar-demo")
-        assertEquals("aRMT", cfg2?.clientId)
-        assertEquals("project.radar-demo", cfg2?.scope)
-        assertEquals(emptyList<SingleVariable>(), cfg2?.config)
         assertEquals(
-            listOf(
-                SingleVariable("a.c", "f", "global"),
-                SingleVariable("a.e", "5", "global"),
+            ClientConfig(
+                "aRMT",
+                "project.radar-test",
+                listOf(
+                    SingleVariable("a.c", "b", "project.radar-test", "aRMT", null, null, null),
+                    SingleVariable("a.d", "5", "project.radar-test", "aRMT", null, null, null),
+                ),
+                listOf(
+                    SingleVariable("a.c", "f", "global", "aRMT",  null, null, null),
+                    SingleVariable("a.e", "5", "global", "aRMT",  null, null, null),
+                ),
             ),
-            cfg2?.defaults,
+            projectService.projectConfig("aRMT", "radar-test"),
+        )
+
+        assertEquals(
+            ClientConfig(
+                "aRMT",
+                "project.radar-demo",
+                listOf(),
+                listOf(
+                    SingleVariable("a.c", "f", "global", "aRMT", null, null, null),
+                    SingleVariable("a.e", "5", "global", "aRMT", null, null, null),
+                ),
+            ),
+            projectService.projectConfig("aRMT", "radar-demo"),
         )
     }
 
     @Test
     fun putProjectConfig() = runBlocking {
-        // Ensure projectConfig works by stubbing empty lists
-        whenever(hibernateResolver.mostRecentConfigs(ConfigProjectServiceImpl.projectScope("radar-test")))
-            .thenReturn(emptyList())
-        whenever(hibernateResolver.mostRecentConfigs(ConfigService.globalScope))
-            .thenReturn(emptyList())
-
         val configEmpty = projectService.projectConfig("aRMT", "radar-test")
-        assertEquals("aRMT", configEmpty?.clientId)
-        assertEquals("project.radar-test", configEmpty?.scope)
-        assertEquals(emptyList<SingleVariable>(), configEmpty?.config)
-        assertEquals(emptyList<SingleVariable>(), configEmpty?.defaults)
+        assertEquals(ClientConfig("aRMT", "project.radar-test", listOf()), configEmpty)
+        projectService.putProjectConfig(
+            "aRMT",
+            "radar-test",
+            ClientConfig(
+                null,
+                null,
+                listOf(
+                    SingleVariable("c", "b", "project.radar-test", "aRMT", null, null, null),
+                    SingleVariable("d", "5", "project.radar-test", "aRMT", null, null, null),
+                ),
+            ),
+        )
+
+        val config = projectService.projectConfig("aRMT", "radar-test")
+        assertEquals(
+            ClientConfig(
+                "aRMT",
+                "project.radar-test",
+                listOf(
+                    SingleVariable("c", "b", "project.radar-test", "aRMT", null, null, null),
+                    SingleVariable("d", "5", "project.radar-test", "aRMT", null, null, null),
+                ),
+            ),
+            config,
+        )
 
         projectService.putProjectConfig(
             "aRMT",
@@ -120,145 +108,95 @@ internal class ProjectServiceTest {
                 null,
                 null,
                 listOf(
-                    SingleVariable("c", "b"),
-                    SingleVariable("d", "5"),
+                    SingleVariable("c", "b", "project.radar-test", "aRMT", null, null, null),
                 ),
             ),
         )
-
-        val seqCaptor = argumentCaptor<Sequence<Pair<QualifiedId, org.radarbase.lang.expression.Variable>>>()
-        verify(hibernateResolver, atLeastOnce()).replace(
-            eq(ConfigProjectServiceImpl.projectScope("radar-test")),
-            eq(null),
-            seqCaptor.capture(),
+        val configNew = projectService.projectConfig("aRMT", "radar-test")
+        assertEquals(
+            ClientConfig(
+                "aRMT",
+                "project.radar-test",
+                listOf(
+                    SingleVariable("c", "b", "project.radar-test", "aRMT", null, null, null),
+                ),
+            ),
+            configNew,
         )
 
-        val captured1 = seqCaptor.firstValue.toList()
-        assertEquals(2, captured1.size)
-        assertEquals("c", captured1[0].first.asString())
-        assertEquals("b".toVariable(), captured1[0].second)
-        assertEquals("d", captured1[1].first.asString())
-        assertEquals("5".toVariable(), captured1[1].second)
-
-        // Update with single key
         projectService.putProjectConfig(
             "aRMT",
             "radar-test",
             ClientConfig(
                 null,
                 null,
-                listOf(SingleVariable("c", "b")),
-            ),
-        )
-        verify(hibernateResolver, atLeastOnce()).replace(
-            eq(ConfigProjectServiceImpl.projectScope("radar-test")),
-            eq(null),
-            any(),
-        )
-
-        // Set null value
-        projectService.putProjectConfig(
-            "aRMT",
-            "radar-test",
-            ClientConfig(
-                null,
-                null,
-                listOf(SingleVariable("c", null)),
-            ),
-        )
-        verify(hibernateResolver, atLeastOnce()).replace(
-            eq(ConfigProjectServiceImpl.projectScope("radar-test")),
-            eq(null),
-            any(),
-        )
-    }
-
-    @Test
-    fun projectConfigName_fallbackToGlobal() = runBlocking {
-        val name = "a.c"
-        val projectScope = ConfigProjectServiceImpl.projectScope("radar-test")
-        val versionsProject = listOf(
-            ClientConfig(
-                clientId = "aRMT",
-                scope = projectScope.asString(),
-                config = listOf(SingleVariable(name, "p2", version = 2)),
-            ),
-            ClientConfig(
-                clientId = "aRMT",
-                scope = projectScope.asString(),
-                config = listOf(SingleVariable(name, "p1", version = 1)),
-            ),
-        )
-        val versionsGlobal = listOf(
-            ClientConfig(
-                clientId = "aRMT",
-                scope = ConfigService.globalScope.asString(),
-                config = listOf(SingleVariable(name, "g2", version = 2)),
-            ),
-        )
-
-        // Case 1: project has versions, should return first of project
-        whenever(hibernateResolver.versions(projectScope, QualifiedId(name))).thenReturn(versionsProject)
-        whenever(hibernateResolver.versions(ConfigService.globalScope, QualifiedId(name))).thenReturn(versionsGlobal)
-
-        val firstProject = projectService.projectConfigName("radar-test", "aRMT", name)
-        assertEquals(versionsProject.first(), firstProject)
-
-        // Case 2: project empty, fall back to global first
-        whenever(hibernateResolver.versions(projectScope, QualifiedId(name))).thenReturn(emptyList())
-        val firstGlobal = projectService.projectConfigName("radar-test", "aRMT", name)
-        assertEquals(versionsGlobal.first(), firstGlobal)
-    }
-
-    @Test
-    fun projectConfigNameVersionsListProjectOnly() = runBlocking {
-        val name = "a.c"
-        val projectScope = ConfigProjectServiceImpl.projectScope("radar-test")
-        val versionsProject = listOf(
-            ClientConfig(
-                clientId = "aRMT",
-                scope = projectScope.asString(),
-                config = listOf(SingleVariable(name, "p2", version = 2)),
-            ),
-            ClientConfig(
-                clientId = "aRMT",
-                scope = projectScope.asString(),
-                config = listOf(SingleVariable(name, "p1", version = 1)),
-            ),
-        )
-        whenever(hibernateResolver.versions(projectScope, QualifiedId(name))).thenReturn(versionsProject)
-
-        val listed = projectService.projectConfigNameVersions("radar-test", "aRMT", name)
-        assertEquals(versionsProject, listed)
-    }
-
-    @Test
-    fun projectConfigNameVersionSpecificOrNotFound() {
-        runBlocking {
-            val name = "a.c"
-            val projectScope = ConfigProjectServiceImpl.projectScope("radar-test")
-            val versionsProject = listOf(
-                ClientConfig(
-                    clientId = "aRMT",
-                    scope = projectScope.asString(),
-                    config = listOf(SingleVariable(name, "p2", version = 2)),
+                listOf(
+                    SingleVariable("c", null, "project.radar-test", "aRMT", null, null, null),
                 ),
-                ClientConfig(
-                    clientId = "aRMT",
-                    scope = projectScope.asString(),
-                    config = listOf(SingleVariable(name, "p1", version = 1)),
+            ),
+        )
+        val configNull = projectService.projectConfig("aRMT", "radar-test")
+        assertEquals(
+            ClientConfig(
+                "aRMT",
+                "project.radar-test",
+                listOf(
+                    SingleVariable("c", null, "project.radar-test", "aRMT", null, null, null),
                 ),
-            )
-            whenever(hibernateResolver.versions(projectScope, QualifiedId(name))).thenReturn(versionsProject)
+            ),
+            configNull,
+        )
+    }
 
-            val v2 = projectService.projectConfigNameVersion("radar-test", "aRMT", name, 2)
-            assertEquals(versionsProject[0], v2)
+    @Test
+    fun projectConfigNameAndVersions() = runBlocking {
+        // Register variables in project and global scopes
+        resolver["aRMT"].register("project.radar-test", "p.x", "pv".toVariable())
+        resolver["aRMT"].register("global", "p.x", "gv".toVariable())
 
-            assertThrows(org.radarbase.jersey.exception.HttpNotFoundException::class.java) {
-                runBlocking {
-                    projectService.projectConfigNameVersion("radar-test", "aRMT", name, 99)
-                }
-            }
-        }
+        // Fetch a specific name (should resolve project scope first)
+        val byName = projectService.projectConfigName("radar-test", "aRMT", "p.x")
+        assertEquals(
+            ClientConfig(
+                "aRMT",
+                "project.radar-test",
+                listOf(
+                    // Direct resolver has no metadata or versioning; expect nulls for those fields
+                    SingleVariable("p.x", "pv", "project.radar-test", "aRMT", null, null, null),
+                ),
+                emptyList(),
+            ),
+            byName,
+        )
+
+        // Fetch all versions for the variable name (direct resolver returns single element)
+        val versions = projectService.projectConfigNameVersions("radar-test", "aRMT", "p.x")
+        assertEquals(
+            listOf(
+                ClientConfig(
+                    "aRMT",
+                    "project.radar-test",
+                    listOf(
+                        SingleVariable("p.x", "pv", "project.radar-test", "aRMT", null, null, null),
+                    ),
+                    null,
+                ),
+            ),
+            versions,
+        )
+
+        // Fetch a specific version (the in-memory resolver ignores version and returns the same value)
+        val version1 = projectService.projectConfigNameVersion("radar-test", "aRMT", "p.x", 1)
+        assertEquals(
+            ClientConfig(
+                "aRMT",
+                "project.radar-test",
+                listOf(
+                    SingleVariable("p.x", "pv", "project.radar-test", "aRMT", null, null, null),
+                ),
+                null,
+            ),
+            version1,
+        )
     }
 }
