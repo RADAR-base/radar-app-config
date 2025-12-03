@@ -17,6 +17,7 @@ services:
       MANAGEMENTPORTAL_COMMON_MANAGEMENT_PORTAL_BASE_URL: http://localhost:8080/managementportal
       MANAGEMENTPORTAL_OAUTH_CLIENTS_FILE: /mp-includes/config/oauth_client_details.csv
       MANAGEMENTPORTAL_CATALOGUE_SERVER_ENABLE_AUTO_IMPORT: 'false'
+      MANAGEMENTPORTAL_CATALOGUE_SERVER_SERVER_URL: "http://catalog-server:9010/source-types"
       MANAGEMENTPORTAL_OAUTH_SIGNING_KEY_ALIAS: 'radarbase-managementportal-ec'
       SERVER_SERVLET_SESSION_COOKIE_SECURE: "false"
       JAVA_OPTS: -Xmx512m  # maximum heap size for the JVM running ManagementPortal, increase this as necessary
