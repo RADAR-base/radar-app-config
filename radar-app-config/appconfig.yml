@@ -12,6 +12,6 @@ auth:
   jwtResourceName: res_appconfig
 
 database:
-  url: "jdbc:postgresql://localhost:5432/appconfig?sslmode=disable"
+  url: "jdbc:postgresql://localhost:5433/appconfig?sslmode=disable"
   user: radarcns
   password: radarcns
