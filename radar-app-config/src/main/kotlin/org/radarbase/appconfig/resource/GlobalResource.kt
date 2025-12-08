@@ -88,5 +88,4 @@ class GlobalResource(
         clientService.ensureClient(clientId)
         configService.globalConfigNameVersion(clientId, name, version)
     }
-
 }
