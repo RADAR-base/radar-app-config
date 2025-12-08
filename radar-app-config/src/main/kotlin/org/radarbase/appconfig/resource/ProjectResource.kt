@@ -122,6 +122,4 @@ class ProjectResource(
         clientService.ensureClient(clientId)
         projectService.projectConfigNameVersion(projectId, clientId, name, version)
     }
-
-
 }

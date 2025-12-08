@@ -38,6 +38,4 @@ class PublicResource(
         clientService.ensureClient(PUBLIC_CONFIG_SERVICE)
         configService.globalConfig(PUBLIC_CONFIG_SERVICE)
     }
-
-
 }
