@@ -26,7 +26,7 @@ internal class UserServiceTest {
 
     @Test
     fun putUserConfig() = runBlocking {
-        val configEmpty = userService.userConfig("aRMT", "radar-test", "a")
+        val configEmpty = userService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(ClientConfig("aRMT", "user.a", listOf()), configEmpty)
         userService.putUserConfig(
             "aRMT",
@@ -41,7 +41,7 @@ internal class UserServiceTest {
             ),
         )
 
-        val config = userService.userConfig("aRMT", "radar-test", "a")
+        val config = userService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
                 "aRMT",
@@ -65,7 +65,7 @@ internal class UserServiceTest {
                 ),
             ),
         )
-        val configNew = userService.userConfig("aRMT", "radar-test", "a")
+        val configNew = userService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
                 "aRMT",
@@ -88,7 +88,7 @@ internal class UserServiceTest {
                 ),
             ),
         )
-        val configNull = userService.userConfig("aRMT", "radar-test", "a")
+        val configNull = userService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
                 "aRMT",

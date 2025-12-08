@@ -35,7 +35,7 @@ internal class ProjectServiceTest {
                     SingleVariable("a.d", "5", "project.radar-test", "aRMT", null, null, null),
                 ),
             ),
-            projectService.projectConfig("aRMT", "radar-test"),
+            projectService.getProjectConfig("aRMT", "radar-test"),
         )
 
         resolver["aRMT"].register("global", "a.c", "f".toVariable())
@@ -54,7 +54,7 @@ internal class ProjectServiceTest {
                     SingleVariable("a.e", "5", "global", "aRMT",  null, null, null),
                 ),
             ),
-            projectService.projectConfig("aRMT", "radar-test"),
+            projectService.getProjectConfig("aRMT", "radar-test"),
         )
 
         assertEquals(
@@ -67,13 +67,13 @@ internal class ProjectServiceTest {
                     SingleVariable("a.e", "5", "global", "aRMT", null, null, null),
                 ),
             ),
-            projectService.projectConfig("aRMT", "radar-demo"),
+            projectService.getProjectConfig("aRMT", "radar-demo"),
         )
     }
 
     @Test
     fun putProjectConfig() = runBlocking {
-        val configEmpty = projectService.projectConfig("aRMT", "radar-test")
+        val configEmpty = projectService.getProjectConfig("aRMT", "radar-test")
         assertEquals(ClientConfig("aRMT", "project.radar-test", listOf()), configEmpty)
         projectService.putProjectConfig(
             "aRMT",
@@ -88,7 +88,7 @@ internal class ProjectServiceTest {
             ),
         )
 
-        val config = projectService.projectConfig("aRMT", "radar-test")
+        val config = projectService.getProjectConfig("aRMT", "radar-test")
         assertEquals(
             ClientConfig(
                 "aRMT",
@@ -112,7 +112,7 @@ internal class ProjectServiceTest {
                 ),
             ),
         )
-        val configNew = projectService.projectConfig("aRMT", "radar-test")
+        val configNew = projectService.getProjectConfig("aRMT", "radar-test")
         assertEquals(
             ClientConfig(
                 "aRMT",
@@ -135,7 +135,7 @@ internal class ProjectServiceTest {
                 ),
             ),
         )
-        val configNull = projectService.projectConfig("aRMT", "radar-test")
+        val configNull = projectService.getProjectConfig("aRMT", "radar-test")
         assertEquals(
             ClientConfig(
                 "aRMT",
@@ -155,7 +155,7 @@ internal class ProjectServiceTest {
         resolver["aRMT"].register("global", "p.x", "gv".toVariable())
 
         // Fetch a specific name (should resolve project scope first)
-        val byName = projectService.projectConfigName("radar-test", "aRMT", "p.x")
+        val byName = projectService.getProjectConfigByName("radar-test", "aRMT", "p.x")
         assertEquals(
             ClientConfig(
                 "aRMT",
@@ -170,7 +170,7 @@ internal class ProjectServiceTest {
         )
 
         // Fetch all versions for the variable name (direct resolver returns single element)
-        val versions = projectService.projectConfigNameVersions("radar-test", "aRMT", "p.x")
+        val versions = projectService.getProjectConfigByNameAndAllVersions("radar-test", "aRMT", "p.x")
         assertEquals(
             listOf(
                 ClientConfig(
@@ -186,7 +186,7 @@ internal class ProjectServiceTest {
         )
 
         // Fetch a specific version (the in-memory resolver ignores version and returns the same value)
-        val version1 = projectService.projectConfigNameVersion("radar-test", "aRMT", "p.x", 1)
+        val version1 = projectService.getProjectConfigByNameAndVersion("radar-test", "aRMT", "p.x", 1)
         assertEquals(
             ClientConfig(
                 "aRMT",
