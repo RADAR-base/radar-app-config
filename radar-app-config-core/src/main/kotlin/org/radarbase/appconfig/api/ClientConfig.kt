@@ -4,6 +4,20 @@ import kotlinx.serialization.Serializable
 import org.radarbase.lang.expression.ResolvedVariable
 import org.radarbase.lang.expression.Scope
 
+// Extension function to convert a ResolvedVariable into a SingleVariable for a given clientId.
+internal fun ResolvedVariable.toSingleVariable(clientId: String): SingleVariable {
+    val (resolvedScope, id, variable, createTimestamp, createdBy, version) = this
+    return SingleVariable(
+        id.asString(),
+        variable.asOptString(),
+        resolvedScope.asString(),
+        clientId,
+        version,
+        createdBy,
+        createTimestamp?.toEpochMilli(),
+    )
+}
+
 @Serializable
 data class ClientConfig(
     val clientId: String?,
@@ -32,18 +46,10 @@ data class ClientConfig(
                 clientId,
                 scope.asString(),
                 configs[true]
-                    ?.map { (_, id, variable, createTimestamp, createdBy, version) ->
-                        SingleVariable(id.asString(), variable.asOptString(),
-                            scope.asString(), clientId, version, createdBy, createTimestamp?.toEpochMilli()
-                        )
-                    }
+                    ?.map { it.toSingleVariable(clientId) }
                     ?: emptyList(),
                 configs[false]
-                    ?.map { (scope, id, variable, createTimestamp, createdBy, version) ->
-                        SingleVariable(id.asString(), variable.asOptString(),
-                            scope.asString(), clientId, version, createdBy, createTimestamp?.toEpochMilli()
-                        )
-                    },
+                    ?.map { it.toSingleVariable(clientId) },
             )
         }
 
@@ -52,16 +58,7 @@ data class ClientConfig(
             scope: Scope,
             resolvedConfig: ResolvedVariable,
         ): ClientConfig {
-            val (resolvedScope, id, variable, createTimestamp, createdBy, version) = resolvedConfig
-            val single = SingleVariable(
-                id.asString(),
-                variable.asOptString(),
-                resolvedScope.asString(),
-                clientId,
-                version,
-                createdBy,
-                createTimestamp?.toEpochMilli(),
-            )
+            val single = resolvedConfig.toSingleVariable(clientId)
             return ClientConfig(
                 clientId,
                 scope.asString(),
@@ -75,17 +72,7 @@ data class ClientConfig(
             scope: Scope,
             configSequence: Sequence<ResolvedVariable>,
         ): ClientConfig {
-            val entries = configSequence.map { (resolvedScope, id, variable, createTimestamp, createdBy, version) ->
-                SingleVariable(
-                    id.asString(),
-                    variable.asOptString(),
-                    resolvedScope.asString(),
-                    clientId,
-                    version,
-                    createdBy,
-                    createTimestamp?.toEpochMilli(),
-                )
-            }.toList()
+            val entries = configSequence.map { it.toSingleVariable(clientId) }.toList()
             return ClientConfig(
                 clientId,
                 scope.asString(),
