@@ -90,15 +90,13 @@ internal class ConfigServiceTest {
 
         val listed = configService.getGlobalConfigByNameAndAllVersions("aRMT", "a.c")
         assertEquals(
-            listOf(
+
                 ClientConfig(
                     "aRMT",
                     ConfigService.globalScope.asString(),
                     listOf(SingleVariable("a.c", "v2", "global", "aRMT", null, null, null)),
                     null,
-                ),
-            ),
-            listed,
+                ),listed,
         )
     }
 

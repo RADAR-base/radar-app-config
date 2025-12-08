@@ -172,7 +172,6 @@ internal class ProjectServiceTest {
         // Fetch all versions for the variable name (direct resolver returns single element)
         val versions = projectService.getProjectConfigByNameAndAllVersions("radar-test", "aRMT", "p.x")
         assertEquals(
-            listOf(
                 ClientConfig(
                     "aRMT",
                     "project.radar-test",
@@ -180,9 +179,7 @@ internal class ProjectServiceTest {
                         SingleVariable("p.x", "pv", "project.radar-test", "aRMT", null, null, null),
                     ),
                     null,
-                ),
-            ),
-            versions,
+                ),  versions,
         )
 
         // Fetch a specific version (the in-memory resolver ignores version and returns the same value)
