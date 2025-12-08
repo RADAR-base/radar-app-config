@@ -27,7 +27,6 @@ class HibernateVariableResolver(
     asyncCoroutineService: AsyncCoroutineService,
     private val createdByUsername: String?,
 ) : VariableResolver, HibernateRepository(em, asyncCoroutineService) {
-    private val logger = LoggerFactory.getLogger(HibernateVariableResolver::class.java)
     override suspend fun replace(
         scope: Scope,
         prefix: QualifiedId?,
@@ -46,7 +45,7 @@ class HibernateVariableResolver(
     ) {
         require(!id.isEmpty()) { "Cannot save variable without variable name" }
 
-        // Determine the next version based on the most recent existing config
+        // // Determine the next version based on the most recent stored config.
         val nextVersion = ((selectMaxVersion(scope, id) ?: 0)) + 1
 
         val configEntity = ConfigEntity().apply {
@@ -188,12 +187,12 @@ class HibernateVariableResolver(
     private fun EntityManager.selectConfig(
         scope: Scope,
     ): LongArray = createQuery(
-        "SELECT c.id FROM Config c " +
-            "WHERE c.scope = :scope AND c.clientId = :clientId " +
-            "AND c.version = (" +
-            "  SELECT max(c2.version) FROM Config c2 " +
-            "  WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name" +
-            ")",
+        """SELECT c.id FROM Config c 
+            WHERE c.scope = :scope AND c.clientId = :clientId 
+            AND c.version = (
+                SELECT max(c2.version) FROM Config c2 
+                WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name
+            )""",
         java.lang.Long::class.java,
     )
         .setParameter("scope", scope.asString())
@@ -206,12 +205,12 @@ class HibernateVariableResolver(
         scope: Scope,
         prefix: String,
     ): LongArray = createQuery(
-        "SELECT c.id FROM Config c " +
-            "WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix " +
-            "AND c.version = (" +
-            "  SELECT max(c2.version) FROM Config c2 " +
-            "  WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name" +
-            ")",
+        """SELECT c.id FROM Config c 
+            WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix 
+            AND c.version = (
+              SELECT max(c2.version) FROM Config c2 
+              WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name
+            )""",
         java.lang.Long::class.java,
     )
         .setParameter("scope", scope.asString())
@@ -225,12 +224,12 @@ class HibernateVariableResolver(
         scopes: List<Scope>,
         name: QualifiedId,
     ): TypedQuery<ConfigEntity> = createQuery(
-        "SELECT c FROM Config c " +
-            "WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name = :name " +
-            "AND c.version = (" +
-            "  SELECT max(c2.version) FROM Config c2 " +
-            "  WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name" +
-            ")",
+        """SELECT c FROM Config c
+            WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name = :name
+            AND c.version = (
+              SELECT max(c2.version) FROM Config c2
+              WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name
+            )""",
         ConfigEntity::class.java,
     )
         .setParameter("scopes", scopes.map { it.asString() })
@@ -321,6 +320,7 @@ class HibernateVariableResolver(
             { v1, v2 ->
                 if (scopes.indexOf(v1.scope) < scopes.indexOf(v2.scope)) v1 else v2
             }
+        private val logger = LoggerFactory.getLogger(HibernateVariableResolver::class.java)
     }
 }
 
