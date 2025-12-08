@@ -60,13 +60,13 @@ class ProjectResource(
     @Path("{projectId}/config/{clientId}")
     @GET
     @NeedsPermission(Permission.PROJECT_READ, "projectId")
-    fun projectConfig(
+    fun getProjectConfig(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        projectService.projectConfig(clientId, projectId)
+        projectService.getProjectConfig(clientId, projectId)
     }
 
     @Path("{projectId}/config/{clientId}")
@@ -80,39 +80,39 @@ class ProjectResource(
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
         projectService.putProjectConfig(clientId, projectId, clientConfig)
-        projectService.projectConfig(clientId, projectId)
+        projectService.getProjectConfig(clientId, projectId)
     }
 
     // return the most recent config of client clientId with name name
     @Path("{projectId}/config/{clientId}/names/{name}")
     @GET
-    fun projectConfigName(
+    fun getProjectConfigByName(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
         @PathParam("name") name: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        projectService.projectConfigName(projectId, clientId, name)
+        projectService.getProjectConfigByName(projectId, clientId, name)
     }
 
     // return the all versions of the config of client clientId with name name
     @Path("{projectId}/config/{clientId}/names/{name}/versions")
     @GET
-    fun projectConfigNameVersions(
+    fun getProjectConfigByNameAndAllVersions(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
         @PathParam("name") name: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        projectService.projectConfigNameVersions(projectId, clientId, name)
+        projectService.getProjectConfigByNameAndAllVersions(projectId, clientId, name)
     }
 
     // return the version `version` of the config of client clientId with name name
     @Path("{projectId}/config/{clientId}/names/{name}/versions/{version}")
     @GET
-    fun projectConfigNameVersion(
+    fun getProjectConfigByNameAndVersion(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
         @PathParam("clientId") clientId: String,
@@ -120,6 +120,6 @@ class ProjectResource(
         @PathParam("version") version: Int,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        projectService.projectConfigNameVersion(projectId, clientId, name, version)
+        projectService.getProjectConfigByNameAndVersion(projectId, clientId, name, version)
     }
 }

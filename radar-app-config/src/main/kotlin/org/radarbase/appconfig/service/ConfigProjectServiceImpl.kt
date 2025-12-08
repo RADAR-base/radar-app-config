@@ -15,7 +15,7 @@ import org.radarbase.lang.expression.toVariable
 class ConfigProjectServiceImpl(
     @Context private val resolver: ClientVariableResolver,
 ) : ConfigProjectService {
-    override suspend fun projectConfig(clientId: String, projectId: String): ClientConfig {
+    override suspend fun getProjectConfig(clientId: String, projectId: String): ClientConfig {
         val scope = projectScope(projectId)
         return ClientConfig.fromStream(
             clientId,
@@ -35,7 +35,7 @@ class ConfigProjectServiceImpl(
         )
     }
 
-    override suspend fun projectConfigName(projectId: String, clientId: String, name: String): ClientConfig? {
+    override suspend fun getProjectConfigByName(projectId: String, clientId: String, name: String): ClientConfig? {
         val scope = projectScope(projectId)
         return ClientConfig.fromResolvedVariable(
             clientId,
@@ -44,7 +44,7 @@ class ConfigProjectServiceImpl(
         )
     }
 
-    override suspend fun projectConfigNameVersion(projectId: String, clientId: String, name: String, version: Int): ClientConfig {
+    override suspend fun getProjectConfigByNameAndVersion(projectId: String, clientId: String, name: String, version: Int): ClientConfig {
         val scope = projectScope(projectId)
         return ClientConfig.fromVersionStream(
             clientId,
@@ -53,7 +53,7 @@ class ConfigProjectServiceImpl(
         )
     }
 
-    override suspend fun projectConfigNameVersions(projectId: String, clientId: String, name: String): List<ClientConfig> {
+    override suspend fun getProjectConfigByNameAndAllVersions(projectId: String, clientId: String, name: String): List<ClientConfig> {
         val scope = projectScope(projectId)
         val sequence = resolver[clientId].resolveVersions(listOf(scope), QualifiedId(name))
         val config = ClientConfig.fromVersionStream(clientId, scope, sequence)

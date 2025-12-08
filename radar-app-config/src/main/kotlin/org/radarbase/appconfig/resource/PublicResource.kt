@@ -32,10 +32,10 @@ class PublicResource(
 ) {
     @Path("config")
     @GET
-    fun globalConfig(
+    fun getPublicConfig(
         @Suspended asyncResponse: AsyncResponse,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(PUBLIC_CONFIG_SERVICE)
-        configService.globalConfig(PUBLIC_CONFIG_SERVICE)
+        configService.getGlobalConfig(PUBLIC_CONFIG_SERVICE)
     }
 }
