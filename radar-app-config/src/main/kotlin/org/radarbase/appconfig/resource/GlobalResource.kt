@@ -63,7 +63,7 @@ class GlobalResource(
         clientService.ensureClient(clientId)
         configService.getGlobalConfigByName(clientId, name)
     }
-    
+
     // return the all versions of the config of client clientId with name name
     @Path("config/{clientId}/names/{name}/versions")
     @GET

@@ -3,12 +3,10 @@ package org.radarbase.appconfig.service
 import jakarta.ws.rs.core.Context
 import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
-import org.radarbase.appconfig.persistence.HibernateVariableResolver
 import org.radarbase.appconfig.service.ConditionService.Companion.conditionScope
 import org.radarbase.appconfig.service.ConfigProjectServiceImpl.Companion.projectScope
 import org.radarbase.appconfig.service.ConfigService.Companion.globalScope
 import org.radarbase.appconfig.service.ConfigService.Companion.userScope
-import org.radarbase.jersey.exception.HttpNotFoundException
 import org.radarbase.lang.expression.NullLiteral
 import org.radarbase.lang.expression.QualifiedId
 import org.radarbase.lang.expression.Scope
@@ -29,7 +27,10 @@ class UserService(
         )
     }
 
-    suspend fun getUserConfig(clientId: String, projectId: String, userId: String,
+    suspend fun getUserConfig(
+        clientId: String,
+        projectId: String,
+        userId: String,
     ): ClientConfig {
         val scopes = userScopes(clientId, projectId, userId)
         return ClientConfig.fromStream(
@@ -40,28 +41,39 @@ class UserService(
     }
 
     suspend fun getUserConfigByName(
-        clientId: String, projectId: String, userId: String, name: String,
+        clientId: String,
+        projectId: String,
+        userId: String,
+        name: String,
     ): ClientConfig {
         val scopes = userScopes(clientId, projectId, userId)
         return ClientConfig.fromResolvedVariable(
             clientId,
             scopes[0],
-            resolver[clientId].resolve(scopes, QualifiedId(name))
+            resolver[clientId].resolve(scopes, QualifiedId(name)),
         )
     }
 
     suspend fun getUserConfigByNameAndVersion(
-        clientId: String, projectId: String, userId: String, name: String, version: Int,
+        clientId: String,
+        projectId: String,
+        userId: String,
+        name: String,
+        version: Int,
     ): ClientConfig {
         val scopes = userScopes(clientId, projectId, userId)
         return ClientConfig.fromVersionStream(
             clientId,
             scopes[0],
-            resolver[clientId].resolveVersion(scopes, QualifiedId(name), version)
+            resolver[clientId].resolveVersion(scopes, QualifiedId(name), version),
         )
     }
 
-    suspend fun getUserConfigByNameAndAllVersions(clientId: String, projectId: String, userId: String, name: String,
+    suspend fun getUserConfigByNameAndAllVersions(
+        clientId: String,
+        projectId: String,
+        userId: String,
+        name: String,
     ): ClientConfig {
         val scopes = userScopes(clientId, projectId, userId)
         val sequence = resolver[clientId].resolveVersions(scopes, QualifiedId(name))
@@ -69,7 +81,10 @@ class UserService(
         return config
     }
 
-    private suspend fun userScopes(clientId: String, projectId: String, userId: String,
+    private suspend fun userScopes(
+        clientId: String,
+        projectId: String,
+        userId: String,
     ): List<Scope> = buildList {
         add(userScope(userId))
         conditionService.matchingConditions(clientId, projectId, userId)

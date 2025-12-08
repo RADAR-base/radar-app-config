@@ -10,8 +10,8 @@ import org.radarbase.appconfig.api.SingleVariable
 import org.radarbase.appconfig.inject.ClientInterpreter
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.inject.InMemoryResourceEnhancer
-import org.radarbase.lang.expression.toVariable
 import org.radarbase.lang.expression.register
+import org.radarbase.lang.expression.toVariable
 
 internal class ConfigServiceTest {
     private lateinit var configService: ConfigService
@@ -91,12 +91,13 @@ internal class ConfigServiceTest {
         val listed = configService.getGlobalConfigByNameAndAllVersions("aRMT", "a.c")
         assertEquals(
 
-                ClientConfig(
-                    "aRMT",
-                    ConfigService.globalScope.asString(),
-                    listOf(SingleVariable("a.c", "v2", "global", "aRMT", null, null, null)),
-                    null,
-                ),listed,
+            ClientConfig(
+                "aRMT",
+                ConfigService.globalScope.asString(),
+                listOf(SingleVariable("a.c", "v2", "global", "aRMT", null, null, null)),
+                null,
+            ),
+            listed,
         )
     }
 

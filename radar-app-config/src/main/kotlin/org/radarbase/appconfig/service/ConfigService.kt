@@ -3,13 +3,11 @@ package org.radarbase.appconfig.service
 import jakarta.ws.rs.core.Context
 import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
-import org.radarbase.jersey.exception.HttpNotFoundException
 import org.radarbase.lang.expression.NullLiteral
 import org.radarbase.lang.expression.QualifiedId
 import org.radarbase.lang.expression.Scope
 import org.radarbase.lang.expression.SimpleScope
 import org.radarbase.lang.expression.toVariable
-import org.radarbase.appconfig.persistence.HibernateVariableResolver
 
 class ConfigService(
     @Context private val resolver: ClientVariableResolver,
@@ -29,7 +27,7 @@ class ConfigService(
         return ClientConfig.fromResolvedVariable(
             clientId,
             globalScope,
-            resolver[clientId].resolve(listOf(globalScope), QualifiedId(name))
+            resolver[clientId].resolve(listOf(globalScope), QualifiedId(name)),
         )
     }
 
@@ -37,7 +35,7 @@ class ConfigService(
         return ClientConfig.fromVersionStream(
             clientId,
             globalScope,
-            resolver[clientId].resolveVersion(listOf(globalScope), QualifiedId(name), version)
+            resolver[clientId].resolveVersion(listOf(globalScope), QualifiedId(name), version),
         )
     }
 
@@ -46,7 +44,6 @@ class ConfigService(
         val config = ClientConfig.fromVersionStream(clientId, globalScope, sequence)
         return config
     }
-
 
     suspend fun putGlobalConfig(config: ClientConfig, clientId: String) {
         resolver[clientId].replace(

@@ -55,7 +55,6 @@ class HibernateVariableResolver(
             this.value = variable.asOptString()
             this.createdByUser = createdByUsername
             this.version = nextVersion
-
         }
         // Log creator info and basic identifiers at info level on creation
         logger.info(
