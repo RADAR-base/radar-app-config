@@ -41,10 +41,10 @@ class ConfigService(
         )
     }
 
-    suspend fun getGlobalConfigByNameAndAllVersions(clientId: String, name: String): List<ClientConfig> {
+    suspend fun getGlobalConfigByNameAndAllVersions(clientId: String, name: String): ClientConfig {
         val sequence = resolver[clientId].resolveVersions(listOf(globalScope), QualifiedId(name))
         val config = ClientConfig.fromVersionStream(clientId, globalScope, sequence)
-        return listOf(config)
+        return config
     }
 
 

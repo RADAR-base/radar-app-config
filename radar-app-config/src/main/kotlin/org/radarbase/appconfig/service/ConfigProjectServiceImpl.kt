@@ -35,7 +35,7 @@ class ConfigProjectServiceImpl(
         )
     }
 
-    override suspend fun getProjectConfigByName(projectId: String, clientId: String, name: String): ClientConfig? {
+    override suspend fun getProjectConfigByName(projectId: String, clientId: String, name: String): ClientConfig {
         val scope = projectScope(projectId)
         return ClientConfig.fromResolvedVariable(
             clientId,
@@ -53,11 +53,11 @@ class ConfigProjectServiceImpl(
         )
     }
 
-    override suspend fun getProjectConfigByNameAndAllVersions(projectId: String, clientId: String, name: String): List<ClientConfig> {
+    override suspend fun getProjectConfigByNameAndAllVersions(projectId: String, clientId: String, name: String): ClientConfig {
         val scope = projectScope(projectId)
         val sequence = resolver[clientId].resolveVersions(listOf(scope), QualifiedId(name))
         val config = ClientConfig.fromVersionStream(clientId, scope, sequence)
-        return listOf(config)
+        return config
     }
 
     companion object {
