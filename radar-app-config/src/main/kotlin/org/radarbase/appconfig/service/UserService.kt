@@ -62,11 +62,11 @@ class UserService(
     }
 
     suspend fun getUserConfigByNameAndAllVersions(clientId: String, projectId: String, userId: String, name: String,
-    ): List<ClientConfig> {
+    ): ClientConfig {
         val scopes = userScopes(clientId, projectId, userId)
         val sequence = resolver[clientId].resolveVersions(scopes, QualifiedId(name))
         val config = ClientConfig.fromVersionStream(clientId, scopes[0], sequence)
-        return listOf(config)
+        return config
     }
 
     private suspend fun userScopes(clientId: String, projectId: String, userId: String,
