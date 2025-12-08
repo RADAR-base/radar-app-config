@@ -3,7 +3,6 @@ package org.radarbase.lang.expression
 import java.math.BigDecimal
 import java.time.Instant
 
-//data class ResolvedVariable(val scope: Scope, val id: QualifiedId, val variable: Variable)
 data class ResolvedVariable(
     val scope: Scope,
     val id: QualifiedId,
