@@ -29,7 +29,7 @@ class UserService(
         )
     }
 
-    suspend fun userConfig(clientId: String, projectId: String, userId: String,
+    suspend fun getUserConfig(clientId: String, projectId: String, userId: String,
     ): ClientConfig {
         val scopes = userScopes(clientId, projectId, userId)
         return ClientConfig.fromStream(
@@ -39,7 +39,7 @@ class UserService(
         )
     }
 
-    suspend fun userConfigName(
+    suspend fun getUserConfigByName(
         clientId: String, projectId: String, userId: String, name: String,
     ): ClientConfig {
         val scopes = userScopes(clientId, projectId, userId)
@@ -50,7 +50,7 @@ class UserService(
         )
     }
 
-    suspend fun userConfigNameVersion(
+    suspend fun getUserConfigByNameAndVersion(
         clientId: String, projectId: String, userId: String, name: String, version: Int,
     ): ClientConfig {
         val scopes = userScopes(clientId, projectId, userId)
@@ -61,7 +61,7 @@ class UserService(
         )
     }
 
-    suspend fun userConfigNameVersions(clientId: String, projectId: String, userId: String, name: String,
+    suspend fun getUserConfigByNameAndAllVersions(clientId: String, projectId: String, userId: String, name: String,
     ): List<ClientConfig> {
         val scopes = userScopes(clientId, projectId, userId)
         val sequence = resolver[clientId].resolveVersions(scopes, QualifiedId(name))

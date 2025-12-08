@@ -17,7 +17,7 @@ class ConfigService(
     @Context private val clientService: ClientService,
 ) {
 
-    suspend fun globalConfig(clientId: String): ClientConfig {
+    suspend fun getGlobalConfig(clientId: String): ClientConfig {
         return ClientConfig.fromStream(
             clientId,
             globalScope,
@@ -25,7 +25,7 @@ class ConfigService(
         )
     }
 
-    suspend fun globalConfigName(clientId: String, name: String): ClientConfig {
+    suspend fun getGlobalConfigByName(clientId: String, name: String): ClientConfig {
         return ClientConfig.fromResolvedVariable(
             clientId,
             globalScope,
@@ -33,7 +33,7 @@ class ConfigService(
         )
     }
 
-    suspend fun globalConfigNameVersion(clientId: String, name: String, version: Int): ClientConfig {
+    suspend fun getGlobalConfigByNameAndVersion(clientId: String, name: String, version: Int): ClientConfig {
         return ClientConfig.fromVersionStream(
             clientId,
             globalScope,
@@ -41,7 +41,7 @@ class ConfigService(
         )
     }
 
-    suspend fun globalConfigNameVersions(clientId: String, name: String): List<ClientConfig> {
+    suspend fun getGlobalConfigByNameAndAllVersions(clientId: String, name: String): List<ClientConfig> {
         val sequence = resolver[clientId].resolveVersions(listOf(globalScope), QualifiedId(name))
         val config = ClientConfig.fromVersionStream(clientId, globalScope, sequence)
         return listOf(config)

@@ -39,53 +39,53 @@ class GlobalResource(
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
         configService.putGlobalConfig(config, clientId)
-        configService.globalConfig(clientId)
+        configService.getGlobalConfig(clientId)
     }
 
     @Path("config/{clientId}")
     @GET
-    fun globalConfig(
+    fun getGlobalConfig(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("clientId") clientId: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        configService.globalConfig(clientId)
+        configService.getGlobalConfig(clientId)
     }
 
     // return the most recent config of client clientId with name name
     @Path("config/{clientId}/names/{name}")
     @GET
-    fun globalConfigName(
+    fun getGlobalConfigByName(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("clientId") clientId: String,
         @PathParam("name") name: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        configService.globalConfigName(clientId, name)
+        configService.getGlobalConfigByName(clientId, name)
     }
     
     // return the all versions of the config of client clientId with name name
     @Path("config/{clientId}/names/{name}/versions")
     @GET
-    fun globalConfigNameVersions(
+    fun getGlobalConfigByNameAndAllVersions(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("clientId") clientId: String,
         @PathParam("name") name: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        configService.globalConfigNameVersions(clientId, name)
+        configService.getGlobalConfigByNameAndAllVersions(clientId, name)
     }
 
     // return the version version of the config of client clientId with name name
     @Path("config/{clientId}/names/{name}/versions/{version}")
     @GET
-    fun globalConfigNameVersion(
+    fun getGlobalConfigByNameAndVersion(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("clientId") clientId: String,
         @PathParam("name") name: String,
         @PathParam("version") version: Int,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        configService.globalConfigNameVersion(clientId, name, version)
+        configService.getGlobalConfigByNameAndVersion(clientId, name, version)
     }
 }
