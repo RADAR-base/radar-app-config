@@ -26,7 +26,7 @@ internal class UserServiceTest {
 
     @Test
     fun putUserConfig() = runBlocking {
-        val configEmpty = userService.userConfig("aRMT", "radar-test", "a")
+        val configEmpty = userService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(ClientConfig("aRMT", "user.a", listOf()), configEmpty)
         userService.putUserConfig(
             "aRMT",
@@ -35,20 +35,20 @@ internal class UserServiceTest {
                 null,
                 null,
                 listOf(
-                    SingleVariable("c", "b"),
-                    SingleVariable("d", "5"),
+                    SingleVariable("c", "b", "user.a", "aRMT", null, null, null),
+                    SingleVariable("d", "5", "user.a", "aRMT", null, null, null),
                 ),
             ),
         )
 
-        val config = userService.userConfig("aRMT", "radar-test", "a")
+        val config = userService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
                 "aRMT",
                 "user.a",
                 listOf(
-                    SingleVariable("c", "b"),
-                    SingleVariable("d", "5"),
+                    SingleVariable("c", "b", "user.a", "aRMT", null, null, null),
+                    SingleVariable("d", "5", "user.a", "aRMT", null, null, null),
                 ),
             ),
             config,
@@ -61,17 +61,17 @@ internal class UserServiceTest {
                 null,
                 null,
                 listOf(
-                    SingleVariable("c", "b"),
+                    SingleVariable("c", "b", "user.a", "aRMT", null, null, null),
                 ),
             ),
         )
-        val configNew = userService.userConfig("aRMT", "radar-test", "a")
+        val configNew = userService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
                 "aRMT",
                 "user.a",
                 listOf(
-                    SingleVariable("c", "b"),
+                    SingleVariable("c", "b", "user.a", "aRMT", null, null, null),
                 ),
             ),
             configNew,
@@ -84,20 +84,20 @@ internal class UserServiceTest {
                 null,
                 null,
                 listOf(
-                    SingleVariable("d", "else"),
+                    SingleVariable("d", "else", "user.a", "aRMT", null, null, null),
                 ),
             ),
         )
-        val configNull = userService.userConfig("aRMT", "radar-test", "a")
+        val configNull = userService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
                 "aRMT",
                 "user.a",
                 listOf(
-                    SingleVariable("c", "b"),
+                    SingleVariable("c", "b", "user.a", "aRMT", null, null, null),
                 ),
                 listOf(
-                    SingleVariable("d", "else", "project.radar-test"),
+                    SingleVariable("d", "else", "project.radar-test", "aRMT", null, null, null),
                 ),
             ),
             configNull,

@@ -16,6 +16,7 @@ import org.radarbase.lang.expression.SimpleScope
 import org.radarbase.lang.expression.Variable
 import org.radarbase.lang.expression.VariableResolver
 import org.radarbase.lang.expression.toVariable
+import org.slf4j.LoggerFactory
 import java.util.stream.Stream
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
@@ -24,14 +25,13 @@ class HibernateVariableResolver(
     private val clientId: String,
     private val cache: IMap<String, LongArray>,
     asyncCoroutineService: AsyncCoroutineService,
+    private val createdByUsername: String?,
 ) : VariableResolver, HibernateRepository(em, asyncCoroutineService) {
     override suspend fun replace(
         scope: Scope,
         prefix: QualifiedId?,
         variables: Sequence<Pair<QualifiedId, Variable>>,
     ) = transact {
-        deleteConfig(scope, prefix).executeUpdate()
-
         variables
             .filter { (id, _) -> !id.isEmpty() }
             .forEach { (id, variable) -> save(scope, id, variable) }
@@ -45,12 +45,25 @@ class HibernateVariableResolver(
     ) {
         require(!id.isEmpty()) { "Cannot save variable without variable name" }
 
+        // // Determine the next version based on the most recent stored config.
+        val nextVersion = ((selectMaxVersion(scope, id) ?: 0)) + 1
+
         val configEntity = ConfigEntity().apply {
             this.clientId = this@HibernateVariableResolver.clientId
             this.scope = scope.asString()
             this.name = id.asString()
             this.value = variable.asOptString()
+            this.createdByUser = createdByUsername
+            this.version = nextVersion
         }
+        // Log creator info and basic identifiers at info level on creation
+        logger.info(
+            "Created config entry: clientId={} scope={} name={} createdBy={}",
+            configEntity.clientId,
+            configEntity.scope,
+            configEntity.name,
+            configEntity.createdByUser,
+        )
         persist(configEntity)
     }
 
@@ -75,6 +88,29 @@ class HibernateVariableResolver(
                 .reduce(higherScopedVariable(scopes))
                 .orElseThrow { NoSuchFieldError("Unknown variable $id in scopes $scopes.") }
         }
+    }
+
+    override suspend fun resolveVersions(
+        scopes: List<Scope>,
+        id: QualifiedId,
+    ): Sequence<ResolvedVariable> = transact {
+        val scope = scopes.firstOrNull() ?: return@transact emptySequence()
+        selectConfigVersions(scope, id)
+            .resultList
+            .asSequence()
+            .map { it.toResolvedVariable() }
+    }
+
+    override suspend fun resolveVersion(
+        scopes: List<Scope>,
+        id: QualifiedId,
+        version: Int,
+    ): Sequence<ResolvedVariable> = transact {
+        val scope = scopes.firstOrNull() ?: return@transact emptySequence()
+        selectConfigVersion(scope, id, version)
+            .resultList
+            .asSequence()
+            .map { it.toResolvedVariable() }
     }
 
     override suspend fun resolveAll(
@@ -150,7 +186,12 @@ class HibernateVariableResolver(
     private fun EntityManager.selectConfig(
         scope: Scope,
     ): LongArray = createQuery(
-        "SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId",
+        """SELECT c.id FROM Config c 
+            WHERE c.scope = :scope AND c.clientId = :clientId 
+            AND c.version = (
+                SELECT max(c2.version) FROM Config c2 
+                WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name
+            )""",
         java.lang.Long::class.java,
     )
         .setParameter("scope", scope.asString())
@@ -163,7 +204,12 @@ class HibernateVariableResolver(
         scope: Scope,
         prefix: String,
     ): LongArray = createQuery(
-        "SELECT c.id FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix",
+        """SELECT c.id FROM Config c 
+            WHERE c.scope = :scope AND c.clientId = :clientId AND c.name LIKE :prefix 
+            AND c.version = (
+              SELECT max(c2.version) FROM Config c2 
+              WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name
+            )""",
         java.lang.Long::class.java,
     )
         .setParameter("scope", scope.asString())
@@ -177,12 +223,58 @@ class HibernateVariableResolver(
         scopes: List<Scope>,
         name: QualifiedId,
     ): TypedQuery<ConfigEntity> = createQuery(
-        "SELECT c FROM Config c WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name = :name",
+        """SELECT c FROM Config c
+            WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name = :name
+            AND c.version = (
+              SELECT max(c2.version) FROM Config c2
+              WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name
+            )""",
         ConfigEntity::class.java,
     )
         .setParameter("scopes", scopes.map { it.asString() })
         .setParameter("clientId", clientId)
         .setParameter("name", name.asString())
+
+    // New helper to select versions list for a single scope and id
+    private fun EntityManager.selectConfigVersions(
+        scope: Scope,
+        id: QualifiedId,
+    ): TypedQuery<ConfigEntity> = createQuery(
+        "SELECT c FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name = :name ORDER BY c.version DESC",
+        ConfigEntity::class.java,
+    )
+        .setParameter("scope", scope.asString())
+        .setParameter("clientId", clientId)
+        .setParameter("name", id.asString())
+
+    // New helper to select a specific version for a single scope and id
+    private fun EntityManager.selectConfigVersion(
+        scope: Scope,
+        id: QualifiedId,
+        version: Int,
+    ): TypedQuery<ConfigEntity> = createQuery(
+        "SELECT c FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name = :name AND c.version = :version",
+        ConfigEntity::class.java,
+    )
+        .setParameter("scope", scope.asString())
+        .setParameter("clientId", clientId)
+        .setParameter("name", id.asString())
+        .setParameter("version", version)
+
+    // Helper to compute the max version number
+    private fun EntityManager.selectMaxVersion(
+        scope: Scope,
+        id: QualifiedId,
+    ): Int? = createQuery(
+        "SELECT MAX(c.version) FROM Config c WHERE c.scope = :scope AND c.clientId = :clientId AND c.name = :name",
+        java.lang.Integer::class.java,
+    )
+        .setParameter("scope", scope.asString())
+        .setParameter("clientId", clientId)
+        .setParameter("name", id.asString())
+        .resultList
+        .firstOrNull()
+        ?.toInt()
 
     private fun EntityManager.listConfig(
         scopes: List<Scope>,
@@ -218,12 +310,16 @@ class HibernateVariableResolver(
             SimpleScope(scope),
             QualifiedId(name),
             value?.toVariable() ?: NullLiteral(),
+            createTimestamp,
+            createdByUser,
+            version,
         )
 
         private fun higherScopedVariable(scopes: List<Scope>): (ResolvedVariable, ResolvedVariable) -> ResolvedVariable =
             { v1, v2 ->
                 if (scopes.indexOf(v1.scope) < scopes.indexOf(v2.scope)) v1 else v2
             }
+        private val logger = LoggerFactory.getLogger(HibernateVariableResolver::class.java)
     }
 }
 

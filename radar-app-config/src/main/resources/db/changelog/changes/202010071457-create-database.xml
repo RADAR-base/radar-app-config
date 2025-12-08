@@ -45,6 +45,9 @@
             <column name="scope" type="varchar(255)"/>
             <column name="name" type="varchar(255)"/>
             <column name="value" type="clob"/>
+            <column name="create_timestamp" type="timestamp"/>
+            <column name="created_by_user" type="varchar(255)"/>
+            <column name="version" type="int"/>
         </createTable>
 
         <createIndex tableName="config" indexName="idx_config_scoped_client">

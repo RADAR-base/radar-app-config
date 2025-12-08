@@ -23,7 +23,7 @@ services:
       - db
       - default
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
   traefik:
     extends:
@@ -55,7 +55,7 @@ services:
       - mp
 #      - default
 #    ports:
-#      - "5432:5432"
+#      - "5433:5432"
 
 
   kratos-selfservice-ui-node:

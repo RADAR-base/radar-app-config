@@ -14,12 +14,35 @@ class ConfigService(
     @Context private val conditionService: ConditionService,
     @Context private val clientService: ClientService,
 ) {
-    suspend fun globalConfig(clientId: String): ClientConfig {
+
+    suspend fun getGlobalConfig(clientId: String): ClientConfig {
         return ClientConfig.fromStream(
             clientId,
             globalScope,
             resolver[clientId].resolveAll(listOf(globalScope), null),
         )
+    }
+
+    suspend fun getGlobalConfigByName(clientId: String, name: String): ClientConfig {
+        return ClientConfig.fromResolvedVariable(
+            clientId,
+            globalScope,
+            resolver[clientId].resolve(listOf(globalScope), QualifiedId(name)),
+        )
+    }
+
+    suspend fun getGlobalConfigByNameAndVersion(clientId: String, name: String, version: Int): ClientConfig {
+        return ClientConfig.fromVersionStream(
+            clientId,
+            globalScope,
+            resolver[clientId].resolveVersion(listOf(globalScope), QualifiedId(name), version),
+        )
+    }
+
+    suspend fun getGlobalConfigByNameAndAllVersions(clientId: String, name: String): ClientConfig {
+        val sequence = resolver[clientId].resolveVersions(listOf(globalScope), QualifiedId(name))
+        val config = ClientConfig.fromVersionStream(clientId, globalScope, sequence)
+        return config
     }
 
     suspend fun putGlobalConfig(config: ClientConfig, clientId: String) {

@@ -50,6 +50,7 @@ class HibernatePersistenceResourceEnhancer(
             clientId,
             hazelcastInstance.getMap(clientId),
             asyncService,
+            this.hazelcastInstance.name, // this gets the name of the user identity name configured in management portal
         )
     }
 }

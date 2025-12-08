@@ -6,10 +6,12 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.Lob
+import jakarta.persistence.PrePersist
 import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy
+import java.time.Instant
 
 @Entity(name = "Config")
 @Table(name = "config")
@@ -34,4 +36,20 @@ class ConfigEntity {
     @Column
     @Lob
     var value: String? = null
+
+    @Column(name = "create_timestamp")
+    var createTimestamp: Instant? = null
+
+    @Column(name = "created_by_user")
+    var createdByUser: String? = null
+
+    @Column
+    var version: Int? = null
+
+    @PrePersist
+    fun onPrePersist() {
+        if (createTimestamp == null) {
+            createTimestamp = Instant.now()
+        }
+    }
 }

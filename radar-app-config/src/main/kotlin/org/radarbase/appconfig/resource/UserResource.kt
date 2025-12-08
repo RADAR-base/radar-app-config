@@ -41,7 +41,7 @@ class UserResource(
     @GET
     @Cache(maxAge = 60, isPrivate = true, vary = [AUTHORIZATION])
     @NeedsPermission(Permission.SUBJECT_READ, "projectId")
-    fun userClientConfig(
+    fun getUserClientConfig(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
@@ -55,7 +55,7 @@ class UserResource(
     @GET
     @Cache(maxAge = 60, isPrivate = true, vary = [AUTHORIZATION])
     @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
-    fun userClientConfig(
+    fun getUserClientConfig(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
@@ -67,14 +67,14 @@ class UserResource(
     @Path("/{userId}/config/{clientId}")
     @GET
     @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
-    fun userClientConfig(
+    fun getUserClientConfig(
         @Suspended asyncResponse: AsyncResponse,
         @PathParam("projectId") projectId: String,
         @PathParam("userId") userId: String,
         @PathParam("clientId") clientId: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        userService.userConfig(clientId, projectId, userId)
+        userService.getUserConfig(clientId, projectId, userId)
     }
 
     @Path("/{userId}/config/{clientId}")
@@ -89,6 +89,52 @@ class UserResource(
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
         userService.putUserConfig(clientId, userId, clientConfig)
-        userService.userConfig(clientId, projectId, userId)
+        userService.getUserConfig(clientId, projectId, userId)
+    }
+
+    // return the most recent config of client clientId with name name for a user
+    @Path("/{userId}/config/{clientId}/names/{name}")
+    @GET
+    @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
+    fun getUserConfigByName(
+        @Suspended asyncResponse: AsyncResponse,
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
+        @PathParam("clientId") clientId: String,
+        @PathParam("name") name: String,
+    ) = asyncService.runAsCoroutine(asyncResponse) {
+        clientService.ensureClient(clientId)
+        userService.getUserConfigByName(clientId, projectId, userId, name)
+    }
+
+    // return all versions of the config of client clientId with name name for a user (user scope only)
+    @Path("/{userId}/config/{clientId}/names/{name}/versions")
+    @GET
+    @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
+    fun getUserConfigByNameAndAllVersions(
+        @Suspended asyncResponse: AsyncResponse,
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
+        @PathParam("clientId") clientId: String,
+        @PathParam("name") name: String,
+    ) = asyncService.runAsCoroutine(asyncResponse) {
+        clientService.ensureClient(clientId)
+        userService.getUserConfigByNameAndAllVersions(clientId, projectId, userId, name)
+    }
+
+    // return the version `version` of the config of client clientId with name name for a user (user scope only)
+    @Path("/{userId}/config/{clientId}/names/{name}/versions/{version}")
+    @GET
+    @NeedsPermission(Permission.SUBJECT_READ, "projectId", "userId")
+    fun getUserConfigByNameAndVersion(
+        @Suspended asyncResponse: AsyncResponse,
+        @PathParam("projectId") projectId: String,
+        @PathParam("userId") userId: String,
+        @PathParam("clientId") clientId: String,
+        @PathParam("name") name: String,
+        @PathParam("version") version: Int,
+    ) = asyncService.runAsCoroutine(asyncResponse) {
+        clientService.ensureClient(clientId)
+        userService.getUserConfigByNameAndVersion(clientId, projectId, userId, name, version)
     }
 }
