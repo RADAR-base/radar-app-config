@@ -3,9 +3,7 @@ package org.radarbase.appconfig.service
 import jakarta.ws.rs.core.Context
 import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
-import org.radarbase.appconfig.persistence.HibernateVariableResolver
 import org.radarbase.appconfig.service.ConfigService.Companion.globalScope
-import org.radarbase.jersey.exception.HttpNotFoundException
 import org.radarbase.lang.expression.NullLiteral
 import org.radarbase.lang.expression.QualifiedId
 import org.radarbase.lang.expression.Scope
@@ -40,7 +38,7 @@ class ConfigProjectServiceImpl(
         return ClientConfig.fromResolvedVariable(
             clientId,
             scope,
-            resolver[clientId].resolve(listOf(scope, globalScope), QualifiedId(name))
+            resolver[clientId].resolve(listOf(scope, globalScope), QualifiedId(name)),
         )
     }
 
@@ -49,7 +47,7 @@ class ConfigProjectServiceImpl(
         return ClientConfig.fromVersionStream(
             clientId,
             scope,
-            resolver[clientId].resolveVersion(listOf(scope), QualifiedId(name), version)
+            resolver[clientId].resolveVersion(listOf(scope), QualifiedId(name), version),
         )
     }
 

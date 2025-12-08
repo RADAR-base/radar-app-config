@@ -9,7 +9,7 @@ data class ResolvedVariable(
     val variable: Variable,
     val createTimestamp: Instant?,
     val createdBy: String?,
-    val version: Int?
+    val version: Int?,
 )
 interface VariableResolver {
     suspend fun replace(scope: Scope, prefix: QualifiedId? = null, variables: Sequence<Pair<QualifiedId, Variable>>)
@@ -129,7 +129,6 @@ class DirectVariableResolver : VariableResolver {
             ?: return emptySequence()
         return sequenceOf(resolved)
     }
-
 
     override fun toString(): String {
         return "DirectVariableResolver(variables=$variables)"
