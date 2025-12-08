@@ -69,8 +69,6 @@ class UserService(
         return listOf(config)
     }
 
-
-
     private suspend fun userScopes(clientId: String, projectId: String, userId: String,
     ): List<Scope> = buildList {
         add(userScope(userId))

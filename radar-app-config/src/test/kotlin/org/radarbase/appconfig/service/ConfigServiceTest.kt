@@ -32,7 +32,7 @@ internal class ConfigServiceTest {
         resolver["aRMT"].register("global", "a.c", "b".toVariable())
         resolver["aRMT"].register("global", "a.d", 5.toVariable())
 
-        val result = configService.globalConfig("aRMT")
+        val result = configService.getGlobalConfig("aRMT")
         assertEquals(
             ClientConfig(
                 "aRMT",
@@ -59,7 +59,7 @@ internal class ConfigServiceTest {
 
         configService.putGlobalConfig(cfg, "aRMT")
 
-        val result = configService.globalConfig("aRMT")
+        val result = configService.getGlobalConfig("aRMT")
         assertEquals(
             ClientConfig(
                 "aRMT",
@@ -77,7 +77,7 @@ internal class ConfigServiceTest {
     fun globalConfigNameAndVersions() = runBlocking {
         resolver["aRMT"].register("global", "a.c", "v2".toVariable())
 
-        val first = configService.globalConfigName("aRMT", "a.c")
+        val first = configService.getGlobalConfigByName("aRMT", "a.c")
         assertEquals(
             ClientConfig(
                 "aRMT",
@@ -88,7 +88,7 @@ internal class ConfigServiceTest {
             first,
         )
 
-        val listed = configService.globalConfigNameVersions("aRMT", "a.c")
+        val listed = configService.getGlobalConfigByNameAndAllVersions("aRMT", "a.c")
         assertEquals(
             listOf(
                 ClientConfig(
@@ -106,7 +106,7 @@ internal class ConfigServiceTest {
     fun globalConfigNameVersionSpecific() = runBlocking {
         resolver["aRMT"].register("global", "a.c", "v2".toVariable())
 
-        val v2 = configService.globalConfigNameVersion("aRMT", "a.c", 2)
+        val v2 = configService.getGlobalConfigByNameAndVersion("aRMT", "a.c", 2)
         assertEquals(
             ClientConfig(
                 "aRMT",
