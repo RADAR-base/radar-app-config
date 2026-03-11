@@ -1,6 +1,7 @@
 [versions]
 # Platform
 kotlin = "1.9.24"
+gradle = "8.14"
 kotlinCoroutines ="1.8.0"
 
 antlr = "4.13.1"
