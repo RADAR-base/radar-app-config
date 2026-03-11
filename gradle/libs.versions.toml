@@ -13,8 +13,8 @@ jackson = "2.20.2"
 junit = "5.9.3"
 kotlinxSerialization = "1.6.3"
 mockitoKotlin = "5.3.1"
-radarCommons = "1.2.4"
-radarJersey = "0.12.5"
+radarCommons = "1.2.5"
+radarJersey = "0.12.7"
 ktor = "2.3.9"
 
 [libraries]
@@ -29,6 +29,7 @@ hazelcast = { group = "com.hazelcast", name = "hazelcast", version.ref = "hazelc
 hazelcast-hybernate53 = { group = "com.hazelcast", name = "hazelcast-hibernate53", version.ref = "hazelcastHibernate" }
 hazelcast-kubernetes = { group = "com.hazelcast", name = "hazelcast-kubernetes", version.ref = "hazelcastKubernetes" }
 jackson-bom = { group = "com.fasterxml.jackson", name = "jackson-bom", version.ref = "jackson" }
+jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
 junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit" }
 kotlinx-coroutines-bom = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom", version.ref = "kotlinCoroutines"}
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
