@@ -9,7 +9,7 @@ plugins {
 }
 
 radarRootProject {
-    projectVersion.set(properties["projectVersion"] as String)
+    projectVersion.set(libs.versions.project)
     gradleVersion.set(libs.versions.gradle)
 }
 
