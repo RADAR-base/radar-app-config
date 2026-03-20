@@ -1,5 +1,4 @@
 plugins {
-    id("publishing-convention")
     alias(libs.plugins.kotlin.serialization)
 }
 
