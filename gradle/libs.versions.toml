@@ -9,13 +9,15 @@ hamcrest = "2.2"
 hazelcast = "5.4.0"
 hazelcastHibernate = "5.1.0"
 hazelcastKubernetes = "2.2.3"
+# @pin Upgrade to 2.21.x requires kotlin v2 minimum
 jackson = "2.20.2"
 junit = "5.9.3"
 kotlinxSerialization = "1.6.3"
 mockitoKotlin = "5.3.1"
-radarCommons = "1.2.5"
+radarCommons = "1.2.6"
 radarJersey = "0.12.7"
-ktor = "2.3.9"
+# @pin Upgrade to 3.x.x requires kotlin v2 minimum
+ktor = "2.3.13"
 log4j2 = "2.23.1"
 
 [libraries]
