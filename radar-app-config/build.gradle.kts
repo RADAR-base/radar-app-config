@@ -1,6 +1,5 @@
 plugins {
     application
-    id("kotlin-convention")
 }
 
 application {
@@ -21,7 +20,7 @@ application {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
 
     implementation(project(":radar-app-config-core"))
@@ -40,8 +39,4 @@ dependencies {
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.hamcrest)
     testImplementation(libs.mockito.kotlin)
-}
-
-radarKotlin {
-    sentryEnabled.set(true)
 }

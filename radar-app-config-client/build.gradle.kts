@@ -1,7 +1,3 @@
-plugins {
-    id("publishing-convention")
-}
-
 description = "Kotlin Client SDK to the radar-app-config API"
 
 dependencies {
