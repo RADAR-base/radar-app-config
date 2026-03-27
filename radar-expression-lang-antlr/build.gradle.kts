@@ -17,7 +17,7 @@ tasks.generateGrammarSource {
         "$rootDir/radar-expression-lang/build/generated-src/antlr/main/org/radarbase/lang/expression/antlr",
     )
     arguments = arguments + listOf(
-        "-package", "org.radarbase.lang.expression.antlr"
+        "-package", "org.radarbase.lang.expression.antlr",
     )
 }
 
