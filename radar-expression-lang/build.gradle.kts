@@ -1,7 +1,3 @@
-plugins {
-    id("publishing-convention")
-}
-
 description = "RADAR app condition expression language"
 
 val generateGrammarSource by project(":radar-expression-lang-antlr").tasks

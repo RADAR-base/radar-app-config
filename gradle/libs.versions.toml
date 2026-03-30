@@ -1,6 +1,8 @@
 [versions]
 # Platform
-kotlin = "1.9.23"
+project = "0.6.2"
+kotlin = "1.9.24"
+gradle = "8.14"
 kotlinCoroutines ="1.8.0"
 
 antlr = "4.13.1"
@@ -8,19 +10,18 @@ hamcrest = "2.2"
 hazelcast = "5.4.0"
 hazelcastHibernate = "5.1.0"
 hazelcastKubernetes = "2.2.3"
-jackson = "2.17.3"
+# @pin Upgrade to 2.21.x requires kotlin v2 minimum
+jackson = "2.20.2"
 junit = "5.9.3"
 kotlinxSerialization = "1.6.3"
 mockitoKotlin = "5.3.1"
-radarCommons = "1.2.4"
-radarJersey = "0.12.5"
-ktor = "2.3.9"
+radarCommons = "1.2.6"
+radarJersey = "0.12.7"
+# @pin Upgrade to 3.x.x requires kotlin v2 minimum
+ktor = "2.3.13"
+log4j2 = "2.23.1"
 
 [libraries]
-# For buildSrc project
-gradle-radar-kotlin = { group = "org.radarbase.radar-kotlin", name = "org.radarbase.radar-kotlin.gradle.plugin", version.ref = "radarCommons" }
-gradle-radar-publishing = { group = "org.radarbase.radar-publishing", name = "org.radarbase.radar-publishing.gradle.plugin", version.ref = "radarCommons" }
-
 antlr = { group = "org.antlr", name = "antlr4", version.ref = "antlr" }
 antlr4-runtime = { group = "org.antlr", name = "antlr4-runtime", version.ref = "antlr" }
 hamcrest = { group = "org.hamcrest", name = "hamcrest", version.ref = "hamcrest" }
@@ -28,6 +29,7 @@ hazelcast = { group = "com.hazelcast", name = "hazelcast", version.ref = "hazelc
 hazelcast-hybernate53 = { group = "com.hazelcast", name = "hazelcast-hibernate53", version.ref = "hazelcastHibernate" }
 hazelcast-kubernetes = { group = "com.hazelcast", name = "hazelcast-kubernetes", version.ref = "hazelcastKubernetes" }
 jackson-bom = { group = "com.fasterxml.jackson", name = "jackson-bom", version.ref = "jackson" }
+jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
 junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit" }
 kotlinx-coroutines-bom = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom", version.ref = "kotlinCoroutines"}
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
@@ -38,4 +40,8 @@ radar-jersey = { group = "org.radarbase", name = "radar-jersey", version.ref = "
 radar-jersey-hibernate = { group = "org.radarbase", name = "radar-jersey-hibernate", version.ref = "radarJersey" }
 
 [plugins]
+radar-root-project = { id = "org.radarbase.radar-root-project", version.ref = "radarCommons" }
+radar-kotlin = { id = "org.radarbase.radar-kotlin", version.ref = "radarCommons" }
+radar-publishing = { id = "org.radarbase.radar-publishing", version.ref = "radarCommons" }
+radar-dependency-management = { id = "org.radarbase.radar-dependency-management", version.ref = "radarCommons" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
