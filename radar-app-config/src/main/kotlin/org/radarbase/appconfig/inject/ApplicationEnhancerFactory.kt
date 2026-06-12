@@ -17,7 +17,7 @@ import org.radarbase.lang.expression.ListVariablesFunction
 import org.radarbase.lang.expression.SumFunction
 
 /** This binder needs to register all non-Jersey classes, otherwise initialization fails. */
-class ManagementPortalEnhancerFactory(private val config: ApplicationConfig) : EnhancerFactory {
+class ApplicationEnhancerFactory(private val config: ApplicationConfig) : EnhancerFactory {
     override fun createEnhancers(): List<JerseyResourceEnhancer> = buildList {
         if (config.database != null) {
             val databaseConfig = config.database.copy(
