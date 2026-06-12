@@ -19,9 +19,9 @@
   -->
 
 <databaseChangeLog
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
     <property name="autoIncrement" value="true" dbms="mysql,postgresql,oracle,mssql"/>
 
@@ -45,9 +45,6 @@
             <column name="scope" type="varchar(255)"/>
             <column name="name" type="varchar(255)"/>
             <column name="value" type="clob"/>
-            <column name="create_timestamp" type="timestamp"/>
-            <column name="created_by_user" type="varchar(255)"/>
-            <column name="version" type="int"/>
         </createTable>
 
         <createIndex tableName="config" indexName="idx_config_scoped_client">
