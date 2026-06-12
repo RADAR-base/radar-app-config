@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM --platform=$BUILDPLATFORM gradle:8.14-jdk17 as builder
+FROM --platform=$BUILDPLATFORM gradle:8.14-jdk17 AS builder
 
 RUN mkdir /code
 WORKDIR /code
@@ -36,9 +36,8 @@ RUN gradle :radar-app-config:jar
 
 FROM eclipse-temurin:17-jre
 
-MAINTAINER @pvannierop
-
 LABEL description="RADAR-base radar app config container"
+LABEL org.opencontainers.image.authors="pim@thehyve.nl"
 
 # Override JAVA_OPTS to set heap parameters, for example
 ENV JAVA_OPTS="" \
