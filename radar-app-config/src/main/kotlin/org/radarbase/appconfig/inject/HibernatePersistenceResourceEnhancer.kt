@@ -17,27 +17,29 @@ class HibernatePersistenceResourceEnhancer(
     private val hazelcastConfig: HazelcastConfig,
 ) : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {
-        System.setProperty("hazelcast.logging.type", "slf4j")
-        val hzConfig = if (hazelcastConfig.configPath != null) {
-            com.hazelcast.internal.config.ConfigLoader.load(hazelcastConfig.configPath)
-        } else {
-            Config().apply {
-                networkConfig = hazelcastConfig.network
+        if (hazelcastConfig.enable) {
+            System.setProperty("hazelcast.logging.type", "slf4j")
+            val hzConfig = if (hazelcastConfig.configPath != null) {
+                com.hazelcast.internal.config.ConfigLoader.load(hazelcastConfig.configPath)
+            } else {
+                Config().apply {
+                    networkConfig = hazelcastConfig.network
+                }
+            }.apply {
+                clusterName = hazelcastConfig.clusterName
+                instanceName = hazelcastConfig.instanceName
             }
-        }.apply {
-            clusterName = hazelcastConfig.clusterName
-            instanceName = hazelcastConfig.instanceName
+
+            val hazelcastInstance = Hazelcast.newHazelcastInstance(hzConfig)
+
+            bind(hazelcastInstance)
+                .to(HazelcastInstance::class.java)
+                .`in`(Singleton::class.java)
+
+            bind(HibernateClientVariableResolver::class.java)
+                .to(ClientVariableResolver::class.java)
+                .`in`(Singleton::class.java)
         }
-
-        val hazelcastInstance = Hazelcast.newHazelcastInstance(hzConfig)
-
-        bind(hazelcastInstance)
-            .to(HazelcastInstance::class.java)
-            .`in`(Singleton::class.java)
-
-        bind(HibernateClientVariableResolver::class.java)
-            .to(ClientVariableResolver::class.java)
-            .`in`(Singleton::class.java)
     }
 
     class HibernateClientVariableResolver(

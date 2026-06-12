@@ -20,13 +20,14 @@ import org.radarbase.lang.expression.SumFunction
 class ApplicationEnhancerFactory(private val config: ApplicationConfig) : EnhancerFactory {
     override fun createEnhancers(): List<JerseyResourceEnhancer> = buildList {
         if (config.database != null) {
+            val hazelcastEnhancedProperties = if (config.hazelcast.enable) mapOf(
+                "hibernate.cache.use_second_level_cache" to "true",
+                "hibernate.cache.region.factory_class" to "com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory",
+                "hibernate.cache.hazelcast.instance_name" to config.hazelcast.instanceName,
+            ) else emptyMap<String, String>() + config.database.properties
             val databaseConfig = config.database.copy(
                 managedClasses = listOf(ConfigEntity::class.qualifiedName!!),
-                properties = mapOf(
-                    "hibernate.cache.use_second_level_cache" to "true",
-                    "hibernate.cache.region.factory_class" to "com.hazelcast.hibernate.HazelcastLocalCacheRegionFactory",
-                    "hibernate.cache.hazelcast.instance_name" to config.hazelcast.instanceName,
-                ) + config.database.properties,
+                properties = hazelcastEnhancedProperties
             )
             add(HibernateResourceEnhancer(databaseConfig))
             add(HibernatePersistenceResourceEnhancer(config.hazelcast))

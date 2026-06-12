@@ -15,3 +15,17 @@ database:
   url: "jdbc:postgresql://localhost:5433/appconfig?sslmode=disable"
   user: radarcns
   password: radarcns
+
+hazelcast:
+  enable: false
+  network:
+    port: 5801
+    join:
+      multicastConfig:
+        enabled: false
+      kubernetesConfig:
+        enabled: true
+        properties:
+          service-name: app-config
+          service-port: 5801
+          namespace: default
