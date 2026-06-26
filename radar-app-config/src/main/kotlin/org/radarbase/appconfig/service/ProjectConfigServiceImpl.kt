@@ -3,16 +3,16 @@ package org.radarbase.appconfig.service
 import jakarta.ws.rs.core.Context
 import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.inject.ClientVariableResolver
-import org.radarbase.appconfig.service.ConfigService.Companion.globalScope
+import org.radarbase.appconfig.service.GlobalConfigService.Companion.globalScope
 import org.radarbase.lang.expression.NullLiteral
 import org.radarbase.lang.expression.QualifiedId
 import org.radarbase.lang.expression.Scope
 import org.radarbase.lang.expression.SimpleScope
 import org.radarbase.lang.expression.toVariable
 
-class ConfigProjectServiceImpl(
+class ProjectConfigServiceImpl(
     @Context private val resolver: ClientVariableResolver,
-) : ConfigProjectService {
+) : ProjectConfigService {
     override suspend fun getProjectConfig(clientId: String, projectId: String): ClientConfig {
         val scope = projectScope(projectId)
         return ClientConfig.fromStream(

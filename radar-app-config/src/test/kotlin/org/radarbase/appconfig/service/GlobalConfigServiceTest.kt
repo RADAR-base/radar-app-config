@@ -13,14 +13,14 @@ import org.radarbase.appconfig.inject.InMemoryResourceEnhancer
 import org.radarbase.lang.expression.register
 import org.radarbase.lang.expression.toVariable
 
-internal class ConfigServiceTest {
-    private lateinit var configService: ConfigService
+internal class GlobalConfigServiceTest {
+    private lateinit var globalConfigService: GlobalConfigService
     private lateinit var resolver: ClientVariableResolver
 
     @BeforeEach
     fun setUp() {
         resolver = InMemoryResourceEnhancer.InMemoryClientVariableResolver()
-        configService = ConfigService(
+        globalConfigService = GlobalConfigService(
             resolver = resolver,
             conditionService = ConditionService(resolver, ClientInterpreter(resolver)),
             clientService = mock(),
@@ -32,11 +32,11 @@ internal class ConfigServiceTest {
         resolver["aRMT"].register("global", "a.c", "b".toVariable())
         resolver["aRMT"].register("global", "a.d", 5.toVariable())
 
-        val result = configService.getGlobalConfig("aRMT")
+        val result = globalConfigService.getGlobalConfig("aRMT")
         assertEquals(
             ClientConfig(
                 "aRMT",
-                ConfigService.globalScope.asString(),
+                GlobalConfigService.globalScope.asString(),
                 listOf(
                     SingleVariable("a.c", "b", "global", "aRMT", null, null, null),
                     SingleVariable("a.d", "5", "global", "aRMT", null, null, null),
@@ -57,13 +57,13 @@ internal class ConfigServiceTest {
             ),
         )
 
-        configService.putGlobalConfig(cfg, "aRMT")
+        globalConfigService.putGlobalConfig(cfg, "aRMT")
 
-        val result = configService.getGlobalConfig("aRMT")
+        val result = globalConfigService.getGlobalConfig("aRMT")
         assertEquals(
             ClientConfig(
                 "aRMT",
-                ConfigService.globalScope.asString(),
+                GlobalConfigService.globalScope.asString(),
                 listOf(
                     SingleVariable("x.y", "z", "global", "aRMT", null, null, null),
                     SingleVariable("n.m", null, "global", "aRMT", null, null, null),
@@ -77,23 +77,23 @@ internal class ConfigServiceTest {
     fun globalConfigNameAndVersions() = runBlocking {
         resolver["aRMT"].register("global", "a.c", "v2".toVariable())
 
-        val first = configService.getGlobalConfigByName("aRMT", "a.c")
+        val first = globalConfigService.getGlobalConfigByName("aRMT", "a.c")
         assertEquals(
             ClientConfig(
                 "aRMT",
-                ConfigService.globalScope.asString(),
+                GlobalConfigService.globalScope.asString(),
                 listOf(SingleVariable("a.c", "v2", "global", "aRMT", null, null, null)),
                 emptyList(),
             ),
             first,
         )
 
-        val listed = configService.getGlobalConfigByNameAndAllVersions("aRMT", "a.c")
+        val listed = globalConfigService.getGlobalConfigByNameAndAllVersions("aRMT", "a.c")
         assertEquals(
 
             ClientConfig(
                 "aRMT",
-                ConfigService.globalScope.asString(),
+                GlobalConfigService.globalScope.asString(),
                 listOf(SingleVariable("a.c", "v2", "global", "aRMT", null, null, null)),
                 null,
             ),
@@ -105,11 +105,11 @@ internal class ConfigServiceTest {
     fun globalConfigNameVersionSpecific() = runBlocking {
         resolver["aRMT"].register("global", "a.c", "v2".toVariable())
 
-        val v2 = configService.getGlobalConfigByNameAndVersion("aRMT", "a.c", 2)
+        val v2 = globalConfigService.getGlobalConfigByNameAndVersion("aRMT", "a.c", 2)
         assertEquals(
             ClientConfig(
                 "aRMT",
-                ConfigService.globalScope.asString(),
+                GlobalConfigService.globalScope.asString(),
                 listOf(SingleVariable("a.c", "v2", "global", "aRMT", null, null, null)),
                 null,
             ),

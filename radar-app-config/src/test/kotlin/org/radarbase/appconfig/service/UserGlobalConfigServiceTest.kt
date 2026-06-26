@@ -10,9 +10,9 @@ import org.radarbase.appconfig.inject.ClientInterpreter
 import org.radarbase.appconfig.inject.ClientVariableResolver
 import org.radarbase.appconfig.inject.InMemoryResourceEnhancer
 
-internal class UserServiceTest {
-    private lateinit var userService: UserService
-    private lateinit var projectService: ConfigProjectService
+internal class UserGlobalConfigServiceTest {
+    private lateinit var userConfigService: UserConfigService
+    private lateinit var projectService: ProjectConfigService
     private lateinit var resolver: ClientVariableResolver
 
     @BeforeEach
@@ -20,15 +20,15 @@ internal class UserServiceTest {
         resolver = InMemoryResourceEnhancer.InMemoryClientVariableResolver()
 
         val conditionService = ConditionService(resolver, ClientInterpreter(resolver))
-        userService = UserService(conditionService, resolver)
-        projectService = ConfigProjectServiceImpl(resolver)
+        userConfigService = UserConfigService(conditionService, resolver)
+        projectService = ProjectConfigServiceImpl(resolver)
     }
 
     @Test
     fun putUserConfig() = runBlocking {
-        val configEmpty = userService.getUserConfig("aRMT", "radar-test", "a")
+        val configEmpty = userConfigService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(ClientConfig("aRMT", "user.a", listOf()), configEmpty)
-        userService.putUserConfig(
+        userConfigService.putUserConfig(
             "aRMT",
             "a",
             ClientConfig(
@@ -41,7 +41,7 @@ internal class UserServiceTest {
             ),
         )
 
-        val config = userService.getUserConfig("aRMT", "radar-test", "a")
+        val config = userConfigService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
                 "aRMT",
@@ -54,7 +54,7 @@ internal class UserServiceTest {
             config,
         )
 
-        userService.putUserConfig(
+        userConfigService.putUserConfig(
             "aRMT",
             "a",
             ClientConfig(
@@ -65,7 +65,7 @@ internal class UserServiceTest {
                 ),
             ),
         )
-        val configNew = userService.getUserConfig("aRMT", "radar-test", "a")
+        val configNew = userConfigService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
                 "aRMT",
@@ -88,7 +88,7 @@ internal class UserServiceTest {
                 ),
             ),
         )
-        val configNull = userService.getUserConfig("aRMT", "radar-test", "a")
+        val configNull = userConfigService.getUserConfig("aRMT", "radar-test", "a")
         assertEquals(
             ClientConfig(
                 "aRMT",

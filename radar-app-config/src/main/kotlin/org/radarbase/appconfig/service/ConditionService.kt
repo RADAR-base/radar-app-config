@@ -4,9 +4,9 @@ import jakarta.ws.rs.core.Context
 import org.radarbase.appconfig.api.Condition
 import org.radarbase.appconfig.inject.ClientInterpreter
 import org.radarbase.appconfig.inject.ClientVariableResolver
-import org.radarbase.appconfig.service.ConfigProjectServiceImpl.Companion.projectScope
-import org.radarbase.appconfig.service.ConfigService.Companion.globalScope
-import org.radarbase.appconfig.service.ConfigService.Companion.userScope
+import org.radarbase.appconfig.service.ProjectConfigServiceImpl.Companion.projectScope
+import org.radarbase.appconfig.service.GlobalConfigService.Companion.globalScope
+import org.radarbase.appconfig.service.GlobalConfigService.Companion.userScope
 import org.radarbase.lang.expression.Scope
 import org.radarbase.lang.expression.SimpleScope
 

@@ -10,7 +10,7 @@ import jakarta.ws.rs.container.Suspended
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import org.radarbase.appconfig.service.ClientService
-import org.radarbase.appconfig.service.ConfigService
+import org.radarbase.appconfig.service.GlobalConfigService
 import org.radarbase.jersey.service.AsyncCoroutineService
 
 private const val PUBLIC_CONFIG_SERVICE: String = "public_config_service"
@@ -20,7 +20,7 @@ private const val PUBLIC_CONFIG_SERVICE: String = "public_config_service"
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class PublicResource(
-    @Context private val configService: ConfigService,
+    @Context private val globalConfigService: GlobalConfigService,
     @Context private val clientService: ClientService,
     @Context private val asyncService: AsyncCoroutineService,
 ) {
@@ -30,6 +30,6 @@ class PublicResource(
         @Suspended asyncResponse: AsyncResponse,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(PUBLIC_CONFIG_SERVICE)
-        configService.getGlobalConfig(PUBLIC_CONFIG_SERVICE)
+        globalConfigService.getGlobalConfig(PUBLIC_CONFIG_SERVICE)
     }
 }

@@ -16,7 +16,7 @@ import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.api.ProjectList
 import org.radarbase.appconfig.api.toProject
 import org.radarbase.appconfig.service.ClientService
-import org.radarbase.appconfig.service.ConfigProjectService
+import org.radarbase.appconfig.service.ProjectConfigService
 import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
@@ -32,7 +32,7 @@ import org.radarbase.management.client.MPProject
 @Authenticated
 class ProjectResource(
     @Context private val radarProjectService: RadarProjectService,
-    @Context private val projectService: ConfigProjectService,
+    @Context private val projectService: ProjectConfigService,
     @Context private val clientService: ClientService,
     @Context private val asyncService: AsyncCoroutineService,
 ) {

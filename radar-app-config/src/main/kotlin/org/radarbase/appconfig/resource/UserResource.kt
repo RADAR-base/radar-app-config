@@ -16,7 +16,7 @@ import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.api.UserList
 import org.radarbase.appconfig.api.toUser
 import org.radarbase.appconfig.service.ClientService
-import org.radarbase.appconfig.service.UserService
+import org.radarbase.appconfig.service.UserConfigService
 import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.auth.NeedsPermission
@@ -33,7 +33,7 @@ import org.radarbase.management.client.MPSubject
 @Authenticated
 @Singleton
 class UserResource(
-    @Context private val userService: UserService,
+    @Context private val userConfigService: UserConfigService,
     @Context private val clientService: ClientService,
     @Context private val radarProjectService: RadarProjectService,
     @Context private val asyncService: AsyncCoroutineService,
@@ -74,7 +74,7 @@ class UserResource(
         @PathParam("clientId") clientId: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        userService.getUserConfig(clientId, projectId, userId)
+        userConfigService.getUserConfig(clientId, projectId, userId)
     }
 
     @Path("/{userId}/config/{clientId}")
@@ -88,8 +88,8 @@ class UserResource(
         clientConfig: ClientConfig,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        userService.putUserConfig(clientId, userId, clientConfig)
-        userService.getUserConfig(clientId, projectId, userId)
+        userConfigService.putUserConfig(clientId, userId, clientConfig)
+        userConfigService.getUserConfig(clientId, projectId, userId)
     }
 
     // return the most recent config of client clientId with name name for a user
@@ -104,7 +104,7 @@ class UserResource(
         @PathParam("name") name: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        userService.getUserConfigByName(clientId, projectId, userId, name)
+        userConfigService.getUserConfigByName(clientId, projectId, userId, name)
     }
 
     // return all versions of the config of client clientId with name name for a user (user scope only)
@@ -119,7 +119,7 @@ class UserResource(
         @PathParam("name") name: String,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        userService.getUserConfigByNameAndAllVersions(clientId, projectId, userId, name)
+        userConfigService.getUserConfigByNameAndAllVersions(clientId, projectId, userId, name)
     }
 
     // return the version `version` of the config of client clientId with name name for a user (user scope only)
@@ -135,6 +135,6 @@ class UserResource(
         @PathParam("version") version: Int,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        userService.getUserConfigByNameAndVersion(clientId, projectId, userId, name, version)
+        userConfigService.getUserConfigByNameAndVersion(clientId, projectId, userId, name, version)
     }
 }

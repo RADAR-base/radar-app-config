@@ -3,7 +3,6 @@ package org.radarbase.appconfig.resource
 import jakarta.inject.Singleton
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
-import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
@@ -11,36 +10,24 @@ import jakarta.ws.rs.container.AsyncResponse
 import jakarta.ws.rs.container.Suspended
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
-import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.GlobalConfigService
-import org.radarbase.auth.authorization.Permission
 import org.radarbase.jersey.auth.Authenticated
-import org.radarbase.jersey.auth.NeedsPermission
 import org.radarbase.jersey.service.AsyncCoroutineService
 
-@Path("global")
+@Path("service")
 @Singleton
 @Authenticated
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-class GlobalResource(
+/*
+ * Provides read-only access for external services without scope evaluation.
+ */
+class ServiceResource(
     @Context private val globalConfigService: GlobalConfigService,
     @Context private val clientService: ClientService,
     @Context private val asyncService: AsyncCoroutineService,
 ) {
-    @POST
-    @Path("config/{clientId}")
-    @NeedsPermission(Permission.PROJECT_CREATE)
-    fun updateConfig(
-        @Suspended asyncResponse: AsyncResponse,
-        @PathParam("clientId") clientId: String,
-        config: ClientConfig,
-    ) = asyncService.runAsCoroutine(asyncResponse) {
-        clientService.ensureClient(clientId)
-        globalConfigService.putGlobalConfig(config, clientId)
-        globalConfigService.getGlobalConfig(clientId)
-    }
 
     @Path("config/{clientId}")
     @GET
@@ -52,7 +39,7 @@ class GlobalResource(
         globalConfigService.getGlobalConfig(clientId)
     }
 
-    // return the most recent config of client clientId with name name
+    // return the most recent config of client clientId with name 'name'
     @Path("config/{clientId}/names/{name}")
     @GET
     fun getGlobalConfigByName(

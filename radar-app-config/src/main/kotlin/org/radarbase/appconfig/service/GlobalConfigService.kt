@@ -9,7 +9,7 @@ import org.radarbase.lang.expression.Scope
 import org.radarbase.lang.expression.SimpleScope
 import org.radarbase.lang.expression.toVariable
 
-class ConfigService(
+class GlobalConfigService(
     @Context private val resolver: ClientVariableResolver,
     @Context private val conditionService: ConditionService,
     @Context private val clientService: ClientService,

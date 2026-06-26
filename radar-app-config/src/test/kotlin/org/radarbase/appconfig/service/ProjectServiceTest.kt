@@ -12,13 +12,13 @@ import org.radarbase.lang.expression.register
 import org.radarbase.lang.expression.toVariable
 
 internal class ProjectServiceTest {
-    private lateinit var projectService: ConfigProjectService
+    private lateinit var projectService: ProjectConfigService
     private lateinit var resolver: ClientVariableResolver
 
     @BeforeEach
     fun setUp() {
         resolver = InMemoryResourceEnhancer.InMemoryClientVariableResolver()
-        projectService = ConfigProjectServiceImpl(resolver)
+        projectService = ProjectConfigServiceImpl(resolver)
     }
 
     @Test

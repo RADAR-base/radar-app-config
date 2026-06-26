@@ -2,7 +2,7 @@ package org.radarbase.appconfig.service
 
 import org.radarbase.appconfig.api.ClientConfig
 
-interface ConfigProjectService {
+interface ProjectConfigService {
     suspend fun getProjectConfig(clientId: String, projectId: String): ClientConfig
     suspend fun putProjectConfig(clientId: String, projectId: String, clientConfig: ClientConfig)
     suspend fun getProjectConfigByName(projectId: String, clientId: String, name: String): ClientConfig

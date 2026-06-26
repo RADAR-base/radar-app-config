@@ -5,10 +5,10 @@ import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConditionService
-import org.radarbase.appconfig.service.ConfigProjectService
-import org.radarbase.appconfig.service.ConfigProjectServiceImpl
-import org.radarbase.appconfig.service.ConfigService
-import org.radarbase.appconfig.service.UserService
+import org.radarbase.appconfig.service.ProjectConfigService
+import org.radarbase.appconfig.service.ProjectConfigServiceImpl
+import org.radarbase.appconfig.service.GlobalConfigService
+import org.radarbase.appconfig.service.UserConfigService
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.jersey.filter.Filters
 
@@ -37,12 +37,12 @@ class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyR
             .to(ConditionService::class.java)
             .`in`(Singleton::class.java)
 
-        bind(ConfigService::class.java)
-            .to(ConfigService::class.java)
+        bind(GlobalConfigService::class.java)
+            .to(GlobalConfigService::class.java)
             .`in`(Singleton::class.java)
 
-        bind(ConfigProjectServiceImpl::class.java)
-            .to(ConfigProjectService::class.java)
+        bind(ProjectConfigServiceImpl::class.java)
+            .to(ProjectConfigService::class.java)
             .`in`(Singleton::class.java)
 
         bind(ClientService::class.java)
@@ -53,8 +53,8 @@ class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyR
             .to(ClientInterpreter::class.java)
             .`in`(Singleton::class.java)
 
-        bind(UserService::class.java)
-            .to(UserService::class.java)
+        bind(UserConfigService::class.java)
+            .to(UserConfigService::class.java)
             .`in`(Singleton::class.java)
     }
 }
