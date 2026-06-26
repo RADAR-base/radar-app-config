@@ -11,8 +11,6 @@ import org.radarbase.lang.expression.toVariable
 
 class GlobalConfigService(
     @Context private val resolver: ClientVariableResolver,
-    @Context private val conditionService: ConditionService,
-    @Context private val clientService: ClientService,
 ) {
 
     suspend fun getGlobalConfig(clientId: String): ClientConfig {

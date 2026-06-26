@@ -146,6 +146,19 @@ class HibernateVariableResolver(
             .asSequence()
     }
 
+    override suspend fun all(
+    ): TypedQuery<ConfigEntity> = createQuery(
+    """SELECT c FROM Config c
+            WHERE c.scope IN (:scopes) AND c.clientId = :clientId AND c.name = :name
+            AND c.version = (
+              SELECT max(c2.version) FROM Config c2
+              WHERE c2.scope = c.scope AND c2.clientId = c.clientId AND c2.name = c.name
+            )""",
+    ConfigEntity::class.java,
+    )
+    .setParameter("clientId", clientId)
+    .setParameter("name", name.asString())
+
     private fun EntityManager.deleteConfig(
         scope: Scope,
         prefix: QualifiedId?,
