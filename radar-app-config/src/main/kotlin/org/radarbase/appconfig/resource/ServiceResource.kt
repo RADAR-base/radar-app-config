@@ -15,6 +15,7 @@ import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.NonResolvingConfigService
 import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.service.AsyncCoroutineService
+import org.radarbase.lang.expression.QualifiedId
 import org.radarbase.lang.expression.Scope
 
 /*
@@ -42,6 +43,11 @@ class ServiceResource(
         @QueryParam("version") version: Int?,
     ) = asyncService.runAsCoroutine(asyncResponse) {
         clientService.ensureClient(clientId)
-        configService.getConfig(clientId)
+        configService.getConfig(
+            clientId = clientId,
+            scopes = scopes,
+            id = name?.let { QualifiedId(it) },
+            version = version,
+        )
     }
 }

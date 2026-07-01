@@ -14,8 +14,12 @@ class MockAsyncCoroutineService : AsyncCoroutineService {
         block: suspend () -> T,
     ) {
         runBlocking {
-            val result = block()
-            asyncResponse.resume(result)
+            try {
+                val result = block()
+                asyncResponse.resume(result)
+            } catch (ex: Throwable) {
+                asyncResponse.resume(ex)
+            }
         }
     }
 
