@@ -120,7 +120,7 @@ HTTP 200 OK
 }
 ```
 
-Get the most recent value for a specific config name in the global scope.
+Get the most recent value for a specific config name in the global scope. Sys admin only.
 ```
 GET /global/config/{clientId}/names/{name}
 ---
@@ -135,7 +135,7 @@ HTTP 200 OK
 }
 ```
 
-List all versions for a specific config name in the global scope.
+List all versions for a specific config name in the global scope. Sys admin only.
 ```
 GET /global/config/{clientId}/names/{name}/versions
 ---
@@ -152,7 +152,7 @@ HTTP 200 OK
 
 ```
 
-Get one specific version of a config name in the global scope.
+Get one specific version of a config name in the global scope. Sys admin only.
 ```
 GET /global/config/{clientId}/names/{name}/versions/{version}
 ---
@@ -358,13 +358,14 @@ HTTP 200 OK
 
 Start the stack with
 ```
-docker-compose up -d
+docker compose -f docker/docker-compose.yaml build
+docker compose -f docker/docker-compose.yaml up -d
 ```
 
 and once you're finished, stop it with
 
 ```
-docker-compose down
+docker compose -f docker/docker-compose.yaml down
 ```
 
 Then you can test requests with Postman at root URL `http://localhost:8080/appconfig/api/`. Start a Postman query. Add OAuth2 authorization and press the _Get new access token_ button. Use

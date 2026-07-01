@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="insert-dev-data" author="pim" context="dev">
+        <loadData
+            file="db/changelog/changes/202607011037-dev-data.csv"
+            separator=";"
+            tableName="config"
+            usePreparedStatements="true">
+            <column name="client_id" type="STRING"/>
+            <column name="scope" type="STRING"/>
+            <column name="name" type="STRING"/>
+            <column name="value" type="STRING"/>
+            <column name="create_timestamp" type="DATETIME"/>
+            <column name="created_by_user" type="STRING"/>
+            <column name="version" type="NUMERIC"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

@@ -25,7 +25,7 @@
     https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
     <property name="autoIncrement" value="true" dbms="mysql,postgresql,oracle,mssql"/>
 
-    <changeSet id="3" author="pim" dbms="postgresql">
+    <changeSet id="3" author="pim" dbms="postgresql,h2">
         <addColumn tableName="config">
             <column name="create_timestamp" type="timestamp"/>
         </addColumn>

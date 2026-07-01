@@ -22,8 +22,6 @@ internal class GlobalConfigServiceTest {
         resolver = InMemoryResourceEnhancer.InMemoryClientVariableResolver()
         globalConfigService = GlobalConfigService(
             resolver = resolver,
-            conditionService = ConditionService(resolver, ClientInterpreter(resolver)),
-            clientService = mock(),
         )
     }
 

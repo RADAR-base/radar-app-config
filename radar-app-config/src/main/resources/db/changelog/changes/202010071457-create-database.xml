@@ -23,9 +23,9 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
-    <property name="autoIncrement" value="true" dbms="mysql,postgresql,oracle,mssql"/>
+    <property name="autoIncrement" value="true" dbms="mysql,postgresql,oracle,mssql,h2"/>
 
-    <changeSet id="0" author="joris" dbms="postgresql">
+    <changeSet id="0" author="joris" dbms="postgresql,h2">
         <validCheckSum>8:66d339bfb0b07ca6736080b2bc5a37fd</validCheckSum>
         <validCheckSum>9:4f80f55dc6fb69c363081a6ed3d3ef65</validCheckSum>
         <createSequence sequenceName="hibernate_sequence" startValue="1" incrementBy="1"/>

@@ -1,0 +1,4 @@
+client_id;scope;name;value;create_timestamp;created_by_user;version
+radar_dashboard;global;app_name;Radar Dashboard;2026-07-01 10:37:00;admin;1
+radar_dashboard;project:test-project;theme;dark;2026-07-01 10:37:00;admin;1
+radar_dashboard;user:test-user;language;en;2026-07-01 10:37:00;admin;1

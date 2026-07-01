@@ -5,9 +5,11 @@ import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConditionService
+import org.radarbase.appconfig.service.GlobalConfigService
+import org.radarbase.appconfig.service.NonResolvingConfigService
+import org.radarbase.appconfig.service.NonResolvingConfigServiceImpl
 import org.radarbase.appconfig.service.ProjectConfigService
 import org.radarbase.appconfig.service.ProjectConfigServiceImpl
-import org.radarbase.appconfig.service.GlobalConfigService
 import org.radarbase.appconfig.service.UserConfigService
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.jersey.filter.Filters
@@ -55,6 +57,10 @@ class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyR
 
         bind(UserConfigService::class.java)
             .to(UserConfigService::class.java)
+            .`in`(Singleton::class.java)
+
+        bind(NonResolvingConfigServiceImpl::class.java)
+            .to(NonResolvingConfigService::class.java)
             .`in`(Singleton::class.java)
     }
 }

@@ -25,7 +25,7 @@
     https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
     <property name="autoIncrement" value="true" dbms="mysql,postgresql,oracle,mssql"/>
 
-    <changeSet id="2" author="joris" dbms="postgresql">
+    <changeSet id="2" author="joris" dbms="postgresql,h2">
         <validCheckSum>8:5736e7f59f2222c54bd5e6068d0ae1a7</validCheckSum>
         <validCheckSum>9:f9f243c52574f9ebc5a51dbc6eb528a3</validCheckSum>
         <createIndex tableName="config" indexName="idx_config_client_name">

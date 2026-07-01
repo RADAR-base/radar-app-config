@@ -27,4 +27,5 @@
     <include file="db/changelog/changes/202010071457-create-database.xml"/>
     <include file="db/changelog/changes/202011101201-change-index.xml"/>
     <include file="db/changelog/changes/202605121804-add-version-columns.xml"/>
+    <include file="db/changelog/changes/202607011037-insert-dev-data.xml"/>
 </databaseChangeLog>

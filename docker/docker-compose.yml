@@ -60,7 +60,7 @@ services:
     build:
       context: ..
       dockerfile: radar-app-config/Dockerfile
-    image: radarbase/radar-app-config:dev
+    image: radarbase/radar-app-config:dev-2
     restart: on-failure
     volumes:
       - ./etc/appconfig.yml:/etc/radar-app-config/appconfig.yml

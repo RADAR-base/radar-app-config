@@ -68,7 +68,6 @@ class DirectVariableResolver : VariableResolver {
 
         return refStream
     }
-
     override suspend fun replace(scope: Scope, prefix: QualifiedId?, variables: Sequence<Pair<QualifiedId, Variable>>) {
         val newVariables = variables.toMap()
         this.variables[scope] = if (prefix == null) {

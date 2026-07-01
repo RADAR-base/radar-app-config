@@ -39,4 +39,6 @@ dependencies {
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.hamcrest)
     testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.h2)
+    testImplementation(libs.liquibase.core)
 }

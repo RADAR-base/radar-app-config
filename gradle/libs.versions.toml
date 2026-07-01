@@ -4,6 +4,8 @@ project = "0.6.2"
 kotlin = "1.9.24"
 gradle = "8.14"
 kotlinCoroutines ="1.8.0"
+h2 = "2.2.224"
+liquibase = "4.33.0"
 
 antlr = "4.13.1"
 hamcrest = "2.2"
@@ -35,6 +37,8 @@ kotlinx-coroutines-bom = { group = "org.jetbrains.kotlinx", name = "kotlinx-coro
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 ktor-bom = { group = "io.ktor", name = "ktor-bom", version.ref = "ktor" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
+h2 = { group = "com.h2database", name = "h2", version.ref = "h2" }
+liquibase-core = { group = "org.liquibase", name = "liquibase-core", version.ref = "liquibase" }
 radar-commons-kotlin = { group = "org.radarbase", name = "radar-commons-kotlin", version.ref = "radarCommons" }
 radar-jersey = { group = "org.radarbase", name = "radar-jersey", version.ref = "radarJersey" }
 radar-jersey-hibernate = { group = "org.radarbase", name = "radar-jersey-hibernate", version.ref = "radarJersey" }

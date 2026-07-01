@@ -20,8 +20,8 @@ internal fun ResolvedVariable.toSingleVariable(clientId: String): SingleVariable
 
 @Serializable
 data class ClientConfig(
-    val clientId: String?,
-    val scope: String?,
+    val clientId: String? = null,
+    val scope: String? = null,
     val config: List<SingleVariable>,
     val defaults: List<SingleVariable>? = null,
 ) {
@@ -43,13 +43,24 @@ data class ClientConfig(
         ): ClientConfig {
             val configs = configSequence.groupBy { it.scope == scope }
             return ClientConfig(
-                clientId,
-                scope.asString(),
-                configs[true]
+                clientId = clientId,
+                scope = scope.asString(),
+                config = configs[true]
                     ?.map { it.toSingleVariable(clientId) }
                     ?: emptyList(),
-                configs[false]
+                defaults = configs[false]
                     ?.map { it.toSingleVariable(clientId) },
+            )
+        }
+
+        fun fromStream(
+            clientId: String,
+            configSequence: Sequence<ResolvedVariable>,
+        ): ClientConfig {
+            return ClientConfig(
+                clientId = clientId,
+                config = configSequence
+                    .map { it.toSingleVariable(clientId) }.toList(),
             )
         }
 

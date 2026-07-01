@@ -8,7 +8,9 @@ import jakarta.persistence.EntityManager
 import jakarta.ws.rs.core.Context
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.HazelcastConfig
+import org.radarbase.appconfig.persistence.HibernateVariableRepository
 import org.radarbase.appconfig.persistence.HibernateVariableResolver
+import org.radarbase.appconfig.persistence.VariableRepository
 import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.jersey.service.AsyncCoroutineService
 import org.radarbase.lang.expression.VariableResolver
@@ -39,6 +41,10 @@ class HibernatePersistenceResourceEnhancer(
             bind(HibernateClientVariableResolver::class.java)
                 .to(ClientVariableResolver::class.java)
                 .`in`(Singleton::class.java)
+
+            bind(HibernateClientVariableRepository::class.java)
+                .to(VariableRepository::class.java)
+                .`in`(Singleton::class.java)
         }
     }
 
@@ -53,6 +59,19 @@ class HibernatePersistenceResourceEnhancer(
             hazelcastInstance.getMap(clientId),
             asyncService,
             this.hazelcastInstance.name, // this gets the name of the user identity name configured in management portal
+        )
+    }
+
+    // TODO I do not understand the caching mechanism as used in HibernateClientVariableResolver
+    // Investigate and add if needed.
+    class HibernateClientVariableRepository(
+        @Context private val em: jakarta.inject.Provider<EntityManager>,
+        @Context private val asyncService: AsyncCoroutineService,
+    ) : ClientVariableRepository {
+        override fun get(clientId: String): VariableRepository = HibernateVariableRepository(
+            em,
+            clientId,
+            asyncService,
         )
     }
 }
