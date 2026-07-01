@@ -6,5 +6,6 @@ build/
 out/
 
 .idea/
+.junie/
 
 docker/etc/smtp.env
