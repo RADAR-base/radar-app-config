@@ -22,6 +22,7 @@ radarJersey = "0.12.7"
 # @pin Upgrade to 3.x.x requires kotlin v2 minimum
 ktor = "2.3.13"
 log4j2 = "2.23.1"
+jersey = "3.1.3"
 
 [libraries]
 antlr = { group = "org.antlr", name = "antlr4", version.ref = "antlr" }
@@ -42,6 +43,8 @@ liquibase-core = { group = "org.liquibase", name = "liquibase-core", version.ref
 radar-commons-kotlin = { group = "org.radarbase", name = "radar-commons-kotlin", version.ref = "radarCommons" }
 radar-jersey = { group = "org.radarbase", name = "radar-jersey", version.ref = "radarJersey" }
 radar-jersey-hibernate = { group = "org.radarbase", name = "radar-jersey-hibernate", version.ref = "radarJersey" }
+jersey-testFramework-core = { group = "org.glassfish.jersey.test-framework", name = "jersey-test-framework-core", version.ref = "jersey" }
+jersey-testFramework-provider-grizzly2 = { group = "org.glassfish.jersey.test-framework.providers", name = "jersey-test-framework-provider-grizzly2", version.ref = "jersey" }
 
 [plugins]
 radar-root-project = { id = "org.radarbase.radar-root-project", version.ref = "radarCommons" }

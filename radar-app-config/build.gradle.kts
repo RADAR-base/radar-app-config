@@ -41,4 +41,6 @@ dependencies {
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.h2)
     testImplementation(libs.liquibase.core)
+    testImplementation(libs.jersey.testFramework.core)
+    testImplementation(libs.jersey.testFramework.provider.grizzly2)
 }

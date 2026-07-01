@@ -37,7 +37,7 @@ class ServiceResource(
     // TODO add authorization annotation!!!!
     fun getGlobalConfig(
         @Suspended asyncResponse: AsyncResponse,
-        @QueryParam("scopes") scopes: Collection<Scope>?,
+        @QueryParam("scopes") scopes: List<Scope>?,
         @PathParam("clientId") clientId: String,
         @QueryParam("name") name: String?,
         @QueryParam("version") version: Int?,
