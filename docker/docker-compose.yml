@@ -1,13 +1,10 @@
----
-version: '3.2'
-
 services:
   #---------------------------------------------------------------------------#
   # Management Portal                                                         #
   #---------------------------------------------------------------------------#
   managementportal:
-#    image: radarbase/management-portal:2.0.0
-    image: managementportal
+    image: ghcr.io/radar-base/managementportal/management-portal:2.1.13
+#    image: managementportal
     depends_on:
       - mp-postgresql
     environment:
@@ -38,9 +35,9 @@ services:
     image: bitnamilegacy/postgresql:15
     platform: linux/amd64
     environment:
-      - POSTGRES_USER=radarcns
-      - POSTGRES_PASSWORD=radarcns
-      - POSTGRESQL_DB=managementportal
+      - POSTGRESQL_USERNAME=radarcns
+      - POSTGRESQL_PASSWORD=radarcns
+      - POSTGRESQL_DATABASE=managementportal
     labels:
       - "traefik.enable=false"
 
@@ -61,7 +58,7 @@ services:
   #---------------------------------------------------------------------------#
   app-config:
     build:
-      context: .
+      context: ..
       dockerfile: radar-app-config/Dockerfile
     image: radarbase/radar-app-config:dev
     restart: on-failure
@@ -75,7 +72,8 @@ services:
 
   app-config-frontend:
     build:
-      context: radar-app-config-frontend
+      context: ..
+      dockerfile: radar-app-config-frontend/Dockerfile
     #    image: radarbase/radar-app-config-frontend:dev
     environment:
       - AUTH_URL=http://127.0.0.1:8080/managementportal/oauth
@@ -145,9 +143,9 @@ services:
   postgresd-kratos:
     image: bitnamilegacy/postgresql:15
     environment:
-      - POSTGRES_USER=kratos
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=kratos
+      - POSTGRESQL_USERNAME=kratos
+      - POSTGRESQL_PASSWORD=secret
+      - POSTGRESQL_DATABASE=kratos
 
   mailslurper:
     image: oryd/mailslurper:latest-smtps

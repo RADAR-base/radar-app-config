@@ -15,3 +15,5 @@ database:
   url: "jdbc:postgresql://app-postgresql/appconfig?sslmode=disable"
   user: radarcns
   password: radarcns
+  liquibase:
+    contexts: [postgresql,dev]
