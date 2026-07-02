@@ -2,7 +2,6 @@ package org.radarbase.appconfig.resource
 
 import jakarta.inject.Singleton
 import jakarta.ws.rs.core.Application
-import jakarta.ws.rs.core.GenericType
 import jakarta.ws.rs.core.MediaType
 import org.glassfish.hk2.utilities.binding.AbstractBinder
 import org.glassfish.jersey.test.JerseyTest
@@ -122,7 +121,7 @@ class ServiceResourceTest : JerseyTest() {
                     size == 2 && first().asString() == "global"
                         && last().asString() == "project:$project"
                 },
-                id = eq(QualifiedId(name)),
+                name = eq(QualifiedId(name)),
                 prefix = anyOrNull(),
                 version = eq(version),
             )

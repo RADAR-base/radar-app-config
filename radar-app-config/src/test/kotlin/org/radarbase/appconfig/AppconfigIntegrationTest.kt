@@ -43,7 +43,6 @@ import org.radarbase.jersey.service.ProjectService
 import org.radarbase.lang.expression.ResolvedVariable
 import kotlin.jvm.java
 
-// These tests are not yet working because mocking/stubbing token validation is not yet working.
 class AppconfigIntegrationTest : JerseyTest() {
 
     init {
@@ -95,7 +94,7 @@ class AppconfigIntegrationTest : JerseyTest() {
     }
 
     @Test
-    fun testSearchWithScopes() {
+    fun testSearchWithScopesGetsLatestVersion() {
         target("service/config/radar_dashboard/search")
             .queryParam("scope", "global")
             .queryParam("scope", "project:test-project")
@@ -105,33 +104,29 @@ class AppconfigIntegrationTest : JerseyTest() {
                 assertEquals(200, response.status)
                 val response = response.readEntity(ClientConfig::class.java)
                 assert(response.config.isNotEmpty())
+                val singleValues = response.config.associateBy { it.name }
+                assertEquals("Radar Dashboard", singleValues["app_name"]?.value)
+                assertEquals(2, singleValues["app_name"]?.version)
+                assertEquals("light" , singleValues["theme"]?.value)
+                assertEquals(2, singleValues["theme"]?.version)
             }
     }
-//
-//    @ParameterizedTest
-//    @CsvSource(
-//        "max, 15.0",
-//        "min, 5.0",
-//        "avg, 10.0",
-//    )
-//    fun testCalculateValues(func: String, expected: Double) {
-//        target("project/project-1/subject/sub-1/topic/questionnaire_answer/category/baseline_questions/variable/Perceived_Pain_Score/values/$func")
-//            .request()
-//            .get()
-//            .use { response ->
-//                assertEquals(200, response.status)
-//                assertEquals(expected, response.readEntity(Double::class.java))
-//            }
-//    }
-//
-//    @Test
-//    fun testGetCount() {
-//        target("project/project-1/subject/sub-1/topic/questionnaire_answer/category/baseline_questions/variable/Perceived_Pain_Score/observations/count")
-//            .request()
-//            .get()
-//            .use { response ->
-//                assertEquals(200, response.status)
-//                assertEquals(3, response.readEntity(Int::class.java))
-//            }
-//    }
+
+    @Test
+    fun testSearchWithVersion() {
+        target("service/config/radar_dashboard/search")
+            .queryParam("version", 1)
+            .queryParam("name", "theme")
+            .request()
+            .get()
+            .use { response ->
+                assertEquals(200, response.status)
+                val response = response.readEntity(ClientConfig::class.java)
+                assertEquals(1, response.config.size)
+                val singleValues = response.config.associateBy { it.name }
+                assertEquals("dark", singleValues["theme"]?.value)
+                assertEquals(1, singleValues["theme"]?.version)
+            }
+    }
+
 }
