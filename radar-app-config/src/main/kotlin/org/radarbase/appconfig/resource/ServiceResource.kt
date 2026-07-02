@@ -17,6 +17,7 @@ import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.service.AsyncCoroutineService
 import org.radarbase.lang.expression.QualifiedId
 import org.radarbase.lang.expression.Scope
+import org.radarbase.lang.expression.SimpleScope
 
 /*
  * Provides read-only access for external services without scope evaluation.

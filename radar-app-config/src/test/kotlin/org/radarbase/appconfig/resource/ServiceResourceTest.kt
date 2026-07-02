@@ -77,14 +77,19 @@ class ServiceResourceTest : JerseyTest() {
     @Test
     fun testGetGlobalConfig() {
         val clientId = "test-client"
-        
+        val name = "app_name"
+        val project = "test-project"
+        val version = 3
+
         configService.stub {
             onBlocking { getConfig(eq(clientId), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()) } doReturn emptySequence()
         }
 
         val response = target("service/config/$clientId/search")
             .queryParam("scopes", "global")
-            .queryParam("name", "test.id")
+            .queryParam("scopes", "project:$project")
+            .queryParam("name", name)
+            .queryParam("version", version)
             .request(MediaType.APPLICATION_JSON)
             .get()
 
@@ -92,40 +97,17 @@ class ServiceResourceTest : JerseyTest() {
         val entity = response.readEntity(object : GenericType<List<Any>>() {})
         assertEquals(0, entity.size)
 
+        verifyBlocking(clientService) {
+            ensureClient(clientId)
+        }
         verifyBlocking(configService) {
             getConfig(
                 clientId = eq(clientId),
                 scopes = argThat { 
-                    size == 1 && first().asString() == "global"
+                    size == 2 && first().asString() == "global"
+                        && last().asString() == "project:$project"
                 },
-                id = eq(QualifiedId("test.id")),
-                prefix = anyOrNull(),
-                version = anyOrNull(),
-            )
-        }
-    }
-
-    @Test
-    fun testGetGlobalConfigWithVersion() {
-        val clientId = "test-client"
-        val version = 3
-        
-        configService.stub {
-            onBlocking { getConfig(eq(clientId), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()) } doReturn emptySequence()
-        }
-
-        val response = target("service/config/$clientId/search")
-            .queryParam("version", version)
-            .request(MediaType.APPLICATION_JSON)
-            .get()
-
-        assertEquals(200, response.status)
-
-        verifyBlocking(configService) {
-            getConfig(
-                clientId = eq(clientId),
-                scopes = anyOrNull(),
-                id = anyOrNull(),
+                id = eq(QualifiedId(name)),
                 prefix = anyOrNull(),
                 version = eq(version),
             )
@@ -133,21 +115,43 @@ class ServiceResourceTest : JerseyTest() {
     }
 
     @Test
-    fun testGetGlobalConfigNoParams() {
+    fun testGetGlobalConfigCommaSeparated() {
         val clientId = "test-client"
-        
+        val name = "app_name"
+        val project = "test-project"
+        val version = 3
+
         configService.stub {
             onBlocking { getConfig(eq(clientId), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()) } doReturn emptySequence()
         }
 
         val response = target("service/config/$clientId/search")
+            .queryParam("scope", "global")
+            .queryParam("scope", ",project:$project")
+            .queryParam("name", name)
+            .queryParam("version", version)
             .request(MediaType.APPLICATION_JSON)
             .get()
 
         assertEquals(200, response.status)
-        
+        val entity = response.readEntity(object : GenericType<List<Any>>() {})
+        assertEquals(0, entity.size)
+
         verifyBlocking(clientService) {
             ensureClient(clientId)
         }
+        verifyBlocking(configService) {
+            getConfig(
+                clientId = eq(clientId),
+                scopes = argThat {
+                    size == 2 && first().asString() == "global"
+                        && last().asString() == "project:$project"
+                },
+                id = eq(QualifiedId(name)),
+                prefix = anyOrNull(),
+                version = eq(version),
+            )
+        }
     }
+
 }
