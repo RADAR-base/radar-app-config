@@ -14,13 +14,13 @@ class NonResolvingConfigServiceImpl(
     override suspend fun getConfig(
         clientId: String,
         scopes: Collection<Scope>?,
-        id: QualifiedId?,
+        name: QualifiedId?,
         prefix: QualifiedId?,
         version: Int?,
     ) = ClientConfig(
         clientId = clientId,
         config = clientVariableRepository[clientId]
-            .query(scopes, id, prefix, version)
+            .query(scopes, name, prefix, version)
             .map { it.toSingleVariable() }
             .toList()
     )

@@ -8,7 +8,7 @@ interface NonResolvingConfigService {
     suspend fun getConfig(
         clientId: String,
         scopes: Collection<Scope>? = null,
-        id: QualifiedId? = null,
+        name: QualifiedId? = null,
         prefix: QualifiedId? = null,
         version: Int? = null,
     ): ClientConfig

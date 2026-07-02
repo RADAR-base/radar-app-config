@@ -46,7 +46,7 @@ class ServiceResource(
         configService.getConfig(
             clientId = clientId,
             scopes = scopes,
-            id = name?.let { QualifiedId(it) },
+            name = name?.let { QualifiedId(it) },
             version = version,
         )
     }
