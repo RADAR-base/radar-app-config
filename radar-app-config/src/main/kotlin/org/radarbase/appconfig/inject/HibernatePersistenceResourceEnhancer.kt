@@ -19,6 +19,15 @@ class HibernatePersistenceResourceEnhancer(
     private val hazelcastConfig: HazelcastConfig,
 ) : JerseyResourceEnhancer {
     override fun AbstractBinder.enhance() {
+
+        bind(HibernateClientVariableResolver::class.java)
+            .to(ClientVariableResolver::class.java)
+            .`in`(Singleton::class.java)
+
+        bind(HibernateClientVariableRepository::class.java)
+            .to(ClientVariableRepository::class.java)
+            .`in`(Singleton::class.java)
+
         if (hazelcastConfig.enable) {
             System.setProperty("hazelcast.logging.type", "slf4j")
             val hzConfig = if (hazelcastConfig.configPath != null) {
@@ -36,14 +45,6 @@ class HibernatePersistenceResourceEnhancer(
 
             bind(hazelcastInstance)
                 .to(HazelcastInstance::class.java)
-                .`in`(Singleton::class.java)
-
-            bind(HibernateClientVariableResolver::class.java)
-                .to(ClientVariableResolver::class.java)
-                .`in`(Singleton::class.java)
-
-            bind(HibernateClientVariableRepository::class.java)
-                .to(VariableRepository::class.java)
                 .`in`(Singleton::class.java)
         }
     }

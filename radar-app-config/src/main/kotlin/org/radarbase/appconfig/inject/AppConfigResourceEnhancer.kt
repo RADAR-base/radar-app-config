@@ -3,6 +3,7 @@ package org.radarbase.appconfig.inject
 import jakarta.inject.Singleton
 import org.glassfish.jersey.internal.inject.AbstractBinder
 import org.radarbase.appconfig.config.ApplicationConfig
+import org.radarbase.appconfig.resource.paramconverter.ScopeParamConverterProvider
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.ConditionService
 import org.radarbase.appconfig.service.GlobalConfigService
@@ -15,18 +16,14 @@ import org.radarbase.jersey.enhancer.JerseyResourceEnhancer
 import org.radarbase.jersey.filter.Filters
 
 class AppConfigResourceEnhancer(private val config: ApplicationConfig) : JerseyResourceEnhancer {
-    override val classes: Array<Class<*>> = if (config.isCorsEnabled) {
-        arrayOf(
-            Filters.cors,
-            Filters.logResponse,
-            Filters.cache,
-        )
-    } else {
-        arrayOf(
-            Filters.logResponse,
-            Filters.cache,
-        )
-    }
+    override val classes = buildList {
+        add(Filters.logResponse)
+        add(Filters.cache)
+        add(ScopeParamConverterProvider::class.java)
+        if (config.isCorsEnabled) {
+            add(Filters.cors)
+        }
+    }.toTypedArray()
 
     override val packages: Array<String> = arrayOf("org.radarbase.appconfig.resource")
 

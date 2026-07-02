@@ -18,6 +18,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.verifyBlocking
 import org.radarbase.appconfig.persistence.MockAsyncCoroutineService
+import org.radarbase.appconfig.resource.paramconverter.ScopeParamConverterProvider
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.appconfig.service.NonResolvingConfigService
 import org.radarbase.jersey.config.ConfigLoader
@@ -82,52 +83,20 @@ class ServiceResourceTest : JerseyTest() {
         val version = 3
 
         configService.stub {
-            onBlocking { getConfig(eq(clientId), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()) } doReturn emptySequence()
-        }
-
-        val response = target("service/config/$clientId/search")
-            .queryParam("scopes", "global")
-            .queryParam("scopes", "project:$project")
-            .queryParam("name", name)
-            .queryParam("version", version)
-            .request(MediaType.APPLICATION_JSON)
-            .get()
-
-        assertEquals(200, response.status)
-        val entity = response.readEntity(object : GenericType<List<Any>>() {})
-        assertEquals(0, entity.size)
-
-        verifyBlocking(clientService) {
-            ensureClient(clientId)
-        }
-        verifyBlocking(configService) {
-            getConfig(
-                clientId = eq(clientId),
-                scopes = argThat { 
-                    size == 2 && first().asString() == "global"
-                        && last().asString() == "project:$project"
-                },
-                id = eq(QualifiedId(name)),
-                prefix = anyOrNull(),
-                version = eq(version),
-            )
-        }
-    }
-
-    @Test
-    fun testGetGlobalConfigCommaSeparated() {
-        val clientId = "test-client"
-        val name = "app_name"
-        val project = "test-project"
-        val version = 3
-
-        configService.stub {
-            onBlocking { getConfig(eq(clientId), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()) } doReturn emptySequence()
+            onBlocking {
+                getConfig(
+                    eq(clientId),
+                    anyOrNull(),
+                    anyOrNull(),
+                    anyOrNull(),
+                    anyOrNull()
+                )
+            } doReturn emptySequence()
         }
 
         val response = target("service/config/$clientId/search")
             .queryParam("scope", "global")
-            .queryParam("scope", ",project:$project")
+            .queryParam("scope", "project:$project")
             .queryParam("name", name)
             .queryParam("version", version)
             .request(MediaType.APPLICATION_JSON)

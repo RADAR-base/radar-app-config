@@ -1,0 +1,34 @@
+baseUri: http://0.0.0.0:8090/appconfig/api
+isJmxEnabled: false
+
+auth:
+  managementPortal:
+    url: http://localhost:8080/managementportal
+    clientId: appconfig
+    clientSecret: test
+  jwtResourceName: res_appconfig
+
+database:
+  url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DEFAULT_NULL_ORDERING=HIGH;NON_KEYWORDS=VALUE;INIT=create schema if not exists CONFIG
+  user: "sa"
+  password:
+  dialect: org.hibernate.dialect.H2Dialect
+  driver: org.h2.Driver
+  liquibase:
+    contexts: [h2,dev]
+  properties:
+    jakarta.persistence.schema-generation.database.action: none
+
+hazelcast:
+  enable: false
+  network:
+    port: 5801
+    join:
+      multicastConfig:
+        enabled: false
+      kubernetesConfig:
+        enabled: true
+        properties:
+          service-name: app-config
+          service-port: 5801
+          namespace: default

@@ -1,11 +1,10 @@
-package org.radarbase.appconfig.resource
+package org.radarbase.appconfig.resource.paramconverter
 
 import jakarta.ws.rs.ext.ParamConverter
 import jakarta.ws.rs.ext.ParamConverterProvider
 import jakarta.ws.rs.ext.Provider
 import org.radarbase.lang.expression.Scope
 import org.radarbase.lang.expression.SimpleScope
-import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 @Provider

@@ -17,7 +17,6 @@ import org.radarbase.jersey.auth.Authenticated
 import org.radarbase.jersey.service.AsyncCoroutineService
 import org.radarbase.lang.expression.QualifiedId
 import org.radarbase.lang.expression.Scope
-import org.radarbase.lang.expression.SimpleScope
 
 /*
  * Provides read-only access for external services without scope evaluation.
@@ -38,8 +37,8 @@ class ServiceResource(
     // TODO add authorization annotation!!!!
     fun getGlobalConfig(
         @Suspended asyncResponse: AsyncResponse,
-        @QueryParam("scopes") scopes: List<Scope>?,
         @PathParam("clientId") clientId: String,
+        @QueryParam("scope") scopes: List<Scope>?,
         @QueryParam("name") name: String?,
         @QueryParam("version") version: Int?,
     ) = asyncService.runAsCoroutine(asyncResponse) {
