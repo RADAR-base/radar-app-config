@@ -30,6 +30,7 @@ import org.glassfish.jersey.test.spi.TestContainerFactory
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
+import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.config.ApplicationConfig
 import org.radarbase.appconfig.service.ClientService
 import org.radarbase.auth.authorization.AuthorizationOracle
@@ -39,6 +40,8 @@ import org.radarbase.jersey.auth.disabled.DisabledAuthValidator
 import org.radarbase.jersey.auth.disabled.DisabledAuthorizationOracle
 import org.radarbase.jersey.config.ConfigLoader
 import org.radarbase.jersey.service.ProjectService
+import org.radarbase.lang.expression.ResolvedVariable
+import kotlin.jvm.java
 
 // These tests are not yet working because mocking/stubbing token validation is not yet working.
 class AppconfigIntegrationTest : JerseyTest() {
@@ -87,6 +90,7 @@ class AppconfigIntegrationTest : JerseyTest() {
             .get()
             .use { response ->
                 assertEquals(200, response.status)
+
             }
     }
 
@@ -94,11 +98,13 @@ class AppconfigIntegrationTest : JerseyTest() {
     fun testSearchWithScopes() {
         target("service/config/radar_dashboard/search")
             .queryParam("scope", "global")
-            .queryParam("scope", "project:test")
+            .queryParam("scope", "project:test-project")
             .request()
             .get()
             .use { response ->
                 assertEquals(200, response.status)
+                val response = response.readEntity(ClientConfig::class.java)
+                assert(response.config.isNotEmpty())
             }
     }
 //

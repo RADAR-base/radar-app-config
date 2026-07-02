@@ -3,6 +3,7 @@ package org.radarbase.appconfig.persistence
 import jakarta.inject.Provider
 import jakarta.persistence.EntityManager
 import jakarta.persistence.TypedQuery
+import org.radarbase.appconfig.api.SingleVariable
 import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.appconfig.persistence.hibernate.ConfigSpecs.ofLatestVersion
 import org.radarbase.appconfig.persistence.hibernate.ConfigSpecs.whereClientId
@@ -35,10 +36,9 @@ class HibernateVariableRepository(
         id: QualifiedId?,
         prefix: QualifiedId?,
         version: Int?,
-    ): Sequence<ResolvedVariable> = transact {
+    ): Sequence<ConfigEntity> = transact {
         freeConfigQuery(scopes, id, prefix, version)
             .resultStream
-            .map { it.toResolvedVariable() }
             .asSequence()
     }
 

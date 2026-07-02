@@ -1,7 +1,7 @@
 package org.radarbase.appconfig.persistence
 
+import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.lang.expression.QualifiedId
-import org.radarbase.lang.expression.ResolvedVariable
 import org.radarbase.lang.expression.Scope
 
 interface VariableRepository {
@@ -9,6 +9,6 @@ interface VariableRepository {
         scopes: Collection<Scope>? = null,
         id: QualifiedId? = null,
         prefix: QualifiedId? = null,
-        version: Int? = null
-    ): Sequence<ResolvedVariable>
+        version: Int? = null,
+    ): Sequence<ConfigEntity>
 }

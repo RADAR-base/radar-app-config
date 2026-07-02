@@ -29,22 +29,30 @@ class HibernateVariableRepositoryTest : RepositoryTest() {
     fun testQueryByScope() = runBlocking {
         val variables = repository.query(scopes = listOf(SimpleScope("global"))).toList()
         assertEquals(1, variables.size)
-        assertEquals("app_name", variables[0].id.toString())
-        assertEquals("Radar Dashboard", variables[0].variable.asString())
+        assertEquals("app_name", variables[0].name)
+        assertEquals("Radar Dashboard", variables[0].value)
     }
 
     @Test
-    fun testQueryById() = runBlocking {
+    fun testQueryByIdReturnsLatestVersion() = runBlocking {
         val variables = repository.query(id = QualifiedId("theme")).toList()
         assertEquals(1, variables.size)
-        assertEquals("project:test-project", variables[0].scope.toString())
-        assertEquals("dark", variables[0].variable.asString())
+        assertEquals("project:test-project", variables[0].scope)
+        assertEquals("light", variables[0].value)
+    }
+
+    @Test
+    fun testQueryByIdAndVersion() = runBlocking {
+        val variables = repository.query(id = QualifiedId("theme"), version = 1).toList()
+        assertEquals(1, variables.size)
+        assertEquals("project:test-project", variables[0].scope)
+        assertEquals("dark", variables[0].value)
     }
 
     @Test
     fun testQueryByPrefix() = runBlocking {
         val variables = repository.query(prefix = QualifiedId("app")).toList()
         assertEquals(1, variables.size)
-        assertEquals("app_name", variables[0].id.toString())
+        assertEquals("app_name", variables[0].name)
     }
 }

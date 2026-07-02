@@ -10,8 +10,10 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.stub
 import org.radarbase.appconfig.inject.ClientVariableRepository
 import org.radarbase.appconfig.persistence.VariableRepository
+import org.radarbase.appconfig.persistence.entity.ConfigEntity
 import org.radarbase.lang.expression.QualifiedId
 import org.radarbase.lang.expression.SimpleScope
+import java.time.Instant
 
 class NonResolvingConfigServiceImplTest {
     @Mock
@@ -21,6 +23,18 @@ class NonResolvingConfigServiceImplTest {
     private lateinit var variableRepository: VariableRepository
 
     private lateinit var service: NonResolvingConfigServiceImpl
+
+    val configEntities = listOf(
+        ConfigEntity().also {
+            it.clientId = "test-client"
+            it.scope = "global"
+            it.name = "name"
+            it.value = "value"
+            it.createTimestamp = Instant.now()
+            it.createdByUser = "test-user"
+            it.version = 1
+        }
+    )
 
     @BeforeEach
     fun setUp() {
@@ -37,12 +51,12 @@ class NonResolvingConfigServiceImplTest {
         val id = QualifiedId("test.id")
         val prefix = QualifiedId("test")
         val version = 1
-        
+
         variableRepository.stub {
-            onBlocking { query(scopes, id, prefix, version) } doReturn emptySequence()
+            onBlocking { query(scopes, id, prefix, version) } doReturn configEntities.asSequence()
         }
 
         val result = service.getConfig("test-client", scopes, id, prefix, version)
-        assertEquals(0, result.count())
+        assertEquals(1, result.config.size)
     }
 }

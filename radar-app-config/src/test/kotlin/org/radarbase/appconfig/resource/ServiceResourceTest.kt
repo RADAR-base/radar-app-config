@@ -17,6 +17,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.verifyBlocking
+import org.radarbase.appconfig.api.ClientConfig
 import org.radarbase.appconfig.persistence.MockAsyncCoroutineService
 import org.radarbase.appconfig.resource.paramconverter.ScopeParamConverterProvider
 import org.radarbase.appconfig.service.ClientService
@@ -38,6 +39,11 @@ class ServiceResourceTest : JerseyTest() {
 
     @Mock
     lateinit var clientService: ClientService
+
+    val clientConfig = ClientConfig(
+        clientId = "test-client",
+        config = emptyList(),
+    )
 
     class TestResourceEnhancer : JerseyResourceEnhancer {
         override val classes: Array<Class<*>> = arrayOf(
@@ -91,7 +97,7 @@ class ServiceResourceTest : JerseyTest() {
                     anyOrNull(),
                     anyOrNull()
                 )
-            } doReturn emptySequence()
+            } doReturn clientConfig
         }
 
         val response = target("service/config/$clientId/search")
@@ -103,8 +109,8 @@ class ServiceResourceTest : JerseyTest() {
             .get()
 
         assertEquals(200, response.status)
-        val entity = response.readEntity(object : GenericType<List<Any>>() {})
-        assertEquals(0, entity.size)
+        val entity = response.readEntity(ClientConfig::class.java)
+        assertEquals(0, entity.config.size)
 
         verifyBlocking(clientService) {
             ensureClient(clientId)
