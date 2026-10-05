@@ -5,4 +5,52 @@
 #     - id: CVE-2024-12345
 #       statement: Not exploitable, because ...
 #       expired_at: 2027-01-01
-vulnerabilities: []
+vulnerabilities:
+  - id: CVE-2025-66035
+    statement: >-
+      @angular/common 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
+  - id: CVE-2026-50170
+    statement: >-
+      @angular/common 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
+  - id: CVE-2026-50171
+    statement: >-
+      @angular/common 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
+  - id: CVE-2026-54266
+    statement: >-
+      @angular/common 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
+  - id: CVE-2026-54268
+    statement: >-
+      @angular/common 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
+  - id: CVE-2026-68945
+    statement: >-
+      @angular/common 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
+  - id: CVE-2025-66412
+    statement: >-
+      @angular/compiler 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
+  - id: CVE-2026-22610
+    statement: >-
+      @angular/compiler 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
+  - id: CVE-2026-69151
+    statement: >-
+      @angular/compiler 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
+  - id: CVE-2026-27970
+    statement: >-
+      @angular/core 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
+  - id: CVE-2026-54267
+    statement: >-
+      @angular/core 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
+  - id: CVE-2026-101896
+    statement: >-
+      @angular/router 13.3.12 (HIGH): fixed only in Angular 19.2+/20+, not in this end-of-life Angular line. Needs the Angular major upgrade.
+    expired_at: 2027-04-05
