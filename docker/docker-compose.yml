@@ -34,7 +34,7 @@ services:
       - "traefik.http.services.managementportal.loadbalancer.server.port=8080"
 
   mp-postgresql:
-    image: bitnami/postgresql:15
+    image: soldevelo/postgresql:15
     platform: linux/amd64
     environment:
       - POSTGRES_USER=radarcns
@@ -44,7 +44,7 @@ services:
       - "traefik.enable=false"
 
   app-postgresql:
-    image: bitnami/postgresql:15
+    image: soldevelo/postgresql:15
     platform: linux/amd64
     environment:
       - POSTGRESQL_USERNAME=radarcns
